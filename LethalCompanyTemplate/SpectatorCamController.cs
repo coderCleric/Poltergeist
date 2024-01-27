@@ -209,12 +209,12 @@ namespace Poltergeist
             if (newX < 270 && newX > 90)
             {
                 if (270 - newX < newX - 90)
-                    transform.eulerAngles = new Vector3(270, transform.eulerAngles.y, transform.eulerAngles.z);
+                    transform.eulerAngles = new Vector3(270, transform.eulerAngles.y, 0);
                 else
-                    transform.eulerAngles = new Vector3(90, transform.eulerAngles.y, transform.eulerAngles.z);
+                    transform.eulerAngles = new Vector3(90, transform.eulerAngles.y, 0);
             }
             else
-                transform.eulerAngles = new Vector3(newX, transform.eulerAngles.y, transform.eulerAngles.z);
+                transform.eulerAngles = new Vector3(newX, transform.eulerAngles.y, 0);
 
             //Move the camera
             float curMoveSpeed = camMoveSpeed;
