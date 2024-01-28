@@ -17,6 +17,9 @@ Features:
 
 # Interactible Objects
 - **Doors**: Can be opened and closed.
+- **Ship Light Switch**: Can be flipped on and off.
+- **Airhorn/Clownhorn**: Can be honked on the ground.
+- **Boombox**: Can be turned on and off on the ground.
 
 # Installing
 Just the same as any of the other BepInEx-based mod, put the folder for the mod in BepInEx/plugins and it should work. This mod is client-side, so having it installed won't cause the game to break if somebody else doesn't have it.
