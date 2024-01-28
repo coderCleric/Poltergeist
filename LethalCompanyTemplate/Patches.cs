@@ -106,6 +106,18 @@ namespace Poltergeist
             }
         }
 
+        /**
+         * Add ghost interactor objects to boomboxes
+         * 
+         * @param __instance The calling boombox
+         */
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(BoomboxItem), "Start")]
+        public static void AddInteractorForBoombox(BoomboxItem __instance)
+        {
+            __instance.gameObject.AddComponent<GhostInteractible>();
+        }
+
 
         /////////////////////////////// Make it so horns can be used by any client when on the ground ///////////////////////////////
         /**

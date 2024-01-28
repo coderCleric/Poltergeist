@@ -9,10 +9,11 @@ namespace Poltergeist
 {
     public class GhostInteractible : MonoBehaviour
     {
-        public enum GhostInteractType {GENERAL, NOISE_PROP}
+        public enum GhostInteractType {GENERAL, NOISE_PROP, BOOMBOX}
 
         private InteractTrigger trigger = null;
         private NoisemakerProp noiseProp = null;
+        private BoomboxItem boombox = null;
         private GhostInteractType type = GhostInteractType.GENERAL;
 
         /**
@@ -31,6 +32,12 @@ namespace Poltergeist
                 noiseProp = GetComponent<NoisemakerProp>();
                 type = GhostInteractType.NOISE_PROP;
             }
+
+            else if (GetComponent<BoomboxItem>() != null)
+            {
+                boombox = GetComponent<BoomboxItem>();
+                type = GhostInteractType.BOOMBOX;
+            }
         }
 
         /**
@@ -48,7 +55,8 @@ namespace Poltergeist
 
                 //It's some sort of horn
                 case GhostInteractType.NOISE_PROP:
-                    HonkHorn();
+                case GhostInteractType.BOOMBOX:
+                    MakeNoise();
                     break;
             }
         }
@@ -56,9 +64,16 @@ namespace Poltergeist
         /**
          * Honk the horn
          */
-        private void HonkHorn()
+        private void MakeNoise()
         {
-            NetworkObject netObj = noiseProp.NetworkObject;
+            //Grab the network object
+            NetworkObject netObj = null;
+            if (type == GhostInteractType.NOISE_PROP)
+                netObj = noiseProp.NetworkObject;
+            else if (type == GhostInteractType.BOOMBOX)
+                netObj = boombox.NetworkObject;
+            else
+                return;
 
             //Error check
             if (netObj == null || !netObj.IsSpawned)
@@ -67,11 +82,16 @@ namespace Poltergeist
                 return;
             }
 
-            //Actually do stuff
+            //Change the ownership to the ghost
             Patches.doGhostGrab = true;
             MethodInfo method = SpectatorCamController.instance.ClientPlayer.GetType().GetMethod("GrabObjectServerRpc", BindingFlags.NonPublic | BindingFlags.Instance);
             method.Invoke(SpectatorCamController.instance.ClientPlayer, new object[] { new NetworkObjectReference(netObj) });
-            noiseProp.UseItemOnClient();
+
+            //Make the noise
+            if(type == GhostInteractType.NOISE_PROP)
+                noiseProp.UseItemOnClient();
+            else if (type == GhostInteractType.BOOMBOX)
+                boombox.UseItemOnClient();
         }
 
         /**
@@ -94,6 +114,10 @@ namespace Poltergeist
                 //It's some sort of horn
                 case GhostInteractType.NOISE_PROP:
                     return "Honk horn : [E]";
+
+                //It's the boombox
+                case GhostInteractType.BOOMBOX:
+                    return "Toggle music : [E]";
             }
 
             return "Unknown Interaction";
