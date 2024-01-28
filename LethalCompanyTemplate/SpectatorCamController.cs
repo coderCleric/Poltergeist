@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Text;
+using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Rendering.HighDefinition;
@@ -18,10 +19,13 @@ namespace Poltergeist
         private Light light = null;
 
         private PlayerControllerB clientPlayer = null;
+        public PlayerControllerB ClientPlayer => clientPlayer;
         private GhostInteractible currentGhostInteractible = null;
         private Transform hintPanelRoot = null;
         private Transform hintPanelOrigParent = null;
         private Transform deathUIRoot = null;
+        private float accelTime = -1;
+        private float decelTime = -1;
 
         /**
          * On awake, make and grab the light
@@ -162,17 +166,55 @@ namespace Poltergeist
         }
 
         /**
+         * When scrolling is done, set the camera up to change speed
+         */
+        private void HandleScroll(InputAction.CallbackContext context)
+        {
+            if(context.ReadValue<float>() > 0)
+            {
+                accelTime = Time.time + 0.3f;
+                decelTime = -1;
+            }
+            else
+            {
+
+                decelTime = Time.time + 0.3f;
+                accelTime = -1;
+            }
+        }
+
+        private void RemoteHonk(NoisemakerProp obj)
+        {
+            NetworkObject netObj = obj.NetworkObject;
+
+            //Error check
+            if (netObj == null || !netObj.IsSpawned)
+            {
+                Poltergeist.DebugLog("could not remote honk; netobj was bad");
+                return;
+            }
+
+            //Actually do stuff
+            Patches.doGhostGrab = true;
+            MethodInfo method = clientPlayer.GetType().GetMethod("GrabObjectServerRpc", BindingFlags.NonPublic | BindingFlags.Instance);
+            method.Invoke(clientPlayer, new object[] {new NetworkObjectReference(netObj)});
+            obj.UseItemOnClient();
+        }
+
+        /**
          * Add and remove the switch light listener as needed
          */
         private void OnEnable()
         {
             IngamePlayerSettings.Instance.playerInput.actions.FindAction("ActivateItem").performed += SwitchLight;
             IngamePlayerSettings.Instance.playerInput.actions.FindAction("Interact").performed += DoInteract;
+            IngamePlayerSettings.Instance.playerInput.actions.FindAction("SwitchItem").performed += HandleScroll;
         }
         private void OnDisable()
         {
             IngamePlayerSettings.Instance.playerInput.actions.FindAction("ActivateItem").performed -= SwitchLight;
             IngamePlayerSettings.Instance.playerInput.actions.FindAction("Interact").performed -= DoInteract;
+            IngamePlayerSettings.Instance.playerInput.actions.FindAction("SwitchItem").performed -= HandleScroll;
         }
 
         /**
@@ -224,13 +266,13 @@ namespace Poltergeist
             Vector3 forwardMove = transform.transform.forward * moveInput.y * curMoveSpeed * Time.deltaTime;
             transform.position += rightMove + forwardMove;
 
-            //Lets the player change the freecam speed
-            if (Keyboard.current[Key.Equals].isPressed)
+            //Actually do the speed change
+            if(accelTime > Time.time)
             {
                 camMoveSpeed += Time.deltaTime * camMoveSpeed;
                 camMoveSpeed = Mathf.Clamp(camMoveSpeed, 0, 100);
             }
-            else if (Keyboard.current[Key.Minus].isPressed)
+            else if(decelTime > Time.time)
             {
                 camMoveSpeed -= Time.deltaTime * camMoveSpeed;
                 camMoveSpeed = Mathf.Clamp(camMoveSpeed, 0, 100);
