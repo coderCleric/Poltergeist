@@ -45,7 +45,6 @@ namespace Poltergeist
          * 
          * __instance The calling grabbable
          */
-        //This breaks things because it prevents the server from telling others that something happened
         [HarmonyPrefix]
         [HarmonyPatch(typeof(GrabbableObject), "ActivateItemClientRpc")]
         public static bool SuppressDuplicateHonk(GrabbableObject __instance) { 
