@@ -1,4 +1,5 @@
-﻿using System;
+﻿using HarmonyLib;
+using System;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Text;
@@ -66,32 +67,17 @@ namespace Poltergeist
          */
         private void MakeNoise()
         {
-            //Grab the network object
-            NetworkObject netObj = null;
+            //Make the noise and suppress the duplicate
             if (type == GhostInteractType.NOISE_PROP)
-                netObj = noiseProp.NetworkObject;
-            else if (type == GhostInteractType.BOOMBOX)
-                netObj = boombox.NetworkObject;
-            else
-                return;
-
-            //Error check
-            if (netObj == null || !netObj.IsSpawned)
             {
-                Poltergeist.DebugLog("could not remote honk; netobj was bad");
-                return;
-            }
-
-            //Change the ownership to the ghost
-            Patches.doGhostGrab = true;
-            MethodInfo method = SpectatorCamController.instance.ClientPlayer.GetType().GetMethod("GrabObjectServerRpc", BindingFlags.NonPublic | BindingFlags.Instance);
-            method.Invoke(SpectatorCamController.instance.ClientPlayer, new object[] { new NetworkObjectReference(netObj) });
-
-            //Make the noise
-            if(type == GhostInteractType.NOISE_PROP)
+                Patches.ignoreObj = noiseProp;
                 noiseProp.UseItemOnClient();
+            }
             else if (type == GhostInteractType.BOOMBOX)
+            {
+                Patches.ignoreObj = boombox;
                 boombox.UseItemOnClient();
+            }
         }
 
         /**

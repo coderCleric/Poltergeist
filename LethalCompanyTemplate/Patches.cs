@@ -7,13 +7,14 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using System.Reflection.Emit;
 using Unity.Netcode;
+using System.Reflection;
 
 namespace Poltergeist
 {
     [HarmonyPatch]
     public static class Patches
     {
-        public static bool doGhostGrab = false;
+        public static GrabbableObject ignoreObj = null;
 
         /////////////////////////////// Needed to suppress certain base-game systems ///////////////////////////////
         /**
@@ -37,6 +38,23 @@ namespace Poltergeist
         public static void OverrideSpectateCam(PlayerControllerB __instance)
         {
             __instance.playersManager.overrideSpectateCamera = true;
+        }
+
+        /**
+         * If this is the object we're ignoring, ignore it
+         * 
+         * __instance The calling grabbable
+         */
+        //This breaks things because it prevents the server from telling others that something happened
+        [HarmonyPrefix]
+        [HarmonyPatch(typeof(GrabbableObject), "ActivateItemClientRpc")]
+        public static bool SuppressDuplicateHonk(GrabbableObject __instance) { 
+            if(__instance == ignoreObj)
+            {
+                ignoreObj = null;
+                return __instance.NetworkManager.IsServer || __instance.NetworkManager.IsHost;
+            }
+            return true;
         }
 
 
@@ -119,7 +137,7 @@ namespace Poltergeist
         }
 
 
-        /////////////////////////////// Make it so horns can be used by any client when on the ground ///////////////////////////////
+        /////////////////////////////// Transpile grabbed object behaviour to facilitate ground use ///////////////////////////////
         /**
          * Make items usable by any client when not held
          * 
@@ -127,7 +145,7 @@ namespace Poltergeist
          * @param __result The resulting value
          */
         [HarmonyTranspiler]
-        [HarmonyPatch(typeof(PlayerControllerB), "GrabObjectServerRpc")]
+        [HarmonyPatch(typeof(GrabbableObject), nameof(GrabbableObject.UseItemOnClient))]
         public static IEnumerable<CodeInstruction> AllowGroundUse(IEnumerable<CodeInstruction> instructions, ILGenerator il)
         {
             //First, load the list of instructions
@@ -135,57 +153,106 @@ namespace Poltergeist
 
             //Next, find where we need to insert
             int insertIndex = -1;
+            object successLabel = null;
             for (int i = 0; i < code.Count - 1; i++)
             {
-                //Count it as a good spot when we recognize the first check of "flag"
-                if (code[i].opcode == OpCodes.Ldloc_0)
+                //Count it as a good spot when we recognize the string being loaded
+                if (code[i].opcode == OpCodes.Ldstr && ((string)code[i].operand).Equals("Can't use item; not owner"))
                 {
-                    Poltergeist.DebugLog("Found expected structure for transpiler");
+                    Poltergeist.DebugLog("Found expected structure for transpiler of UseItemOnClient");
 
                     //Save the index to insert into
                     insertIndex = i;
+
+                    //Save the label to jump to
+                    successLabel = code[i - 1].operand;
 
                     break;
                 }
             }
 
-            //Make the labels that we'll need
-            Label endLabel = il.DefineLabel();
-            Label retLabel = il.DefineLabel();
-
-            //Construct the code to insert
-            code[insertIndex].opcode = OpCodes.Ldsfld;
-            code[insertIndex].operand = AccessTools.Field(typeof(Patches), nameof(Patches.doGhostGrab));
+            //Construct the code to insert (check if the object is held)
             List<CodeInstruction> insertion = new List<CodeInstruction>();
-            insertion.Add(new CodeInstruction(OpCodes.Brtrue_S, endLabel));
-            insertion.Add(new CodeInstruction(OpCodes.Ldloc_0));
+            insertion.Add(new CodeInstruction(OpCodes.Ldarg_0));
+            insertion.Add(new CodeInstruction(OpCodes.Ldfld, AccessTools.Field(typeof(GrabbableObject), nameof(GrabbableObject.isHeld))));
+            insertion.Add(new CodeInstruction(OpCodes.Brfalse_S, successLabel));
 
             //Insert the code
             if (insertIndex != -1)
             {
-                code.InsertRange(insertIndex + 1, insertion);
+                code.InsertRange(insertIndex, insertion);
             }
 
-            //Add the last bit
-            CodeInstruction tmp = new CodeInstruction(OpCodes.Ldc_I4_0);
-            tmp.labels.Add(endLabel);
-            code.Add(tmp);
-            code.Add(new CodeInstruction(OpCodes.Stsfld, AccessTools.Field(typeof(Patches), nameof(Patches.doGhostGrab))));
-            code.Add(new CodeInstruction(OpCodes.Ldloc_0));
-            code.Add(new CodeInstruction(OpCodes.Brfalse, retLabel));
+            return code;
+        }
 
-            //This changes the ownership
-            code.Add(new CodeInstruction(OpCodes.Ldloc_1));
-            code.Add(new CodeInstruction(OpCodes.Ldarg_0));
-            code.Add(new CodeInstruction(OpCodes.Ldfld, AccessTools.Field(typeof(PlayerControllerB), nameof(PlayerControllerB.actualClientId))));
-            code.Add(new CodeInstruction(OpCodes.Callvirt, AccessTools.Method(typeof(NetworkObject), nameof(NetworkObject.ChangeOwnership))));
+        /**
+         * Make items on the ground not forbid hearing with ownership
+         * 
+         * @param __instance The calling input action
+         * @param __result The resulting value
+         */
+        [HarmonyTranspiler]
+        [HarmonyPatch(typeof(GrabbableObject), "ActivateItemClientRpc")]
+        public static IEnumerable<CodeInstruction> AllowGroundHearing(IEnumerable<CodeInstruction> instructions, ILGenerator il)
+        {
+            //First, load the list of instructions
+            List<CodeInstruction> code = new List<CodeInstruction>(instructions);
 
-            //Finally, return
-            tmp = new CodeInstruction(OpCodes.Ret);
-            tmp.labels.Add(retLabel);
-            code.Add(tmp);
+            //Next, find where we need to insert
+            int insertIndex = -1;
+            object successLabel = null;
+            for (int i = 0; i < code.Count - 1; i++)
+            {
+                //Count it as a good spot when we recognize the string being loaded
+                if (code[i].opcode == OpCodes.Call && ((MethodInfo)code[i].operand).Name.Equals("get_IsOwner"))
+                {
+                    Poltergeist.DebugLog("Found expected structure for transpiler of ActivateItemClientRpc");
+
+                    //Save the index to insert into
+                    insertIndex = i - 1;
+
+                    //Save the label to jump to
+                    successLabel = code[i + 1].operand;
+
+                    break;
+                }
+            }
+
+            //Construct the code to insert (check if the object is held)
+            List<CodeInstruction> insertion = new List<CodeInstruction>();
+            insertion.Add(new CodeInstruction(OpCodes.Ldarg_0));
+            insertion.Add(new CodeInstruction(OpCodes.Ldfld, AccessTools.Field(typeof(GrabbableObject), nameof(GrabbableObject.isHeld))));
+            insertion.Add(new CodeInstruction(OpCodes.Brfalse_S, successLabel));
+
+            //Insert the code
+            if (insertIndex != -1)
+            {
+                code.InsertRange(insertIndex, insertion);
+            }
 
             return code;
+        }
+
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(GrabbableObject), "UseItemOnClient")]
+        public static void PrintClientUse()
+        {
+            Poltergeist.DebugLog("Used item on client");
+        }
+
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(GrabbableObject), "ActivateItemServerRpc")]
+        public static void PrintServerRpc()
+        {
+            Poltergeist.DebugLog("Server Rpc called for object");
+        }
+
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(GrabbableObject), "ActivateItemClientRpc")]
+        public static void PrintClientRpc()
+        {
+            Poltergeist.DebugLog("Client Rpc called for object");
         }
     }
 }

@@ -183,24 +183,6 @@ namespace Poltergeist
             }
         }
 
-        private void RemoteHonk(NoisemakerProp obj)
-        {
-            NetworkObject netObj = obj.NetworkObject;
-
-            //Error check
-            if (netObj == null || !netObj.IsSpawned)
-            {
-                Poltergeist.DebugLog("could not remote honk; netobj was bad");
-                return;
-            }
-
-            //Actually do stuff
-            Patches.doGhostGrab = true;
-            MethodInfo method = clientPlayer.GetType().GetMethod("GrabObjectServerRpc", BindingFlags.NonPublic | BindingFlags.Instance);
-            method.Invoke(clientPlayer, new object[] {new NetworkObjectReference(netObj)});
-            obj.UseItemOnClient();
-        }
-
         /**
          * Add and remove the switch light listener as needed
          */
