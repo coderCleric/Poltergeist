@@ -21,6 +21,10 @@ Features:
 - **Airhorn/Clownhorn**: Can be honked on the ground.
 - **Boombox**: Can be turned on and off on the ground.
 
+# Config Option
+- **RunBarebones**: If true, the mod will not actually perform most of its functionality, preserving the vanilla spectate. Good for people who want to play with others who have poltergeist installed, but don't want the freecam themselves. (Note: This option will most likely go away once I figure out how to let you swap between spectate modes.)
+- **GhostLightIntensity**: Modifies the intensity of the light available to ghosts. WARNING; this game has a lot of fog, so really higher light intensities may actually *decrease* visibility.)
+
 # Installing
 Just the same as any of the other BepInEx-based mod, put the folder for the mod in BepInEx/plugins and it should work. This mod is not quite client-side, so certain bugs may occur if you play with it when other players don't have it installed.
 (Specifically, horns and boomboxes won't work properly for the last person who picked them up, if that person doesn't have the mod installed.)
