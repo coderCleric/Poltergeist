@@ -14,6 +14,10 @@ namespace Poltergeist
     [HarmonyPatch]
     public static class Patches
     {
+        //Config things
+        public static bool runBarebones = false;
+
+        //Other fields
         public static GrabbableObject ignoreObj = null;
 
         /////////////////////////////// Needed to suppress certain base-game systems ///////////////////////////////
@@ -25,7 +29,7 @@ namespace Poltergeist
         [HarmonyPatch(typeof(StartOfRound), nameof(StartOfRound.SetSpectateCameraToGameOverMode))]
         public static bool PreventSpectateFollow()
         {
-            return false;
+            return runBarebones;
         }
 
         /**
@@ -37,7 +41,8 @@ namespace Poltergeist
         [HarmonyPatch(typeof(PlayerControllerB), "LateUpdate")]
         public static void OverrideSpectateCam(PlayerControllerB __instance)
         {
-            __instance.playersManager.overrideSpectateCamera = true;
+            if (!runBarebones)
+                __instance.playersManager.overrideSpectateCamera = true;
         }
 
         /**
@@ -70,6 +75,10 @@ namespace Poltergeist
         [HarmonyPatch(typeof(StartOfRound), nameof(StartOfRound.SwitchCamera))]
         public static void ManageCameraController(StartOfRound __instance, Camera newCamera)
         {
+            //Cancel if in barebones mode
+            if (runBarebones)
+                return;
+
             if (newCamera == __instance.spectateCamera)
                 SpectatorCamController.instance.EnableCam();
             else
@@ -85,6 +94,10 @@ namespace Poltergeist
         [HarmonyPatch(typeof(StartOfRound), "Awake")]
         public static void MakeCamController(StartOfRound __instance)
         {
+            //Cancel if in barebones mode
+            if (runBarebones)
+                return;
+
             __instance.spectateCamera.gameObject.AddComponent<SpectatorCamController>();
         }
 
@@ -99,8 +112,12 @@ namespace Poltergeist
         [HarmonyPatch(typeof(InteractTrigger), "Start")]
         public static void AddGhostInteractor(InteractTrigger __instance)
         {
+            //Cancel if in barebones mode
+            if (runBarebones)
+                return;
+
             //If it's a door, add the interactible
-            if(__instance.gameObject.GetComponent<DoorLock>() != null)
+            if (__instance.gameObject.GetComponent<DoorLock>() != null)
                 __instance.gameObject.AddComponent<GhostInteractible>();
 
             //If it's the lightswitch, add one there too
@@ -117,7 +134,11 @@ namespace Poltergeist
         [HarmonyPatch(typeof(NoisemakerProp), "Start")]
         public static void AddInteractorForHorns(NoisemakerProp __instance)
         {
-            if(__instance.name.Contains("Airhorn") || __instance.name.Contains("Clownhorn"))
+            //Cancel if in barebones mode
+            if (runBarebones)
+                return;
+
+            if (__instance.name.Contains("Airhorn") || __instance.name.Contains("Clownhorn"))
             {
                 __instance.gameObject.AddComponent<GhostInteractible>();
             }
@@ -132,6 +153,10 @@ namespace Poltergeist
         [HarmonyPatch(typeof(BoomboxItem), "Start")]
         public static void AddInteractorForBoombox(BoomboxItem __instance)
         {
+            //Cancel if in barebones mode
+            if (runBarebones)
+                return;
+
             __instance.gameObject.AddComponent<GhostInteractible>();
         }
 
@@ -233,6 +258,7 @@ namespace Poltergeist
             return code;
         }
 
+        /*
         [HarmonyPostfix]
         [HarmonyPatch(typeof(GrabbableObject), "UseItemOnClient")]
         public static void PrintClientUse()
@@ -253,5 +279,6 @@ namespace Poltergeist
         {
             Poltergeist.DebugLog("Client Rpc called for object");
         }
+        */
     }
 }

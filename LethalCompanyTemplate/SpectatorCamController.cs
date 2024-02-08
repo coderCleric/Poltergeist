@@ -12,10 +12,13 @@ namespace Poltergeist
 {
     public class SpectatorCamController : MonoBehaviour
     {
+        //Config things
+        public static float lightIntensity = 5;
+
+        //Other fields
         public static SpectatorCamController instance = null;
 
         private float camMoveSpeed = 5f;
-        private float lightIntensity = 5;
         private Light light = null;
 
         private PlayerControllerB clientPlayer = null;
