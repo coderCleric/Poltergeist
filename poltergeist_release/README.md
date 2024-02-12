@@ -1,9 +1,9 @@
 # Poltergeist
 Adds things for dead players to do by letting them fly around in a freecam and interact with certain objects.
 
-Features:
+**Features**:
 - Instead of spectating normally, fly around in a freecam to watch what your friends are doing, or just to explore the map.
-- Teleport to players with the press of a button.
+- Teleport to players (or what's left of them) with the press of a button.
 - Toggle a global light to help you see in dark areas when dead.
 - Interact with certain types of objects. Mess with your friends, or try to communicate with them from *beyond the veil!*
 
@@ -14,6 +14,7 @@ Features:
 - **Toggle Light**: Pressing "use item" (default LMB) will toggle a global light that helps you see in dark areas while dead.
 - **Teleportation**: Pressing a number key will teleport you to the corresponding player, based on join order. This means that the host will be 1, the first player to join will be 2, and so on.
 - **Interact**: Pressing interact (default "e") on the objects listed below will let you interact with them as if you were still alive. Troll your friends, or try to help them out!
+- **Mode Switching**: Pressing "Item Secondary Use" (default "q") switches between vanilla and modded spectate modes.
 
 # Interactible Objects
 - **Doors**: Can be opened and closed.
@@ -21,9 +22,9 @@ Features:
 - **Airhorn/Clownhorn**: Can be honked on the ground.
 - **Boombox**: Can be turned on and off on the ground.
 
-# Config Option
-- **RunBarebones**: If true, the mod will not actually perform most of its functionality, preserving the vanilla spectate. Good for people who want to play with others who have poltergeist installed, but don't want the freecam themselves. (Note: This option will most likely go away once I figure out how to let you swap between spectate modes.)
-- **GhostLightIntensity**: Modifies the intensity of the light available to ghosts. WARNING; this game has a lot of fog, so really higher light intensities may actually *decrease* visibility.)
+# Config Options
+- **DefaultToVanilla**: If true, dying will start you in the vanilla spectate mode.
+- **GhostLightIntensity**: Modifies the intensity of the light available to ghosts. (WARNING; this game has a lot of fog, so really higher light intensities may actually *decrease* visibility.)
 
 # Installing
 Just the same as any of the other BepInEx-based mod, put the folder for the mod in BepInEx/plugins and it should work. This mod is not quite client-side, so certain bugs may occur if you play with it when other players don't have it installed.
