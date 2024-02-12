@@ -141,13 +141,22 @@ namespace Poltergeist
                 }
                 if (targetMasked != null)
                 {
-                    //Move to the masked
-                    Transform target = targetMasked.transform.Find("ScavengerModel/metarig/spine/spine.001/spine.002/spine.003/spine.004");
-                    transform.position = target.position + (target.up * 0.2f);
-                    transform.eulerAngles = new Vector3(target.eulerAngles.x, target.eulerAngles.y, 0);
+                    //If alive, move to the face
+                    if(!targetMasked.isEnemyDead)
+                    {
+                        Transform target = targetMasked.transform.Find("ScavengerModel/metarig/spine/spine.001/spine.002/spine.003/spine.004");
+                        transform.position = target.position + (target.up * 0.2f);
+                        transform.eulerAngles = new Vector3(target.eulerAngles.x, target.eulerAngles.y, 0);
+                    }
+
+                    //Otherwise, go over the body
+                    else
+                    {
+                        transform.position = targetMasked.transform.position + Vector3.up;
+                    }
                 }
 
-                //If the player has a corpse, move and rotate to about the head
+                //If the player has a corpse, move to it
                 else if (player.deadBody != null && !player.deadBody.deactivated)
                 {
                     //Move to the corpse
