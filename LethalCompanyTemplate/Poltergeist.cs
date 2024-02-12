@@ -14,11 +14,10 @@ namespace Poltergeist
             instance = this;
 
             //Handle the config
-            Patches.runBarebones = Config.Bind<bool>("General",
-                "RunBarebones",
+            Patches.defaultMode = Config.Bind<bool>("General",
+                "DefaultToVanilla",
                 false,
-                "If true, most mod functionality will be disabled, preserving the vanilla spectate behavior.\n" +
-                "(Good for those who want to spectate normally, but don't want things to break if others are using the mod)").Value;
+                "If true, the vanilla spectate system will be used by default on death.").Value;
             SpectatorCamController.lightIntensity = Config.Bind<float>("General",
                 "GhostLightIntensity",
                 5,

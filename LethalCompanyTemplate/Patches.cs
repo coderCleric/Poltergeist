@@ -15,21 +15,23 @@ namespace Poltergeist
     public static class Patches
     {
         //Config things
-        public static bool runBarebones = false;
+        public static bool defaultMode = false;
 
         //Other fields
+        public static bool vanillaMode = false;
         public static GrabbableObject ignoreObj = null;
+        public static bool shouldGameOver = false;
 
         /////////////////////////////// Needed to suppress certain base-game systems ///////////////////////////////
         /**
          * Prevents certain manipulations of the spectate camera that would interfere with the controls
          */
         [HarmonyPrefix]
-        [HarmonyPatch(typeof(PlayerControllerB), "RaycastSpectateCameraAroundPivot")]
         [HarmonyPatch(typeof(StartOfRound), nameof(StartOfRound.SetSpectateCameraToGameOverMode))]
-        public static bool PreventSpectateFollow()
+        public static bool PreventSpectateFollow(bool enableGameOver)
         {
-            return runBarebones;
+            shouldGameOver = enableGameOver;
+            return vanillaMode;
         }
 
         /**
@@ -41,7 +43,7 @@ namespace Poltergeist
         [HarmonyPatch(typeof(PlayerControllerB), "LateUpdate")]
         public static void OverrideSpectateCam(PlayerControllerB __instance)
         {
-            if (!runBarebones)
+            if (!vanillaMode)
                 __instance.playersManager.overrideSpectateCamera = true;
         }
 
@@ -75,10 +77,6 @@ namespace Poltergeist
         [HarmonyPatch(typeof(StartOfRound), nameof(StartOfRound.SwitchCamera))]
         public static void ManageCameraController(StartOfRound __instance, Camera newCamera)
         {
-            //Cancel if in barebones mode
-            if (runBarebones)
-                return;
-
             if (newCamera == __instance.spectateCamera)
                 SpectatorCamController.instance.EnableCam();
             else
@@ -94,10 +92,6 @@ namespace Poltergeist
         [HarmonyPatch(typeof(StartOfRound), "Awake")]
         public static void MakeCamController(StartOfRound __instance)
         {
-            //Cancel if in barebones mode
-            if (runBarebones)
-                return;
-
             __instance.spectateCamera.gameObject.AddComponent<SpectatorCamController>();
         }
 
@@ -112,10 +106,6 @@ namespace Poltergeist
         [HarmonyPatch(typeof(InteractTrigger), "Start")]
         public static void AddGhostInteractor(InteractTrigger __instance)
         {
-            //Cancel if in barebones mode
-            if (runBarebones)
-                return;
-
             //If it's a door, add the interactible
             if (__instance.gameObject.GetComponent<DoorLock>() != null)
                 __instance.gameObject.AddComponent<GhostInteractible>();
@@ -134,10 +124,6 @@ namespace Poltergeist
         [HarmonyPatch(typeof(NoisemakerProp), "Start")]
         public static void AddInteractorForHorns(NoisemakerProp __instance)
         {
-            //Cancel if in barebones mode
-            if (runBarebones)
-                return;
-
             if (__instance.name.Contains("Airhorn") || __instance.name.Contains("Clownhorn"))
             {
                 __instance.gameObject.AddComponent<GhostInteractible>();
@@ -153,10 +139,6 @@ namespace Poltergeist
         [HarmonyPatch(typeof(BoomboxItem), "Start")]
         public static void AddInteractorForBoombox(BoomboxItem __instance)
         {
-            //Cancel if in barebones mode
-            if (runBarebones)
-                return;
-
             __instance.gameObject.AddComponent<GhostInteractible>();
         }
 
@@ -258,27 +240,31 @@ namespace Poltergeist
             return code;
         }
 
-        /*
+        /////////////////////////////// Keeping track of masked ///////////////////////////////
+        /**
+         * When a masked is spawned mimicking a player, register them
+         * 
+         * @param __instance The calling enemy
+         */
         [HarmonyPostfix]
-        [HarmonyPatch(typeof(GrabbableObject), "UseItemOnClient")]
-        public static void PrintClientUse()
+        [HarmonyPatch(typeof(MaskedPlayerEnemy), "Start")]
+        public static void RegisterMasked(MaskedPlayerEnemy __instance)
         {
-            Poltergeist.DebugLog("Used item on client");
+            if(__instance.mimickingPlayer != null)
+                SpectatorCamController.masked.Add(__instance);
         }
 
+        /**
+         * When a masked is destroyed, remove them from the list
+         * 
+         * @param __instance The calling enemy
+         */
         [HarmonyPostfix]
-        [HarmonyPatch(typeof(GrabbableObject), "ActivateItemServerRpc")]
-        public static void PrintServerRpc()
+        [HarmonyPatch(typeof(MaskedPlayerEnemy), "OnDestroy")]
+        public static void DeregisterMasked(MaskedPlayerEnemy __instance)
         {
-            Poltergeist.DebugLog("Server Rpc called for object");
+            if(__instance.mimickingPlayer != null)
+                SpectatorCamController.masked.Remove(__instance);
         }
-
-        [HarmonyPostfix]
-        [HarmonyPatch(typeof(GrabbableObject), "ActivateItemClientRpc")]
-        public static void PrintClientRpc()
-        {
-            Poltergeist.DebugLog("Client Rpc called for object");
-        }
-        */
     }
 }

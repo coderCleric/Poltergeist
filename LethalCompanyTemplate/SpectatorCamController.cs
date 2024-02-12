@@ -1,6 +1,7 @@
 ﻿using GameNetcodeStuff;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.Design;
 using System.Reflection;
 using System.Text;
 using Unity.Netcode;
@@ -29,6 +30,7 @@ namespace Poltergeist
         private Transform deathUIRoot = null;
         private float accelTime = -1;
         private float decelTime = -1;
+        public static List<MaskedPlayerEnemy> masked = new List<MaskedPlayerEnemy>();
 
         /**
          * On awake, make and grab the light
@@ -55,12 +57,15 @@ namespace Poltergeist
             if (!enabled)
             {
                 enabled = true;
-                transform.parent = null;
 
                 //Move the camera
-                Transform oldCam = StartOfRound.Instance.activeCamera.transform;
-                transform.position = oldCam.position;
-                transform.rotation = oldCam.rotation;
+                if (!Patches.vanillaMode)
+                {
+                    transform.parent = null;
+                    Transform oldCam = StartOfRound.Instance.activeCamera.transform;
+                    transform.position = oldCam.position;
+                    transform.rotation = oldCam.rotation;
+                }
 
                 //If we don't have them, need to grab certain objects
                 if (hintPanelRoot == null)
@@ -85,9 +90,10 @@ namespace Poltergeist
                 //Basics
                 enabled = false;
                 light.enabled = false;
+                Patches.vanillaMode = Patches.defaultMode;
 
                 //If these aren't null, we moved them and need to put them back
-                if(hintPanelRoot != null)
+                if (hintPanelRoot != null)
                 {
                     hintPanelRoot.parent = hintPanelOrigParent;
                 }
@@ -100,7 +106,7 @@ namespace Poltergeist
         private void SwitchLight(InputAction.CallbackContext context)
         {
             //Cancel if this isn't a "performed" action
-            if (!context.performed)
+            if (!context.performed || Patches.vanillaMode)
             {
                 return;
             }
@@ -119,21 +125,44 @@ namespace Poltergeist
         {
             //Display errors depending on circumstance
             MethodInfo tipMethod = HUDManager.Instance.GetType().GetMethod("DisplaySpectatorTip", BindingFlags.NonPublic | BindingFlags.Instance);
-            if(player == clientPlayer)
-            {
-                //tipMethod.Invoke(HUDManager.Instance, new object[] {"Specified player is you!"});
-                HUDManager.Instance.DisplayTip("Can't Teleport", "Specified player is you!", true);
-                return;
-            }
+            
+            //Player is dead, check for body/masked
             if(player.isPlayerDead)
             {
-                //tipMethod.Invoke(HUDManager.Instance, new object[] { "Specified player is dead!" });
-                HUDManager.Instance.DisplayTip("Can't Teleport", "Specified player is dead!", true);
+                //If some registered masked is mimicking this player, go there
+                MaskedPlayerEnemy targetMasked = null;
+                foreach (MaskedPlayerEnemy enemy in masked)
+                {
+                    if (enemy.mimickingPlayer == player)
+                    {
+                        targetMasked = enemy;
+                        break;
+                    }
+                }
+                if (targetMasked != null)
+                {
+                    //Move to the masked
+                    Transform target = targetMasked.transform.Find("ScavengerModel/metarig/spine/spine.001/spine.002/spine.003/spine.004");
+                    transform.position = target.position + (target.up * 0.2f);
+                    transform.eulerAngles = new Vector3(target.eulerAngles.x, target.eulerAngles.y, 0);
+                }
+
+                //If the player has a corpse, move and rotate to about the head
+                else if (player.deadBody != null && !player.deadBody.deactivated)
+                {
+                    //Move to the corpse
+                    transform.position = player.deadBody.transform.position + Vector3.up;
+                }
+
+                //No corpse or masked, can't do anything
+                else
+                    HUDManager.Instance.DisplayTip("Can't Teleport", "Specified player is dead with no body!", true);
                 return;
             }
+
+            //Player is not connected, can't teleport
             if(!player.isPlayerControlled)
             {
-                //tipMethod.Invoke(HUDManager.Instance, new object[] { "Specified player is not connected!" });
                 HUDManager.Instance.DisplayTip("Can't Teleport", "Specified player is not connected!", true);
                 return;
             }
@@ -153,7 +182,7 @@ namespace Poltergeist
         private void DoInteract(InputAction.CallbackContext context)
         {
             //Cancel if this isn't a "performed" action
-            if (!context.performed)
+            if (!context.performed || Patches.vanillaMode)
             {
                 return;
             }
@@ -173,6 +202,9 @@ namespace Poltergeist
          */
         private void HandleScroll(InputAction.CallbackContext context)
         {
+            if (Patches.vanillaMode)
+                return;
+
             if(context.ReadValue<float>() > 0)
             {
                 accelTime = Time.time + 0.3f;
@@ -187,6 +219,35 @@ namespace Poltergeist
         }
 
         /**
+         * Switches modes between the vanilla and modded spectate
+         */
+        private void SwitchModes(InputAction.CallbackContext context)
+        {
+            //Only do it if performing
+            if (!context.performed)
+                return;
+
+            //Change the flag
+            Patches.vanillaMode = !Patches.vanillaMode;
+
+            //Handle switching to vanilla
+            if(Patches.vanillaMode)
+            {
+                light.enabled = false;
+                clientPlayer.spectatedPlayerScript = null;
+                currentGhostInteractible = null;
+                clientPlayer.cursorTip.text = "";
+                StartOfRound.Instance.SetSpectateCameraToGameOverMode(Patches.shouldGameOver, clientPlayer);
+            }
+
+            //Handle switching to modded
+            else
+            {
+                transform.parent = null;
+            }
+        }
+
+        /**
          * Add and remove the switch light listener as needed
          */
         private void OnEnable()
@@ -194,12 +255,14 @@ namespace Poltergeist
             IngamePlayerSettings.Instance.playerInput.actions.FindAction("ActivateItem").performed += SwitchLight;
             IngamePlayerSettings.Instance.playerInput.actions.FindAction("Interact").performed += DoInteract;
             IngamePlayerSettings.Instance.playerInput.actions.FindAction("SwitchItem").performed += HandleScroll;
+            IngamePlayerSettings.Instance.playerInput.actions.FindAction("ItemSecondaryUse").performed += SwitchModes;
         }
         private void OnDisable()
         {
             IngamePlayerSettings.Instance.playerInput.actions.FindAction("ActivateItem").performed -= SwitchLight;
             IngamePlayerSettings.Instance.playerInput.actions.FindAction("Interact").performed -= DoInteract;
             IngamePlayerSettings.Instance.playerInput.actions.FindAction("SwitchItem").performed -= HandleScroll;
+            IngamePlayerSettings.Instance.playerInput.actions.FindAction("ItemSecondaryUse").performed -= SwitchModes;
         }
 
         /**
@@ -215,9 +278,12 @@ namespace Poltergeist
                     return;
             }
 
-            //If the player is in the menu, don't do update stuff
-            if (clientPlayer.isTypingChat || clientPlayer.quickMenuManager.isMenuOpen)
+            //If the player is in the menu (or we're in vanilla mode), don't do update stuff
+            if (clientPlayer.isTypingChat || clientPlayer.quickMenuManager.isMenuOpen || Patches.vanillaMode)
+            {
+                currentGhostInteractible = null;
                 return;
+            }
 
             //Take raw inputs
             Vector2 moveInput = IngamePlayerSettings.Instance.playerInput.actions.FindAction("Move").ReadValue<Vector2>();
