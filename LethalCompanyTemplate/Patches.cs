@@ -16,6 +16,7 @@ namespace Poltergeist
     {
         //Config things
         public static bool defaultMode = false;
+        public static bool allowAllNoiseMakerProps = false;
 
         //Other fields
         public static bool vanillaMode = false;
@@ -116,7 +117,7 @@ namespace Poltergeist
         }
 
         /**
-         * Add ghost interactor objects to airhorns and clownhorns
+         * Add ghost interactor objects to airhorns and clownhorns and any other prop, if `allowAllNoiseMakerProps` is set to `true`
          * 
          * @param __instance The calling noise prop
          */
@@ -124,7 +125,7 @@ namespace Poltergeist
         [HarmonyPatch(typeof(NoisemakerProp), "Start")]
         public static void AddInteractorForHorns(NoisemakerProp __instance)
         {
-            if (__instance.name.Contains("Airhorn") || __instance.name.Contains("Clownhorn"))
+            if (__instance.name.Contains("Airhorn") || __instance.name.Contains("Clownhorn") || allowAllNoiseMakerProps)
             {
                 __instance.gameObject.AddComponent<GhostInteractible>();
             }
