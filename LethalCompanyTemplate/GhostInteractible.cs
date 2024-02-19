@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Text;
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 namespace Poltergeist
 {
@@ -16,6 +17,10 @@ namespace Poltergeist
         private NoisemakerProp noiseProp = null;
         private BoomboxItem boombox = null;
         private GhostInteractType type = GhostInteractType.GENERAL;
+
+        private long nextUseAvailable = 0;
+
+        public static long interactCoolDown = 0;
 
         /**
          * When made, grab certain important parts
@@ -46,6 +51,16 @@ namespace Poltergeist
          */
         public void Interact(Transform playerTransform)
         {
+            if (isOnCoolDown())
+            {
+                return;
+            }
+            
+            //The current date represented in milliseconds
+            var currentTimeMillis = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+            
+            //Set a cooldown to prevent spamming
+            nextUseAvailable = currentTimeMillis + interactCoolDown;
             switch (type)
             {
                 //It's some generic interactible
@@ -67,6 +82,16 @@ namespace Poltergeist
          */
         private void MakeNoise()
         {
+            if (isOnCoolDown())
+            {
+                return;
+            }
+            
+            //The current date represented in milliseconds
+            var currentTimeMillis = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+            
+            //Set a cooldown to prevent spamming
+            nextUseAvailable = currentTimeMillis + interactCoolDown;
             //Make the noise and suppress the duplicate
             if (type == GhostInteractType.NOISE_PROP)
             {
@@ -85,6 +110,10 @@ namespace Poltergeist
          */
         public string GetTipText()
         {
+            if (isOnCoolDown())
+            {
+                return "On cooldown...";
+            }
             switch (type)
             {
                 //It's some generic interactible
@@ -107,6 +136,15 @@ namespace Poltergeist
             }
 
             return "Unknown Interaction";
+        }
+
+        private bool isOnCoolDown()
+        {
+            //The current date represented in milliseconds
+            var currentTimeMillis = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+
+            //Check if we're on cooldown
+            return currentTimeMillis < nextUseAvailable;
         }
     }
 }

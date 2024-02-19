@@ -1,4 +1,5 @@
-﻿using BepInEx;
+﻿using System;
+using BepInEx;
 using HarmonyLib;
 using System.Reflection;
 
@@ -23,6 +24,10 @@ namespace Poltergeist
                 5,
                 "The intensity of the global light when dead.\n" +
                 "WARNING: This game has a lot of fog, so excessively high values can decrease visibility.").Value;
+            GhostInteractible.interactCoolDown = (long)TimeSpan.FromSeconds(Config.Bind<int>("General",
+                "InteractCoolDown",
+                1,
+                "The cooldown until a dead player can interact with an object again.").Value).TotalMilliseconds;
 
             //Make the patches
             Harmony.CreateAndPatchAll(Assembly.GetExecutingAssembly());
