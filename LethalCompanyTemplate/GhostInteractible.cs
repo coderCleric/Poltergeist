@@ -11,13 +11,22 @@ namespace Poltergeist
 {
     public class GhostInteractible : MonoBehaviour
     {
-        public enum GhostInteractType {GENERAL, NOISE_PROP, BOOMBOX}
+        public enum GhostInteractType {UNKNOWN, GENERAL, NOISE_PROP, BOOMBOX, BIGDOOR}
 
+        //Needed to facilitate the different types of interaction
         private InteractTrigger trigger = null;
         private NoisemakerProp noiseProp = null;
         private BoomboxItem boombox = null;
-        private GhostInteractType type = GhostInteractType.GENERAL;
+        private TerminalAccessibleObject doorObj = null;
+
+        //Fundamental info on the interaction
+        private GhostInteractType type = GhostInteractType.UNKNOWN;
         public float cost = 10f;
+
+        //Useful for the global list of items
+        private static List<GhostInteractible> managedInteractibles = new List<GhostInteractible>();
+        private bool ghostOnly = false;
+        private int indexInList = -1;
 
         /**
          * When made, grab certain important parts
@@ -41,6 +50,61 @@ namespace Poltergeist
                 boombox = GetComponent<BoomboxItem>();
                 type = GhostInteractType.BOOMBOX;
             }
+
+            else if(transform.parent.gameObject.GetComponent<TerminalAccessibleObject>() != null && transform.parent.name.Contains("BigDoor"))
+            {
+                type = GhostInteractType.BIGDOOR;
+                doorObj = transform.parent.gameObject.GetComponent<TerminalAccessibleObject>();
+            }
+        }
+
+        /**
+         * Sets whether or not this is a ghost-only interactible
+         */
+        public void SetGhostOnly(bool ghostOnly)
+        {
+            //Don't do anything if it's already set to that
+            if(ghostOnly == this.ghostOnly) 
+                return;
+
+            this.ghostOnly = ghostOnly;
+
+            if (ghostOnly)
+            {
+                //Add it to the list
+                indexInList = managedInteractibles.Count;
+                managedInteractibles.Add(this);
+            }
+            else //Remove it from the list
+                RemoveFromManaged();
+        }
+
+        /**
+         * Removes this item from the list of managed interactibles quickly
+         */
+        private void RemoveFromManaged()
+        {
+            //-1 indicates it's not in the list
+            if (indexInList == -1)
+                return;
+
+            //Special case for only having 1 element
+            if(managedInteractibles.Count == 1)
+            {
+                managedInteractibles.Clear();
+                indexInList = -1;
+                return;
+            }
+
+            //Override with the last element
+            managedInteractibles[indexInList] = managedInteractibles[managedInteractibles.Count - 1];
+
+            //Give that element its new index
+            managedInteractibles[indexInList].indexInList = indexInList;
+
+            //Remove the duplicate at the end
+            managedInteractibles.RemoveAt(managedInteractibles.Count - 1);
+            indexInList = -1;
         }
 
         /**
@@ -70,6 +134,11 @@ namespace Poltergeist
                 case GhostInteractType.BOOMBOX:
                     MakeNoise();
                     retCost = cost;
+                    break;
+
+                //It's a big door
+                case GhostInteractType.BIGDOOR:
+                    Poltergeist.DebugLog("Tried to interact with a big door");
                     break;
             }
 
@@ -127,9 +196,42 @@ namespace Poltergeist
                 case GhostInteractType.BOOMBOX:
                     retStr = "Toggle music : [E]";
                     break;
+
+                //It's a big door
+                case GhostInteractType.BIGDOOR:
+                    retStr = "Toggle door : [E]";
+                    break;
             }
 
             return retStr + " (" + cost.ToString("F0") + ")";
+        }
+
+        /**
+         * Toggles the raycast colliders on all of the ghost interactibles
+         */
+        public static void SetGhostActivation(bool active)
+        {
+            //Loop through each registered interacible
+            foreach(GhostInteractible interactible in managedInteractibles)
+            {
+                //Skip if it has no collider
+                if (interactible.gameObject.GetComponent<Collider> == null)
+                    continue;
+
+                //Otherwise, use activation to set the collider layer
+                if (active)
+                    interactible.gameObject.layer = LayerMask.NameToLayer("InteractableObject");
+                else
+                    interactible.gameObject.layer = LayerMask.NameToLayer("Ignore Raycast");
+            }
+        }
+
+        /**
+         * On destroy, remove from the list
+         */
+        private void OnDestroy()
+        {
+            RemoveFromManaged();
         }
     }
 }

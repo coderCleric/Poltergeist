@@ -142,6 +142,38 @@ namespace Poltergeist
             __instance.gameObject.AddComponent<GhostInteractible>();
         }
 
+        /**
+         * Add ghost interactor for pneumatic doors
+         * 
+         * @param __instance The calling script
+         */
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(TerminalAccessibleObject), "Start")]
+        public static void AddInteractorForBigDoors(TerminalAccessibleObject __instance)
+        {
+            //Only add if it's a big door
+            if(__instance.name.Contains("BigDoor"))
+            {
+                //Make the gameobject on the door
+                GameObject interactObj = new GameObject();
+                interactObj.transform.parent = __instance.transform;
+                interactObj.transform.localPosition = new Vector3(0, 2.4f, 0);
+                interactObj.transform.localEulerAngles = Vector3.zero;
+                interactObj.transform.localScale = Vector3.one;
+                interactObj.layer = LayerMask.NameToLayer("Ignore Raycast");
+                interactObj.name = "GhostInteractable";
+
+                //Make the box collider
+                BoxCollider col = interactObj.AddComponent<BoxCollider>();
+                col.size = new Vector3(0.7f, 4, 3);
+                col.isTrigger = true; //Just need the player to not walk into it
+
+                //Make the ghost interactor
+                GhostInteractible interactor = interactObj.AddComponent<GhostInteractible>();
+                interactor.SetGhostOnly(true);
+            }
+        }
+
 
         /////////////////////////////// Transpile grabbed object behaviour to facilitate ground use ///////////////////////////////
         /**

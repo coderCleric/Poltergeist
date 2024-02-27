@@ -85,6 +85,9 @@ namespace Poltergeist
 
                 //Zero the power
                 power = 0;
+
+                //Enable ghost-only interactables
+                GhostInteractible.SetGhostActivation(true);
             }
         }
 
@@ -105,6 +108,9 @@ namespace Poltergeist
                 {
                     hintPanelRoot.parent = hintPanelOrigParent;
                 }
+
+                //Disable ghost-only interactables
+                GhostInteractible.SetGhostActivation(false);
             }
         }
 
