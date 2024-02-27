@@ -22,6 +22,11 @@ namespace Poltergeist
         private float camMoveSpeed = 5f;
         private Light light = null;
 
+        private float maxPower = 100;
+        private float powerRecover = 5;
+        private float power = 0;
+        public float Power => power;
+
         private PlayerControllerB clientPlayer = null;
         public PlayerControllerB ClientPlayer => clientPlayer;
         private GhostInteractible currentGhostInteractible = null;
@@ -77,6 +82,9 @@ namespace Poltergeist
 
                 //Move the hint panel to the death UI
                 hintPanelRoot.parent = deathUIRoot;
+
+                //Zero the power
+                power = 0;
             }
         }
 
@@ -200,7 +208,7 @@ namespace Poltergeist
             if (currentGhostInteractible != null)
             {
                 Poltergeist.DebugLog("Attempting to use interactible");
-                currentGhostInteractible.Interact(clientPlayer.transform);
+                power -= currentGhostInteractible.Interact(clientPlayer.transform);
             }
             else
                 Poltergeist.DebugLog("No interactible found");
@@ -287,6 +295,28 @@ namespace Poltergeist
                     return;
             }
 
+            //Calculate the max power based on # of connected players dead
+            float connected = -1; //Negative 1 because we want max power at 1 living player
+            float dead = 0;
+            foreach(PlayerControllerB player in StartOfRound.Instance.allPlayerScripts) //First, count them
+            {
+                if (player.isPlayerDead)
+                {
+                    connected++;
+                    dead++;
+                }
+                else if (player.isPlayerControlled)
+                    connected++;
+            }
+            dead = Mathf.Min(dead, connected); //Make sure we don't go above 100 power
+            if (connected == 0) //Edge case for only 1 player
+                maxPower = 100f;
+            else
+                maxPower = (dead / connected) * 100f;
+
+            //If dead, player should always be gaining power
+            power = Mathf.Min(maxPower, power + (powerRecover * Time.deltaTime));
+
             //If the player is in the menu (or we're in vanilla mode), don't do update stuff
             if (clientPlayer.isTypingChat || clientPlayer.quickMenuManager.isMenuOpen || Patches.vanillaMode)
             {
@@ -337,6 +367,9 @@ namespace Poltergeist
                 camMoveSpeed -= Time.deltaTime * camMoveSpeed;
                 camMoveSpeed = Mathf.Clamp(camMoveSpeed, 0, 100);
             }
+
+            //Display the current power
+            HUDManager.Instance.spectatingPlayerText.text = "Power: " + power.ToString("F0") + " / " + maxPower.ToString("F0");
 
             //Lets the player teleport to other players
             int teleIndex = -1;

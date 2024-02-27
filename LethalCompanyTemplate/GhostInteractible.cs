@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Text;
 using Unity.Netcode;
 using UnityEngine;
@@ -16,6 +17,7 @@ namespace Poltergeist
         private NoisemakerProp noiseProp = null;
         private BoomboxItem boombox = null;
         private GhostInteractType type = GhostInteractType.GENERAL;
+        public float cost = 10f;
 
         /**
          * When made, grab certain important parts
@@ -44,22 +46,34 @@ namespace Poltergeist
         /**
          * Attempt to interact
          */
-        public void Interact(Transform playerTransform)
+        public float Interact(Transform playerTransform)
         {
+            float retCost = 0;
+
+            //Don't let them interact without meeting the cost
+            if(SpectatorCamController.instance.Power < cost)
+                return retCost;
+
             switch (type)
             {
                 //It's some generic interactible
                 case GhostInteractType.GENERAL:
                     if (trigger.interactable)
+                    {
                         trigger.Interact(playerTransform);
+                        retCost = cost;
+                    }
                     break;
 
                 //It's some sort of horn
                 case GhostInteractType.NOISE_PROP:
                 case GhostInteractType.BOOMBOX:
                     MakeNoise();
+                    retCost = cost;
                     break;
             }
+
+            return retCost;
         }
 
         /**
@@ -85,28 +99,37 @@ namespace Poltergeist
          */
         public string GetTipText()
         {
+            //Display message for not having enough power
+            if(SpectatorCamController.instance.Power < cost)
+                return "Not Enough Power (" + cost.ToString("F0") + ")";
+
+            //When you do have enough power
+            string retStr = "Unknown Interaction";
             switch (type)
             {
                 //It's some generic interactible
                 case GhostInteractType.GENERAL:
                     if (!trigger.interactable)
-                        return trigger.disabledHoverTip;
+                        return trigger.disabledHoverTip; //Display no cost if you can't interact
                     else
                     {
                         StringBuilder builder = new StringBuilder(trigger.hoverTip);
-                        return builder.Replace("[LMB]", "[E]").ToString();
+                        retStr = builder.Replace("[LMB]", "[E]").ToString();
                     }
+                    break;
 
                 //It's some sort of horn
                 case GhostInteractType.NOISE_PROP:
-                    return "Honk horn : [E]";
+                    retStr = "Honk horn : [E]";
+                    break;
 
                 //It's the boombox
                 case GhostInteractType.BOOMBOX:
-                    return "Toggle music : [E]";
+                    retStr = "Toggle music : [E]";
+                    break;
             }
 
-            return "Unknown Interaction";
+            return retStr + " (" + cost.ToString("F0") + ")";
         }
     }
 }
