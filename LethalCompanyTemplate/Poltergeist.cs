@@ -18,6 +18,10 @@ namespace Poltergeist
                 "DefaultToVanilla",
                 false,
                 "If true, the vanilla spectate system will be used by default on death.").Value;
+            Patches.allowAllNoiseMakerProps = Config.Bind<bool>("General",
+                "AllowAllNoiseMakerProps",
+                false,
+                "If true, allows the use of any noise maker prop. (For example cash registers)").Value;
             SpectatorCamController.lightIntensity = Config.Bind<float>("General",
                 "GhostLightIntensity",
                 5,
