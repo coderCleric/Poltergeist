@@ -111,8 +111,11 @@ namespace Poltergeist
                 __instance.gameObject.AddComponent<GhostInteractible>();
 
             //If it's the lightswitch, add one there too
-            if(__instance.name.Equals("LightSwitch"))
-                __instance.gameObject.AddComponent<GhostInteractible>();
+            if (__instance.name.Equals("LightSwitch"))
+            {
+                GhostInteractible interactible = __instance.gameObject.AddComponent<GhostInteractible>();
+                interactible.cost = 5;
+            }
         }
 
         /**
@@ -126,7 +129,8 @@ namespace Poltergeist
         {
             if (__instance.name.Contains("Airhorn") || __instance.name.Contains("Clownhorn"))
             {
-                __instance.gameObject.AddComponent<GhostInteractible>();
+                GhostInteractible interactible = __instance.gameObject.AddComponent<GhostInteractible>();
+                interactible.cost = 5;
             }
         }
 
@@ -139,7 +143,8 @@ namespace Poltergeist
         [HarmonyPatch(typeof(BoomboxItem), "Start")]
         public static void AddInteractorForBoombox(BoomboxItem __instance)
         {
-            __instance.gameObject.AddComponent<GhostInteractible>();
+            GhostInteractible interactible = __instance.gameObject.AddComponent<GhostInteractible>();
+            interactible.cost = 5;
         }
 
         /**
@@ -171,6 +176,7 @@ namespace Poltergeist
                 //Make the ghost interactor
                 GhostInteractible interactor = interactObj.AddComponent<GhostInteractible>();
                 interactor.SetGhostOnly(true);
+                interactor.cost = 50;
             }
         }
 

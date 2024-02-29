@@ -1,5 +1,8 @@
 # Changes:
-- 0.1.2
+- 0.3.0
+	- power system
+	- pneumatic doors
+- 0.2.0
 	- Added the ability to switch between the modded and vanilla spectate modes using the "Item Secondary Use" key (default Q).
 		- Also added a "DefaultToVanilla" config option to determine what spectate mode you start in on death.
 	- Allow teleporting to player corpses and masked players.

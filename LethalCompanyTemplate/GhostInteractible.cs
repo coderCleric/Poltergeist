@@ -17,7 +17,7 @@ namespace Poltergeist
         private InteractTrigger trigger = null;
         private NoisemakerProp noiseProp = null;
         private BoomboxItem boombox = null;
-        private TerminalAccessibleObject doorObj = null;
+        private TerminalAccessibleObject bigDoorObj = null;
 
         //Fundamental info on the interaction
         private GhostInteractType type = GhostInteractType.UNKNOWN;
@@ -54,7 +54,7 @@ namespace Poltergeist
             else if(transform.parent.gameObject.GetComponent<TerminalAccessibleObject>() != null && transform.parent.name.Contains("BigDoor"))
             {
                 type = GhostInteractType.BIGDOOR;
-                doorObj = transform.parent.gameObject.GetComponent<TerminalAccessibleObject>();
+                bigDoorObj = transform.parent.gameObject.GetComponent<TerminalAccessibleObject>();
             }
         }
 
@@ -138,7 +138,13 @@ namespace Poltergeist
 
                 //It's a big door
                 case GhostInteractType.BIGDOOR:
-                    Poltergeist.DebugLog("Tried to interact with a big door");
+                    //Why is this private, let me see!
+                    bool powered = (bool) typeof(TerminalAccessibleObject).GetField("isPoweredOn", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(bigDoorObj);
+                    if(powered)
+                    {
+                        bigDoorObj.SetDoorToggleLocalClient();
+                        retCost = 5;
+                    }
                     break;
             }
 
@@ -199,7 +205,12 @@ namespace Poltergeist
 
                 //It's a big door
                 case GhostInteractType.BIGDOOR:
-                    retStr = "Toggle door : [E]";
+                    //Why is this private, let me see!
+                    bool powered = (bool)typeof(TerminalAccessibleObject).GetField("isPoweredOn", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(bigDoorObj);
+                    if (powered)
+                        retStr = "Toggle door : [E]";
+                    else
+                        return "Door is unpowered";
                     break;
             }
 
