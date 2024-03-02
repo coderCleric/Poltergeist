@@ -27,6 +27,9 @@ namespace Poltergeist
             //Make the patches
             Harmony.CreateAndPatchAll(Assembly.GetExecutingAssembly());
 
+            //Make the input instance
+            new PoltergeistCustomInputs();
+
             // All done!
             Logger.LogInfo($"Plugin {PluginInfo.PLUGIN_GUID} is loaded!");
         }

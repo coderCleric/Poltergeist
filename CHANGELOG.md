@@ -1,15 +1,17 @@
-# Changes:
-- 0.3.0
-	- power system
-	- pneumatic doors
-- 0.2.0
-	- Added the ability to switch between the modded and vanilla spectate modes using the "Item Secondary Use" key (default Q).
-		- Also added a "DefaultToVanilla" config option to determine what spectate mode you start in on death.
-	- Allow teleporting to player corpses and masked players.
-	- Removed the "RunBarebones" option.
-- 0.1.1
-	- Added two config options to make things more customizeable.
-		- RunBarebones: Tells the mod to not do most of the main functionality (good for people who like vanilla spectating, but want to play with others with the mod).
-		- GhostLightIntensity: Determines the intensity of the global light for ghosts.
-- 0.1.0
-	- First release with basic functionality.
+# 0.3.0
+- power system
+- pneumatic doors
+- Generic noisemaker control (thanks TheBlackEntity!)
+- Ship decorations
+- Facility storage lockers
+# 0.2.0
+- Added the ability to switch between the modded and vanilla spectate modes using the "Item Secondary Use" key (default Q).
+	- Also added a "DefaultToVanilla" config option to determine what spectate mode you start in on death.
+- Allow teleporting to player corpses and masked players.
+- Removed the "RunBarebones" option.
+# 0.1.1
+- Added two config options to make things more customizeable.
+	- RunBarebones: Tells the mod to not do most of the main functionality (good for people who like vanilla spectating, but want to play with others with the mod).
+	- GhostLightIntensity: Determines the intensity of the global light for ghosts.
+# 0.1.0
+- First release with basic functionality.

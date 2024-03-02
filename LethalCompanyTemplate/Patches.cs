@@ -110,8 +110,8 @@ namespace Poltergeist
             if (__instance.gameObject.GetComponent<DoorLock>() != null)
                 __instance.gameObject.AddComponent<GhostInteractible>();
 
-            //If it's the lightswitch, add one there too
-            if (__instance.name.Equals("LightSwitch"))
+            //If it's the lightswitch or a storage cabinet, add one there too
+            if (__instance.name.Equals("LightSwitch") || (__instance.transform.parent != null && __instance.transform.parent.name.Contains("storage")))
             {
                 GhostInteractible interactible = __instance.gameObject.AddComponent<GhostInteractible>();
                 interactible.cost = 5;
@@ -142,6 +142,33 @@ namespace Poltergeist
         {
             GhostInteractible interactible = __instance.gameObject.AddComponent<GhostInteractible>();
             interactible.cost = 5;
+        }
+
+        /**
+         * Add ghost interactor to ship unlockables
+         */
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(StartOfRound), "SpawnUnlockable")]
+        public static void AddInteractorForUnlockable(int unlockableIndex, StartOfRound __instance)
+        {
+            //Grab the GO if it's there, return early if it's not
+            GameObject unlockObj = null;
+            if(__instance.SpawnedShipUnlockables.ContainsKey(unlockableIndex))
+                unlockObj = __instance.SpawnedShipUnlockables[unlockableIndex];
+            if (unlockObj == null)
+                return;
+
+            //Check if it's one of the things we want to blacklist
+            if (unlockObj.name.Contains("Teleporter") || unlockObj.name.Contains("ShipHorn"))
+                return;
+
+            //Look for an interact trigger
+            InteractTrigger trigger = unlockObj.GetComponentInChildren<InteractTrigger>();
+            if (trigger == null)
+                return;
+
+            //Make the component
+            GhostInteractible ghostInteractible = trigger.gameObject.AddComponent<GhostInteractible>();
         }
 
         /**

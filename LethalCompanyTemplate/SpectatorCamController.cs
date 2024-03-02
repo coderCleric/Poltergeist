@@ -221,24 +221,25 @@ namespace Poltergeist
         }
 
         /**
-         * When scrolling is done, set the camera up to change speed
+         * When scrolling up is done, set the camera up to change speed
          */
-        private void HandleScroll(InputAction.CallbackContext context)
+        private void Accelerate(InputAction.CallbackContext context)
         {
             if (Patches.vanillaMode)
                 return;
+            accelTime = Time.time + 0.3f;
+            decelTime = -1;
+        }
 
-            if(context.ReadValue<float>() > 0)
-            {
-                accelTime = Time.time + 0.3f;
-                decelTime = -1;
-            }
-            else
-            {
-
-                decelTime = Time.time + 0.3f;
-                accelTime = -1;
-            }
+        /**
+         * When scrolling down is done, set the camera up to change speed
+         */
+        private void Decelerate(InputAction.CallbackContext context)
+        {
+            if (Patches.vanillaMode)
+                return;
+            decelTime = Time.time + 0.3f;
+            accelTime = -1;
         }
 
         /**
@@ -271,21 +272,23 @@ namespace Poltergeist
         }
 
         /**
-         * Add and remove the switch light listener as needed
+         * Add and remove the different control listeners as needed
          */
         private void OnEnable()
         {
-            IngamePlayerSettings.Instance.playerInput.actions.FindAction("ActivateItem").performed += SwitchLight;
+            PoltergeistCustomInputs.instance.SwitchLightButton.performed += SwitchLight;
             IngamePlayerSettings.Instance.playerInput.actions.FindAction("Interact").performed += DoInteract;
-            IngamePlayerSettings.Instance.playerInput.actions.FindAction("SwitchItem").performed += HandleScroll;
-            IngamePlayerSettings.Instance.playerInput.actions.FindAction("ItemSecondaryUse").performed += SwitchModes;
+            PoltergeistCustomInputs.instance.AccelerateButton.performed += Accelerate;
+            PoltergeistCustomInputs.instance.DecelerateButton.performed += Decelerate;
+            PoltergeistCustomInputs.instance.ToggleButton.performed += SwitchModes;
         }
         private void OnDisable()
         {
-            IngamePlayerSettings.Instance.playerInput.actions.FindAction("ActivateItem").performed -= SwitchLight;
+            PoltergeistCustomInputs.instance.SwitchLightButton.performed -= SwitchLight;
             IngamePlayerSettings.Instance.playerInput.actions.FindAction("Interact").performed -= DoInteract;
-            IngamePlayerSettings.Instance.playerInput.actions.FindAction("SwitchItem").performed -= HandleScroll;
-            IngamePlayerSettings.Instance.playerInput.actions.FindAction("ItemSecondaryUse").performed -= SwitchModes;
+            PoltergeistCustomInputs.instance.AccelerateButton.performed -= Accelerate;
+            PoltergeistCustomInputs.instance.DecelerateButton.performed -= Decelerate;
+            PoltergeistCustomInputs.instance.ToggleButton.performed -= SwitchModes;
         }
 
         /**

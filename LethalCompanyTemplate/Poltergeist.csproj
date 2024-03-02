@@ -24,6 +24,9 @@
       <Reference Include="Assembly-CSharp">
         <HintPath>D:\SteamLibrary\steamapps\common\Lethal Company\Lethal Company_Data\Managed\Assembly-CSharp.dll</HintPath>
       </Reference>
+      <Reference Include="LethalCompanyInputUtils">
+        <HintPath>..\Dependency Storage\LethalCompanyInputUtils.dll</HintPath>
+      </Reference>
       <Reference Include="Unity.InputSystem">
         <HintPath>D:\SteamLibrary\steamapps\common\Lethal Company\Lethal Company_Data\Managed\Unity.InputSystem.dll</HintPath>
       </Reference>

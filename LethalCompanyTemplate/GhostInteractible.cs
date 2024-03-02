@@ -143,7 +143,7 @@ namespace Poltergeist
                     if(powered)
                     {
                         bigDoorObj.SetDoorToggleLocalClient();
-                        retCost = 5;
+                        retCost = cost;
                     }
                     break;
             }
@@ -195,7 +195,7 @@ namespace Poltergeist
 
                 //It's some sort of horn
                 case GhostInteractType.NOISE_PROP:
-                    retStr = "Honk horn : [E]";
+                    retStr = "Make noise : [E]";
                     break;
 
                 //It's the boombox

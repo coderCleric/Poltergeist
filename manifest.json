@@ -3,5 +3,5 @@
   "version_number": "0.3.0",
   "website_url": "https://github.com/coderCleric/Poltergeist",
   "description": "Lets players freecam on death and mess with certain objects.",
-  "dependencies": [ "BepInEx-BepInExPack-5.4.2100" ]
+  "dependencies": [ "BepInEx-BepInExPack-5.4.2100", "Rune580-LethalCompany_InputUtils-0.6.3" ]
 }
