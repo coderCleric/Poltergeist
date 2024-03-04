@@ -1,9 +1,13 @@
 # 0.3.0
-- power system
-- pneumatic doors
-- Generic noisemaker control (thanks TheBlackEntity!)
-- Ship decorations
-- Facility storage lockers
+- Started using InputUtils, allowing the remapping of the ghost light, accelerate, decelerate, and spectate mode switching actions.
+- Added a power system that aims to prevent spam and provide an interesting scaling as the game goes on.
+	- Interacting with objects now costs a certain amount of power, a resource which will regenerate over time.
+	- The maximum power available to ghosts scales with the percentage of players that are dead, making them more powerful as the day goes on.
+- Added support for additional interactables.
+	- Generic support for noise maker props (thanks TheBlackEntity!).
+	- Purchasable ship decorations.
+	- Storage lockers in the facility.
+	- Pneumatic doors.
 # 0.2.0
 - Added the ability to switch between the modded and vanilla spectate modes using the "Item Secondary Use" key (default Q).
 	- Also added a "DefaultToVanilla" config option to determine what spectate mode you start in on death.
