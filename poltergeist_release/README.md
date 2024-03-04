@@ -16,7 +16,7 @@ Adds things for dead players to do by letting them fly around in a freecam and i
 - **Interact**: Pressing interact (default "e") on the objects listed below will let you interact with them as if you were still alive. Troll your friends, or try to help them out!
 - **Mode Switching**: Switch between vanilla and modded spectate modes using the 'Q' key. Rebindable in the game settings.
 
-# Interactible Objects
+# Interactable Objects
 - **Doors**: Can be opened and closed.
 - **Ship Light Switch**: Can be flipped on and off.
 - **Noisemaker Props**: Items that make noise, such as the clownhorn, airhorn, and cash register.
