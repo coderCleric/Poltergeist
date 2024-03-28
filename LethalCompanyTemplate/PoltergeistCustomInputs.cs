@@ -22,6 +22,15 @@ namespace Poltergeist
         [InputAction("<Keyboard>/q", Name = "Toggle Spectate Mode")]
         public InputAction ToggleButton { get; private set; }
 
+        [InputAction("<Keyboard>/r", Name = "Up")]
+        public InputAction UpKey { get; private set; }
+
+        [InputAction("<Keyboard>/f", Name = "Down")]
+        public InputAction DownKey { get; private set; }
+
+        [InputAction("<Keyboard>/l", Name = "Lock Altitude")]
+        public InputAction LockKey { get; private set; }
+
         //When any instance is constructed, set it to be the instance
         public PoltergeistCustomInputs() : base()
         {

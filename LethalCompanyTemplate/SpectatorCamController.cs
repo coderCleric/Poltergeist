@@ -36,6 +36,8 @@ namespace Poltergeist
         private float accelTime = -1;
         private float decelTime = -1;
         public static List<MaskedPlayerEnemy> masked = new List<MaskedPlayerEnemy>();
+        private int vertDirection = 0;
+        private bool altitudeLock = false;
 
         /**
          * On awake, make and grab the light
@@ -102,6 +104,7 @@ namespace Poltergeist
                 enabled = false;
                 light.enabled = false;
                 Patches.vanillaMode = Patches.defaultMode;
+                altitudeLock = false;
 
                 //If these aren't null, we moved them and need to put them back
                 if (hintPanelRoot != null)
@@ -272,6 +275,19 @@ namespace Poltergeist
         }
 
         /**
+         * Lock the player's altitude for the standard movement
+         */
+        private void LockAltitude(InputAction.CallbackContext context)
+        {
+            //Only do it if performing
+            if (!context.performed)
+                return;
+
+            //Change the flag
+            altitudeLock = !altitudeLock;
+        }
+
+        /**
          * Add and remove the different control listeners as needed
          */
         private void OnEnable()
@@ -281,6 +297,8 @@ namespace Poltergeist
             PoltergeistCustomInputs.instance.AccelerateButton.performed += Accelerate;
             PoltergeistCustomInputs.instance.DecelerateButton.performed += Decelerate;
             PoltergeistCustomInputs.instance.ToggleButton.performed += SwitchModes;
+            PoltergeistCustomInputs.instance.LockKey.performed += LockAltitude;
+
         }
         private void OnDisable()
         {
@@ -289,6 +307,7 @@ namespace Poltergeist
             PoltergeistCustomInputs.instance.AccelerateButton.performed -= Accelerate;
             PoltergeistCustomInputs.instance.DecelerateButton.performed -= Decelerate;
             PoltergeistCustomInputs.instance.ToggleButton.performed -= SwitchModes;
+            PoltergeistCustomInputs.instance.LockKey.performed -= LockAltitude;
         }
 
         /**
@@ -318,7 +337,7 @@ namespace Poltergeist
                     connected++;
             }
             dead = Mathf.Min(dead, connected); //Make sure we don't go above 100 power
-            if (connected == 0) //Edge case for only 1 player
+            if (connected <= 0) //If few enough player connected, always max power
                 maxPower = 100f;
             else
                 maxPower = (dead / connected) * 100f;
@@ -361,9 +380,22 @@ namespace Poltergeist
             float curMoveSpeed = camMoveSpeed;
             if (sprint)
                 curMoveSpeed *= 5;
-            Vector3 rightMove = transform.transform.right * moveInput.x * curMoveSpeed * Time.deltaTime;
-            Vector3 forwardMove = transform.transform.forward * moveInput.y * curMoveSpeed * Time.deltaTime;
+            Vector3 rightMove = transform.right * moveInput.x * curMoveSpeed * Time.deltaTime;
+            Vector3 forwardMove;
+            if (!altitudeLock)
+                forwardMove = transform.forward * moveInput.y * curMoveSpeed * Time.deltaTime;
+            else {
+                forwardMove = transform.forward;
+                forwardMove.y = 0;
+                forwardMove = forwardMove.normalized;
+                forwardMove = forwardMove * moveInput.y * curMoveSpeed * Time.deltaTime;
+            }
             transform.position += rightMove + forwardMove;
+
+            //Handle the vertical controls
+            float vertMotion = (PoltergeistCustomInputs.instance.UpKey.ReadValue<float>() - PoltergeistCustomInputs.instance.DownKey.ReadValue<float>())
+                * curMoveSpeed * Time.deltaTime;
+            transform.position += Vector3.up * vertMotion;
 
             //Actually do the speed change
             if(accelTime > Time.time)
