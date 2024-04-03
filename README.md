@@ -9,6 +9,8 @@ Adds things for dead players to do by letting them fly around in a freecam and i
 
 # Controls
 - **Movement**: Same as how you move your living character, except that moving forwards and backwards can also change your elevation.
+- **Vertical Movement**: Dedicated controls to move up and down, defaulting to r and f. Rebindable in the game settings.
+- **Altitude Lock**: Toggleable altitude lock, preventing the camera from moving up and down except via the dedicated vertical controls. Rebindable in the game settings.
 - **Sprint**: Pressing the sprint key will multiply the camera movement speed by 5.
 - **Speed**: Accelerate and decelerate by scrolling the mouse wheel. Rebindable in the game settings.
 - **Toggle Light**: Toggle a global light that helps you see in dark areas while dead with the left mouse button. Rebindable in the game settings.

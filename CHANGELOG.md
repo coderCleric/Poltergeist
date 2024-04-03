@@ -1,6 +1,7 @@
 # 0.3.1
 - Added controls for vertical movement.
-- Adds a button to stop regular camera movement from changing altitude.
+- Added a button to stop regular camera movement from changing altitude.
+- Tested for v50 compatability, everything seems to work properly!
 # 0.3.0
 - Started using InputUtils, allowing the remapping of the ghost light, accelerate, decelerate, and spectate mode switching actions.
 - Added a power system that aims to prevent spam and provide an interesting scaling as the game goes on.
