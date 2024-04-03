@@ -36,7 +36,6 @@ namespace Poltergeist
         private float accelTime = -1;
         private float decelTime = -1;
         public static List<MaskedPlayerEnemy> masked = new List<MaskedPlayerEnemy>();
-        private int vertDirection = 0;
         private bool altitudeLock = false;
 
         /**
