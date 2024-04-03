@@ -278,8 +278,8 @@ namespace Poltergeist
          */
         private void LockAltitude(InputAction.CallbackContext context)
         {
-            //Only do it if performing
-            if (!context.performed)
+            //Only do it if performing and not in vanilla mode
+            if (!context.performed || Patches.vanillaMode)
                 return;
 
             //Change the flag
