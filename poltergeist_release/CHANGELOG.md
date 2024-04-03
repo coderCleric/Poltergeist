@@ -1,6 +1,7 @@
 # 0.3.1
 - Added controls for vertical movement.
 - Added a button to stop regular camera movement from changing altitude.
+- Updated development environment, resulted in config name changing from "Poltergeist" to "coderCleric.Poltergeist". Sorry about that :(
 - Tested for v50 compatability, everything seems to work properly!
 # 0.3.0
 - Started using InputUtils, allowing the remapping of the ghost light, accelerate, decelerate, and spectate mode switching actions.
