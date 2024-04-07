@@ -19,6 +19,7 @@ namespace Poltergeist
         //Other fields
         public static SpectatorCamController instance = null;
 
+        private Camera cam;
         private float camMoveSpeed = 5f;
         private Light light = null;
 
@@ -44,6 +45,8 @@ namespace Poltergeist
         private void Awake()
         {
             instance = this;
+
+            //Set up the light
             GameObject lightObj = new GameObject("GhostLight");
             light = lightObj.AddComponent<Light>();
             lightObj.AddComponent<HDAdditionalLightData>();
@@ -51,6 +54,10 @@ namespace Poltergeist
             light.type = LightType.Directional;
             light.shadows = LightShadows.None;
             light.intensity = lightIntensity;
+
+            //Grab the camera and change the mask to include invisible enemies
+            cam = GetComponent<Camera>();
+            cam.cullingMask |= 1 << 23;
 
             DisableCam();
         }

@@ -11,7 +11,7 @@ namespace Poltergeist
         //Plugin info
         public const string MOD_GUID = "coderCleric.Poltergeist";
         public const string MOD_NAME = "Poltergeist";
-        public const string MOD_VERSION = "0.3.1";
+        public const string MOD_VERSION = "0.3.2";
 
         //Other things
         private static Poltergeist instance = null;

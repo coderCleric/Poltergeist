@@ -112,7 +112,7 @@ namespace Poltergeist
                 return;
             }
 
-            //If it's the lightswitch or a storage cabinet, add one there too
+            //If its a lightswitch or a storage locker, add one
             if (__instance.name.Equals("LightSwitch") || (__instance.transform.parent != null && __instance.transform.parent.name.Contains("storage")))
             {
                 GhostInteractible interactible = __instance.gameObject.AddComponent<GhostInteractible>();
@@ -130,6 +130,44 @@ namespace Poltergeist
                     __instance.gameObject.AddComponent<GhostInteractible>();
                     return;
                 }
+            }
+
+            //If it's one of the ship buttons, add one
+            if(parent != null)
+            {
+                if(parent.name.Equals("StartButton") || parent.name.Equals("StopButton"))
+                {
+                    GhostInteractible interactible = __instance.gameObject.AddComponent<GhostInteractible>();
+                    interactible.cost = 30;
+                    return;
+                }
+            }
+
+            //If it's a steam valve, add one
+            if(__instance.gameObject.GetComponent<SteamValveHazard>() != null)
+            {
+                GhostInteractible interactible = __instance.gameObject.AddComponent<GhostInteractible>();
+                interactible.cost = 20;
+                return;
+            }
+
+            //If it's the company bell, add one
+            if (parent != null)
+            {
+                if (parent.name.Equals("BellDinger"))
+                {
+                    GhostInteractible interactible = __instance.gameObject.AddComponent<GhostInteractible>();
+                    interactible.cost = 15;
+                    return;
+                }
+            }
+
+            //If it's the lever for the big hangar, add one
+            if(__instance.name.Contains("LeverSwitchHandle"))
+            {
+                GhostInteractible interactible = __instance.gameObject.AddComponent<GhostInteractible>();
+                interactible.cost = 50;
+                return;
             }
         }
 
