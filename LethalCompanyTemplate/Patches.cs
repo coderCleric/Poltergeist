@@ -22,6 +22,17 @@ namespace Poltergeist
         public static GrabbableObject ignoreObj = null;
         public static bool shouldGameOver = false;
 
+        /////////////////////////////// Misc ///////////////////////////////
+        /**
+         * Patch the spiders to not explode if hit by a null player
+         */
+        [HarmonyPrefix]
+        [HarmonyPatch(typeof(SandSpiderAI), nameof(SandSpiderAI.TriggerChaseWithPlayer))]
+        public static bool PreventSpiderBug(PlayerControllerB playerScript)
+        {
+            return playerScript != null;
+        }
+
         /////////////////////////////// Needed to suppress certain base-game systems ///////////////////////////////
         /**
          * Prevents certain manipulations of the spectate camera that would interfere with the controls
