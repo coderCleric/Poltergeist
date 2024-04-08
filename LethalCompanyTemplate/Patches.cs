@@ -8,6 +8,8 @@ using UnityEngine.InputSystem;
 using System.Reflection.Emit;
 using Unity.Netcode;
 using System.Reflection;
+using Poltergeist.GhostInteractibles;
+using Poltergeist.GhostInteractibles.Specific;
 
 namespace Poltergeist
 {
@@ -119,15 +121,15 @@ namespace Poltergeist
         {
             //If it's a door, add the interactible
             if (__instance.gameObject.GetComponent<DoorLock>() != null) {
-                __instance.gameObject.AddComponent<GhostInteractible>();
+                BasicInteractible interactible = __instance.gameObject.AddComponent<BasicInteractible>();
+                interactible.costType = CostType.DOOR;
                 return;
             }
 
             //If its a lightswitch or a storage locker, add one
             if (__instance.name.Equals("LightSwitch") || (__instance.transform.parent != null && __instance.transform.parent.name.Contains("storage")))
             {
-                GhostInteractible interactible = __instance.gameObject.AddComponent<GhostInteractible>();
-                interactible.cost = 5;
+                BasicInteractible interactible = __instance.gameObject.AddComponent<BasicInteractible>();
                 return;
             }
 
@@ -138,7 +140,7 @@ namespace Poltergeist
                 if(parent.name.Contains("Pumpkin") || parent.name.Contains("Television") || parent.name.Contains("Record") || parent.name.Contains("Romantic")
                      || parent.name.Contains("Shower") || parent.name.Contains("Toilet") || parent.name.Contains("Plushie"))
                 {
-                    __instance.gameObject.AddComponent<GhostInteractible>();
+                    __instance.gameObject.AddComponent<BasicInteractible>();
                     return;
                 }
             }
@@ -148,8 +150,8 @@ namespace Poltergeist
             {
                 if(parent.name.Equals("StartButton") || parent.name.Equals("StopButton"))
                 {
-                    GhostInteractible interactible = __instance.gameObject.AddComponent<GhostInteractible>();
-                    interactible.cost = 30;
+                    BasicInteractible interactible = __instance.gameObject.AddComponent<BasicInteractible>();
+                    interactible.costType = CostType.SHIPDOOR;
                     return;
                 }
             }
@@ -157,8 +159,8 @@ namespace Poltergeist
             //If it's a steam valve, add one
             if(__instance.gameObject.GetComponent<SteamValveHazard>() != null)
             {
-                GhostInteractible interactible = __instance.gameObject.AddComponent<GhostInteractible>();
-                interactible.cost = 20;
+                BasicInteractible interactible = __instance.gameObject.AddComponent<BasicInteractible>();
+                interactible.costType = CostType.VALVE;
                 return;
             }
 
@@ -167,8 +169,8 @@ namespace Poltergeist
             {
                 if (parent.name.Equals("BellDinger"))
                 {
-                    GhostInteractible interactible = __instance.gameObject.AddComponent<GhostInteractible>();
-                    interactible.cost = 15;
+                    BasicInteractible interactible = __instance.gameObject.AddComponent<BasicInteractible>();
+                    interactible.costType = CostType.COMPANYBELL;
                     return;
                 }
             }
@@ -176,8 +178,8 @@ namespace Poltergeist
             //If it's the lever for the big hangar, add one
             if(__instance.name.Contains("LeverSwitchHandle"))
             {
-                GhostInteractible interactible = __instance.gameObject.AddComponent<GhostInteractible>();
-                interactible.cost = 50;
+                BasicInteractible interactible = __instance.gameObject.AddComponent<BasicInteractible>();
+                interactible.costType = CostType.HANGARDOOR;
                 return;
             }
         }
@@ -191,8 +193,7 @@ namespace Poltergeist
         [HarmonyPatch(typeof(NoisemakerProp), "Start")]
         public static void AddInteractorForHorns(NoisemakerProp __instance)
         {
-            GhostInteractible interactible = __instance.gameObject.AddComponent<GhostInteractible>();
-            interactible.cost = 5;
+            PropInteractible interactible = __instance.gameObject.AddComponent<PropInteractible>();
         }
 
         /**
@@ -204,8 +205,7 @@ namespace Poltergeist
         [HarmonyPatch(typeof(BoomboxItem), "Start")]
         public static void AddInteractorForBoombox(BoomboxItem __instance)
         {
-            GhostInteractible interactible = __instance.gameObject.AddComponent<GhostInteractible>();
-            interactible.cost = 5;
+            PropInteractible interactible = __instance.gameObject.AddComponent<PropInteractible>();
         }
 
         /**
@@ -235,15 +235,13 @@ namespace Poltergeist
                 col.isTrigger = true; //Just need the player to not walk into it
 
                 //Make the ghost interactor
-                GhostInteractible interactor = interactObj.AddComponent<GhostInteractible>();
-                interactor.SetGhostOnly(true);
-                interactor.cost = 50;
+                BigDoorInteractible interactor = interactObj.AddComponent<BigDoorInteractible>();
             }
         }
 
         /**
          * Add ghost interactor to enemies
-         */
+         *
         [HarmonyPostfix]
         [HarmonyPatch(typeof(EnemyAI), "Start")]
         public static void AddInteractorForEnemies(EnemyAI __instance)
@@ -256,7 +254,7 @@ namespace Poltergeist
                 interactible.cost = 20;
                 Poltergeist.DebugLog("Success for " + __instance.name);
             }
-        }
+        }/
 
 
         /////////////////////////////// Transpile grabbed object behaviour to facilitate ground use ///////////////////////////////
@@ -382,7 +380,5 @@ namespace Poltergeist
             if(__instance.mimickingPlayer != null)
                 SpectatorCamController.masked.Remove(__instance);
         }
-
-        /////////////////////////////// Transpile enemy hit behaviour to allow ghost hits ///////////////////////////////
     }
 }

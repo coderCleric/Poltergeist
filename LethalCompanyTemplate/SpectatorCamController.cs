@@ -1,4 +1,5 @@
 ﻿using GameNetcodeStuff;
+using Poltergeist.GhostInteractibles;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Design;
@@ -30,7 +31,7 @@ namespace Poltergeist
 
         private PlayerControllerB clientPlayer = null;
         public PlayerControllerB ClientPlayer => clientPlayer;
-        private GhostInteractible currentGhostInteractible = null;
+        private IGhostInteractible currentGhostInteractible = null;
         private Transform hintPanelRoot = null;
         private Transform hintPanelOrigParent = null;
         private Transform deathUIRoot = null;
@@ -95,7 +96,7 @@ namespace Poltergeist
                 power = 0;
 
                 //Enable ghost-only interactables
-                GhostInteractible.SetGhostActivation(true);
+                IGhostOnlyInteractible.SetGhostActivation(true);
             }
         }
 
@@ -119,7 +120,7 @@ namespace Poltergeist
                 }
 
                 //Disable ghost-only interactables
-                GhostInteractible.SetGhostActivation(false);
+                IGhostOnlyInteractible.SetGhostActivation(false);
             }
         }
 
@@ -221,12 +222,7 @@ namespace Poltergeist
 
             //If not null, use the interactible
             if (currentGhostInteractible != null)
-            {
-                Poltergeist.DebugLog("Attempting to use interactible");
                 power -= currentGhostInteractible.Interact(clientPlayer.transform);
-            }
-            else
-                Poltergeist.DebugLog("No interactible found");
         }
 
         /**
@@ -443,7 +439,7 @@ namespace Poltergeist
             clientPlayer.cursorTip.text = "";
             if (Physics.Raycast(transform.position, transform.forward, out hit, 5, 0b10000000001101000000) && hit.collider.gameObject.layer != 8)
             {
-                GhostInteractible ghostInteractible = hit.collider.gameObject.GetComponent<GhostInteractible>();
+                IGhostInteractible ghostInteractible = hit.collider.gameObject.GetComponent<NaiveInteractible>();
                 if (ghostInteractible != null)
                 {
                     currentGhostInteractible = ghostInteractible;
