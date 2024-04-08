@@ -11,17 +11,19 @@ namespace Poltergeist
 {
     public class GhostInteractible : MonoBehaviour
     {
-        public enum GhostInteractType {UNKNOWN, GENERAL, NOISE_PROP, BOOMBOX, BIGDOOR}
+        public enum GhostInteractType { UNKNOWN, GENERAL, NOISE_PROP, BOOMBOX, BIGDOOR, ENEMY }
 
         //Needed to facilitate the different types of interaction
         private InteractTrigger trigger = null;
         private NoisemakerProp noiseProp = null;
         private BoomboxItem boombox = null;
         private TerminalAccessibleObject bigDoorObj = null;
+        private EnemyAI enemy = null;
 
         //Fundamental info on the interaction
         private GhostInteractType type = GhostInteractType.UNKNOWN;
         public float cost = 10f;
+        private float lastInteractTime = 0f;
 
         //Useful for the global list of items
         private static List<GhostInteractible> managedInteractibles = new List<GhostInteractible>();
@@ -51,10 +53,16 @@ namespace Poltergeist
                 type = GhostInteractType.BOOMBOX;
             }
 
-            else if(transform.parent.gameObject.GetComponent<TerminalAccessibleObject>() != null && transform.parent.name.Contains("BigDoor"))
+            else if (transform.parent.gameObject.GetComponent<TerminalAccessibleObject>() != null && transform.parent.name.Contains("BigDoor"))
             {
                 type = GhostInteractType.BIGDOOR;
                 bigDoorObj = transform.parent.gameObject.GetComponent<TerminalAccessibleObject>();
+            }
+
+            else if (GetComponent<EnemyAICollisionDetect>() != null)
+            {
+                type = GhostInteractType.ENEMY;
+                enemy = GetComponent<EnemyAICollisionDetect>().mainScript;
             }
         }
 
@@ -64,7 +72,7 @@ namespace Poltergeist
         public void SetGhostOnly(bool ghostOnly)
         {
             //Don't do anything if it's already set to that
-            if(ghostOnly == this.ghostOnly) 
+            if (ghostOnly == this.ghostOnly)
                 return;
 
             this.ghostOnly = ghostOnly;
@@ -89,7 +97,7 @@ namespace Poltergeist
                 return;
 
             //Special case for only having 1 element
-            if(managedInteractibles.Count == 1)
+            if (managedInteractibles.Count == 1)
             {
                 managedInteractibles.Clear();
                 indexInList = -1;
@@ -115,14 +123,14 @@ namespace Poltergeist
             float retCost = 0;
 
             //Don't let them interact without meeting the cost
-            if(SpectatorCamController.instance.Power < cost)
+            if (SpectatorCamController.instance.Power < cost)
                 return retCost;
 
             switch (type)
             {
                 //It's some generic interactible
                 case GhostInteractType.GENERAL:
-                    if (trigger.interactable)
+                    if (trigger.interactable && (!trigger.interactCooldown || trigger.currentCooldownValue <= 0))
                     {
                         trigger.Interact(playerTransform);
                         retCost = cost;
@@ -139,14 +147,30 @@ namespace Poltergeist
                 //It's a big door
                 case GhostInteractType.BIGDOOR:
                     //Why is this private, let me see!
-                    bool powered = (bool) typeof(TerminalAccessibleObject).GetField("isPoweredOn", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(bigDoorObj);
-                    if(powered)
+                    bool powered = (bool)typeof(TerminalAccessibleObject).GetField("isPoweredOn", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(bigDoorObj);
+                    if (powered)
                     {
                         bigDoorObj.SetDoorToggleLocalClient();
                         retCost = cost;
                     }
                     break;
+
+                //It's an enemy
+                case GhostInteractType.ENEMY:
+                    if (!enemy.isEnemyDead)
+                    {
+                        if (lastInteractTime + 3f < Time.time)
+                            enemy.HitEnemyOnLocalClient(0, playHitSFX: true);
+                        else
+                            enemy.HitEnemyOnLocalClient(0, playerWhoHit: enemy.GetClosestPlayer(false, false, false), playHitSFX: true);
+                        retCost = cost;
+                    }
+                    break;
             }
+
+            //If retcost is positive, means that it was used
+            if (retCost > 0)
+                lastInteractTime = Time.time;
 
             return retCost;
         }
@@ -175,7 +199,7 @@ namespace Poltergeist
         public string GetTipText()
         {
             //Display message for not having enough power
-            if(SpectatorCamController.instance.Power < cost)
+            if (SpectatorCamController.instance.Power < cost)
                 return "Not Enough Power (" + cost.ToString("F0") + ")";
 
             //When you do have enough power
@@ -212,6 +236,11 @@ namespace Poltergeist
                     else
                         return "Door is unpowered";
                     break;
+
+                //It's an enemy
+                case GhostInteractType.ENEMY:
+                    retStr = "Pester enemy : [E]";
+                    break;
             }
 
             return retStr + " (" + cost.ToString("F0") + ")";
@@ -223,7 +252,7 @@ namespace Poltergeist
         public static void SetGhostActivation(bool active)
         {
             //Loop through each registered interacible
-            foreach(GhostInteractible interactible in managedInteractibles)
+            foreach (GhostInteractible interactible in managedInteractibles)
             {
                 //Skip if it has no collider
                 if (interactible.gameObject.GetComponent<Collider> == null)

@@ -241,6 +241,23 @@ namespace Poltergeist
             }
         }
 
+        /**
+         * Add ghost interactor to enemies
+         */
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(EnemyAI), "Start")]
+        public static void AddInteractorForEnemies(EnemyAI __instance)
+        {
+            Poltergeist.DebugLog("Making interactor for " + __instance.name);
+            EnemyAICollisionDetect detector = __instance.GetComponentInChildren<EnemyAICollisionDetect>();
+            if (detector != null)
+            {
+                GhostInteractible interactible = detector.gameObject.AddComponent<GhostInteractible>();
+                interactible.cost = 20;
+                Poltergeist.DebugLog("Success for " + __instance.name);
+            }
+        }
+
 
         /////////////////////////////// Transpile grabbed object behaviour to facilitate ground use ///////////////////////////////
         /**
@@ -365,5 +382,7 @@ namespace Poltergeist
             if(__instance.mimickingPlayer != null)
                 SpectatorCamController.masked.Remove(__instance);
         }
+
+        /////////////////////////////// Transpile enemy hit behaviour to allow ghost hits ///////////////////////////////
     }
 }

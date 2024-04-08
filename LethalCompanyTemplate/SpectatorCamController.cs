@@ -441,7 +441,7 @@ namespace Poltergeist
             RaycastHit hit;
             currentGhostInteractible = null;
             clientPlayer.cursorTip.text = "";
-            if (Physics.Raycast(transform.position, transform.forward, out hit, 5, 832) && hit.collider.gameObject.layer != 8)
+            if (Physics.Raycast(transform.position, transform.forward, out hit, 5, 0b10000000001101000000) && hit.collider.gameObject.layer != 8)
             {
                 GhostInteractible ghostInteractible = hit.collider.gameObject.GetComponent<GhostInteractible>();
                 if (ghostInteractible != null)
