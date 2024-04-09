@@ -38,7 +38,7 @@ namespace Poltergeist.GhostInteractibles.Specific
             Patches.ignoreObj = prop;
             prop.UseItemOnClient();
 
-            return 0;
+            return GetCost();
         }
 
         /**
