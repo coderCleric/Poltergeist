@@ -193,7 +193,12 @@ namespace Poltergeist
         [HarmonyPatch(typeof(NoisemakerProp), "Start")]
         public static void AddInteractorForHorns(NoisemakerProp __instance)
         {
-            PropInteractible interactible = __instance.gameObject.AddComponent<PropInteractible>();
+            if (NetworkManager.Singleton.IsHost || NetworkManager.Singleton.IsServer)
+            {
+                GameObject interactObject = GameObject.Instantiate(Poltergeist.propInteractibleObject, __instance.transform);
+                interactObject.GetComponent<NetworkObject>().Spawn();
+                interactObject.transform.parent = __instance.transform;
+            }
         }
 
         /**
@@ -205,7 +210,12 @@ namespace Poltergeist
         [HarmonyPatch(typeof(BoomboxItem), "Start")]
         public static void AddInteractorForBoombox(BoomboxItem __instance)
         {
-            PropInteractible interactible = __instance.gameObject.AddComponent<PropInteractible>();
+            if (NetworkManager.Singleton.IsHost || NetworkManager.Singleton.IsServer)
+            {
+                GameObject interactObject = GameObject.Instantiate(Poltergeist.propInteractibleObject, __instance.transform);
+                interactObject.GetComponent<NetworkObject>().Spawn();
+                interactObject.transform.parent = __instance.transform;
+            }
         }
 
         /**
@@ -256,104 +266,6 @@ namespace Poltergeist
             }
         }/
 
-
-        /////////////////////////////// Transpile grabbed object behaviour to facilitate ground use ///////////////////////////////
-        /**
-         * Make items usable by any client when not held
-         * 
-         * @param __instance The calling input action
-         * @param __result The resulting value
-         */
-        [HarmonyTranspiler]
-        [HarmonyPatch(typeof(GrabbableObject), nameof(GrabbableObject.UseItemOnClient))]
-        public static IEnumerable<CodeInstruction> AllowGroundUse(IEnumerable<CodeInstruction> instructions, ILGenerator il)
-        {
-            //First, load the list of instructions
-            List<CodeInstruction> code = new List<CodeInstruction>(instructions);
-
-            //Next, find where we need to insert
-            int insertIndex = -1;
-            object successLabel = null;
-            for (int i = 0; i < code.Count - 1; i++)
-            {
-                //Count it as a good spot when we recognize the string being loaded
-                if (code[i].opcode == OpCodes.Ldstr && ((string)code[i].operand).Equals("Can't use item; not owner"))
-                {
-                    Poltergeist.DebugLog("Found expected structure for transpiler of UseItemOnClient");
-
-                    //Save the index to insert into
-                    insertIndex = i;
-
-                    //Save the label to jump to
-                    successLabel = code[i - 1].operand;
-
-                    break;
-                }
-            }
-
-            //Construct the code to insert (check if the object is held)
-            List<CodeInstruction> insertion = new List<CodeInstruction>();
-            insertion.Add(new CodeInstruction(OpCodes.Ldarg_0));
-            insertion.Add(new CodeInstruction(OpCodes.Ldfld, AccessTools.Field(typeof(GrabbableObject), nameof(GrabbableObject.isHeld))));
-            insertion.Add(new CodeInstruction(OpCodes.Brfalse_S, successLabel));
-
-            //Insert the code
-            if (insertIndex != -1)
-            {
-                code.InsertRange(insertIndex, insertion);
-            }
-
-            return code;
-        }
-
-        /**
-         * Make items on the ground not forbid hearing with ownership
-         * 
-         * @param __instance The calling input action
-         * @param __result The resulting value
-         */
-        [HarmonyTranspiler]
-        [HarmonyPatch(typeof(GrabbableObject), "ActivateItemClientRpc")]
-        public static IEnumerable<CodeInstruction> AllowGroundHearing(IEnumerable<CodeInstruction> instructions, ILGenerator il)
-        {
-            //First, load the list of instructions
-            List<CodeInstruction> code = new List<CodeInstruction>(instructions);
-
-            //Next, find where we need to insert
-            int insertIndex = -1;
-            object successLabel = null;
-            for (int i = 0; i < code.Count - 1; i++)
-            {
-                //Count it as a good spot when we recognize the string being loaded
-                if (code[i].opcode == OpCodes.Call && ((MethodInfo)code[i].operand).Name.Equals("get_IsOwner"))
-                {
-                    Poltergeist.DebugLog("Found expected structure for transpiler of ActivateItemClientRpc");
-
-                    //Save the index to insert into
-                    insertIndex = i - 1;
-
-                    //Save the label to jump to
-                    successLabel = code[i + 1].operand;
-
-                    break;
-                }
-            }
-
-            //Construct the code to insert (check if the object is held)
-            List<CodeInstruction> insertion = new List<CodeInstruction>();
-            insertion.Add(new CodeInstruction(OpCodes.Ldarg_0));
-            insertion.Add(new CodeInstruction(OpCodes.Ldfld, AccessTools.Field(typeof(GrabbableObject), nameof(GrabbableObject.isHeld))));
-            insertion.Add(new CodeInstruction(OpCodes.Brfalse_S, successLabel));
-
-            //Insert the code
-            if (insertIndex != -1)
-            {
-                code.InsertRange(insertIndex, insertion);
-            }
-
-            return code;
-        }
-
         /////////////////////////////// Keeping track of masked ///////////////////////////////
         /**
          * When a masked is spawned mimicking a player, register them
@@ -379,6 +291,26 @@ namespace Poltergeist
         {
             if(__instance.mimickingPlayer != null)
                 SpectatorCamController.masked.Remove(__instance);
+        }
+
+        /////////////////////////////// Networking garbage ///////////////////////////////
+        /**
+         * Load any network prefabs
+         */
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(GameNetworkManager), "Start")]
+        public static void LoadNetworkPrefabs()
+        {
+            //Only once
+            if (Poltergeist.propInteractibleObject != null)
+                return;
+
+            //Actually load things
+            Poltergeist.propInteractibleObject = Poltergeist.poltergeistAssetBundle.LoadAsset<GameObject>("Assets/Prefabs/NetworkedGhostInteractible.prefab");
+            Poltergeist.propInteractibleObject.AddComponent<PropInteractible>();
+
+            //Register the prefab
+            NetworkManager.Singleton.AddNetworkPrefab(Poltergeist.propInteractibleObject);
         }
     }
 }

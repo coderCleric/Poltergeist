@@ -439,7 +439,19 @@ namespace Poltergeist
             clientPlayer.cursorTip.text = "";
             if (Physics.Raycast(transform.position, transform.forward, out hit, 5, 0b10000000001101000000) && hit.collider.gameObject.layer != 8)
             {
+                //Check if it is a naive interactible, or if a child is a networked one
                 IGhostInteractible ghostInteractible = hit.collider.gameObject.GetComponent<NaiveInteractible>();
+                if(ghostInteractible == null)
+                {
+                    foreach(Transform tf in hit.collider.transform)
+                    {
+                        ghostInteractible = tf.GetComponent<NetworkedInteractible>();
+                        if (ghostInteractible != null)
+                            break;
+                    }
+                }
+
+                //If we found one, select it
                 if (ghostInteractible != null)
                 {
                     currentGhostInteractible = ghostInteractible;

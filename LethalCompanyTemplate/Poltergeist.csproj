@@ -40,4 +40,8 @@
         <HintPath>D:\SteamLibrary\steamapps\common\Lethal Company\Lethal Company_Data\Managed\Unity.TextMeshPro.dll</HintPath>
       </Reference>
     </ItemGroup>
+  
+    <Target Name="NetcodePatch" AfterTargets="PostBuildEvent">
+      <Exec Command="netcode-patch &quot;$(TargetPath)&quot; @(ReferencePathWithRefAssemblies->'&quot;%(Identity)&quot;', ' ')"/>
+    </Target>
 </Project>
