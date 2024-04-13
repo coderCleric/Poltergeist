@@ -11,6 +11,5 @@ namespace Poltergeist.GhostInteractibles
         public abstract float Interact(Transform playerTransform);
         public abstract float GetCost();
         public abstract string GetTipText();
-        public abstract void InteractLocallyOnly();
     }
 }

@@ -251,20 +251,16 @@ namespace Poltergeist
 
         /**
          * Add ghost interactor to enemies
-         *
+         */
         [HarmonyPostfix]
         [HarmonyPatch(typeof(EnemyAI), "Start")]
         public static void AddInteractorForEnemies(EnemyAI __instance)
         {
             Poltergeist.DebugLog("Making interactor for " + __instance.name);
-            EnemyAICollisionDetect detector = __instance.GetComponentInChildren<EnemyAICollisionDetect>();
-            if (detector != null)
-            {
-                GhostInteractible interactible = detector.gameObject.AddComponent<GhostInteractible>();
-                interactible.cost = 20;
-                Poltergeist.DebugLog("Success for " + __instance.name);
-            }
-        }/
+            GameObject interactObject = GameObject.Instantiate(Poltergeist.enemyInteractibleObject, __instance.transform);
+            interactObject.GetComponent<NetworkObject>().Spawn();
+            interactObject.transform.parent = __instance.transform;
+        }
 
         /////////////////////////////// Keeping track of masked ///////////////////////////////
         /**
@@ -306,11 +302,14 @@ namespace Poltergeist
                 return;
 
             //Actually load things
-            Poltergeist.propInteractibleObject = Poltergeist.poltergeistAssetBundle.LoadAsset<GameObject>("Assets/Prefabs/NetworkedGhostInteractible.prefab");
+            Poltergeist.propInteractibleObject = Poltergeist.poltergeistAssetBundle.LoadAsset<GameObject>("Assets/Prefabs/PropInteractible.prefab");
             Poltergeist.propInteractibleObject.AddComponent<PropInteractible>();
+            Poltergeist.enemyInteractibleObject = Poltergeist.poltergeistAssetBundle.LoadAsset<GameObject>("Assets/Prefabs/EnemyInteractible.prefab");
+            Poltergeist.enemyInteractibleObject.AddComponent<EnemyInteractible>();
 
-            //Register the prefab
+            //Register the prefabs
             NetworkManager.Singleton.AddNetworkPrefab(Poltergeist.propInteractibleObject);
+            NetworkManager.Singleton.AddNetworkPrefab(Poltergeist.enemyInteractibleObject);
         }
     }
 }

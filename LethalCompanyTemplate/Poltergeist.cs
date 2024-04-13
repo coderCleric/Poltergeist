@@ -16,6 +16,7 @@ namespace Poltergeist
 
         //Network prefabs
         public static GameObject propInteractibleObject;
+        public static GameObject enemyInteractibleObject;
 
         //Other things
         private static Poltergeist instance = null;

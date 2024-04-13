@@ -11,7 +11,7 @@ namespace Poltergeist.GhostInteractibles.Specific
         private GrabbableObject prop;
 
         /**
-         * On awake, grab the prop
+         * On start, grab the prop
          */
         private void Start()
         {
@@ -50,7 +50,7 @@ namespace Poltergeist.GhostInteractibles.Specific
         /**
          * Do only the local interaction stuff
          */
-        public override void InteractLocallyOnly()
+        public void InteractLocallyOnly()
         {
             Poltergeist.DebugLog("Interacting locally with " + prop.gameObject.name);
             prop.ItemActivate(prop.isBeingUsed);

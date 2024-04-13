@@ -1,21 +1,36 @@
-﻿using System;
+﻿using GameNetcodeStuff;
+using System;
 using System.Collections.Generic;
 using System.Text;
+using Unity.Netcode;
 using UnityEngine;
 
 namespace Poltergeist.GhostInteractibles.Specific
 {
-    public class EnemyInteractible : NaiveInteractible
+    public class EnemyInteractible : NetworkedInteractible
     {
         private EnemyAI enemy;
         private float lastInteractTime = 0;
+        private EnemyDetector[] detectors;
 
         /**
-         * In awake, grab the enemy AI
+         * In start, grab the enemy AI
          */
-        private void Awake()
+        private void Start()
         {
-            enemy = GetComponent<EnemyAICollisionDetect>().mainScript;
+            //Find the enemy AI
+            Transform enemyTF = transform.parent;
+            enemy = enemyTF.GetComponent<EnemyAI>();
+
+            //Make all of the detectors
+            EnemyAICollisionDetect[] AIDetectors = enemyTF.GetComponentsInChildren<EnemyAICollisionDetect>();
+            int detectorCount = AIDetectors.Length;
+            detectors = new EnemyDetector[detectorCount];
+            for (int i = 0; i < detectorCount; i++)
+            {
+                detectors[i] = AIDetectors[i].gameObject.AddComponent<EnemyDetector>();
+                detectors[i].RegisterInteractible(this);
+            }
         }
 
         /**
@@ -35,18 +50,33 @@ namespace Poltergeist.GhostInteractibles.Specific
             if (SpectatorCamController.instance.Power < GetCost())
                 return 0;
 
-            //Pester the enemy
-            if (!enemy.isEnemyDead)
-            {
-                if (lastInteractTime + 3f < Time.time)
-                    enemy.HitEnemyOnLocalClient(0, playHitSFX: true);
-                else
-                    enemy.HitEnemyOnLocalClient(0, playerWhoHit: enemy.GetClosestPlayer(false, false, false), playHitSFX: true);
-                lastInteractTime = Time.time;
-                return GetCost();
-            }
+            //Nothing happens if the enemy is dead
+            if (enemy.isEnemyDead)
+                return 0;
 
-            return 0;
+            //Send the interaction out to the other players
+            if (lastInteractTime + 3f < Time.time)
+                InteractServerRpc(-1);
+            else
+            {
+                PlayerControllerB accusedPlayer = enemy.GetClosestPlayer(true, true, true);
+                if(accusedPlayer != null)
+                    InteractServerRpc((int)accusedPlayer.playerClientId);
+                else
+                    InteractServerRpc(-1);
+            }
+            lastInteractTime = Time.time;
+
+            return GetCost();
+        }
+
+        /**
+         * Do only the local interaction stuff
+         */
+        public void InteractLocallyOnly(PlayerControllerB accusedPlayer)
+        {
+            Poltergeist.DebugLog("Interacting locally with " + enemy.gameObject.name);
+            enemy.HitEnemy(0, accusedPlayer, true);
         }
 
         /**
@@ -67,6 +97,28 @@ namespace Poltergeist.GhostInteractibles.Specific
                 return "Enemy is dead";
 
             return retStr + " (" + GetCost().ToString("F0") + ")";
+        }
+
+        /**
+         * Lets the server message clients about an enemy being pestered by a ghost
+         */
+        [ClientRpc]
+        public void InteractClientRpc(int accussedID)
+        {
+            //Have the specified player "attack" the enemy
+            if (accussedID == -1)
+                InteractLocallyOnly(null);
+            else
+                InteractLocallyOnly(StartOfRound.Instance.allPlayerScripts[accussedID]);
+        }
+
+        /**
+         * Lets the client tell the server we're activating it
+         */
+        [ServerRpc(RequireOwnership = false)]
+        public void InteractServerRpc(int accussedID)
+        {
+            InteractClientRpc(accussedID);
         }
     }
 }
