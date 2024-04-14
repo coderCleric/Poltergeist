@@ -254,12 +254,16 @@ namespace Poltergeist
          */
         [HarmonyPostfix]
         [HarmonyPatch(typeof(EnemyAI), "Start")]
+        [HarmonyPatch(typeof(MaskedPlayerEnemy), "Start")]
         public static void AddInteractorForEnemies(EnemyAI __instance)
         {
-            Poltergeist.DebugLog("Making interactor for " + __instance.name);
-            GameObject interactObject = GameObject.Instantiate(Poltergeist.enemyInteractibleObject, __instance.transform);
-            interactObject.GetComponent<NetworkObject>().Spawn();
-            interactObject.transform.parent = __instance.transform;
+            if (NetworkManager.Singleton.IsHost || NetworkManager.Singleton.IsServer)
+            {
+                Poltergeist.DebugLog("Making interactor for " + __instance.name);
+                GameObject interactObject = GameObject.Instantiate(Poltergeist.enemyInteractibleObject, __instance.transform);
+                interactObject.GetComponent<NetworkObject>().Spawn();
+                interactObject.transform.parent = __instance.transform;
+            }
         }
 
         /////////////////////////////// Keeping track of masked ///////////////////////////////

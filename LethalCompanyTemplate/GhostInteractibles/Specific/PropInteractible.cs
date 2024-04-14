@@ -36,7 +36,7 @@ namespace Poltergeist.GhostInteractibles.Specific
                 return 0;
 
             //Don't let them interact if the item is restricting it
-            if(prop.RequireCooldown() || !prop.UseItemBatteries())
+            if(prop.RequireCooldown() || !prop.UseItemBatteries(!prop.itemProperties.holdButtonUse))
                 return 0;
 
             //Make the noise
