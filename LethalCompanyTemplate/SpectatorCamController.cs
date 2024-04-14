@@ -14,9 +14,6 @@ namespace Poltergeist
 {
     public class SpectatorCamController : MonoBehaviour
     {
-        //Config things
-        public static float lightIntensity = 5;
-
         //Other fields
         public static SpectatorCamController instance = null;
 
@@ -54,7 +51,7 @@ namespace Poltergeist
             lightObj.transform.eulerAngles = new Vector3 (90f, 0f, 0f);
             light.type = LightType.Directional;
             light.shadows = LightShadows.None;
-            light.intensity = lightIntensity;
+            light.intensity = Poltergeist.Config.LightIntensity.Value;
 
             //Grab the camera and change the mask to include invisible enemies
             cam = GetComponent<Camera>();
@@ -110,7 +107,7 @@ namespace Poltergeist
                 //Basics
                 enabled = false;
                 light.enabled = false;
-                Patches.vanillaMode = Patches.defaultMode;
+                Patches.vanillaMode = Poltergeist.Config.DefaultToVanilla.Value;
                 altitudeLock = false;
 
                 //If these aren't null, we moved them and need to put them back
@@ -338,11 +335,11 @@ namespace Poltergeist
                 else if (player.isPlayerControlled)
                     connected++;
             }
-            dead = Mathf.Min(dead, connected); //Make sure we don't go above 100 power
-            if (connected <= 0) //If few enough player connected, always max power
-                maxPower = 100f;
+            dead = Mathf.Min(dead, connected); //Make sure we don't go above max power
+            if (connected <= 0) //If few enough players connected, always max power
+                maxPower = Poltergeist.Config.MaxPower.Value;
             else
-                maxPower = (dead / connected) * 100f;
+                maxPower = (dead / connected) * Poltergeist.Config.MaxPower.Value;
 
             //If dead, player should always be gaining power
             power = Mathf.Min(maxPower, power + (powerRecover * Time.deltaTime));

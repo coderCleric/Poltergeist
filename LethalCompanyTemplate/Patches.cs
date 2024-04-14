@@ -16,9 +16,6 @@ namespace Poltergeist
     [HarmonyPatch]
     public static class Patches
     {
-        //Config things
-        public static bool defaultMode = false;
-
         //Other fields
         public static bool vanillaMode = false;
         public static GrabbableObject ignoreObj = null;

@@ -22,21 +22,14 @@ namespace Poltergeist
         //Other things
         private static Poltergeist instance = null;
         public static AssetBundle poltergeistAssetBundle;
+        public new static PoltergeistConfig Config { get; private set; }
 
         private void Awake()
         {
             instance = this;
 
             //Handle the config
-            Patches.defaultMode = Config.Bind<bool>("General",
-                "DefaultToVanilla",
-                false,
-                "If true, the vanilla spectate system will be used by default on death.").Value;
-            SpectatorCamController.lightIntensity = Config.Bind<float>("General",
-                "GhostLightIntensity",
-                5,
-                "The intensity of the global light when dead.\n" +
-                "WARNING: This game has a lot of fog, so excessively high values can decrease visibility.").Value;
+            Config = new PoltergeistConfig(base.Config);
 
             //Make the patches
             Harmony.CreateAndPatchAll(Assembly.GetExecutingAssembly());
