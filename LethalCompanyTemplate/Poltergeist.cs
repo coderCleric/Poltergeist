@@ -7,12 +7,13 @@ namespace Poltergeist
 {
     [BepInPlugin(MOD_GUID, MOD_NAME, MOD_VERSION)]
     [BepInDependency("com.rune580.LethalCompanyInputUtils")]
+    [BepInDependency("com.sigurd.csync", "4.1.0")]
     public class Poltergeist : BaseUnityPlugin
     {
         //Plugin info
         public const string MOD_GUID = "coderCleric.Poltergeist";
         public const string MOD_NAME = "Poltergeist";
-        public const string MOD_VERSION = "0.4";
+        public const string MOD_VERSION = "1.0.0";
 
         //Network prefabs
         public static GameObject propInteractibleObject;

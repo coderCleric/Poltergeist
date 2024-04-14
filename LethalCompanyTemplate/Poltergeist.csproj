@@ -13,6 +13,8 @@
         <PackageReference Include="BepInEx.Analyzers" Version="1.*" PrivateAssets="all" />
         <PackageReference Include="BepInEx.Core" Version="5.*" />
         <PackageReference Include="BepInEx.PluginInfoProps" Version="2.1.0" />
+        <PackageReference Include="Sigurd.BepInEx.CSync" Version="4.1.0" />
+        <PackageReference Include="LethalCompany.GameLibs.Steam" Version="50.0.0-ngd.0" />
         <PackageReference Include="UnityEngine.Modules" Version="2023.2.16" IncludeAssets="compile" />
     </ItemGroup>
 
@@ -21,27 +23,12 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Reference Include="Assembly-CSharp">
-        <HintPath>D:\SteamLibrary\steamapps\common\Lethal Company\Lethal Company_Data\Managed\Assembly-CSharp.dll</HintPath>
-      </Reference>
       <Reference Include="LethalCompanyInputUtils">
         <HintPath>..\Dependency Storage\LethalCompanyInputUtils.dll</HintPath>
-      </Reference>
-      <Reference Include="Unity.InputSystem">
-        <HintPath>D:\SteamLibrary\steamapps\common\Lethal Company\Lethal Company_Data\Managed\Unity.InputSystem.dll</HintPath>
-      </Reference>
-      <Reference Include="Unity.Netcode.Runtime">
-        <HintPath>D:\SteamLibrary\steamapps\common\Lethal Company\Lethal Company_Data\Managed\Unity.Netcode.Runtime.dll</HintPath>
-      </Reference>
-      <Reference Include="Unity.RenderPipelines.HighDefinition.Runtime">
-        <HintPath>D:\SteamLibrary\steamapps\common\Lethal Company\Lethal Company_Data\Managed\Unity.RenderPipelines.HighDefinition.Runtime.dll</HintPath>
-      </Reference>
-      <Reference Include="Unity.TextMeshPro">
-        <HintPath>D:\SteamLibrary\steamapps\common\Lethal Company\Lethal Company_Data\Managed\Unity.TextMeshPro.dll</HintPath>
       </Reference>
     </ItemGroup>
   
     <Target Name="NetcodePatch" AfterTargets="PostBuildEvent">
-      <Exec Command="netcode-patch &quot;$(TargetPath)&quot; @(ReferencePathWithRefAssemblies->'&quot;%(Identity)&quot;', ' ')"/>
+      <Exec Command="netcode-patch &quot;$(TargetPath)&quot; @(ReferencePathWithRefAssemblies->'&quot;%(Identity)&quot;', ' ')" />
     </Target>
 </Project>
