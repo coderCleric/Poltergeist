@@ -11,6 +11,7 @@ namespace Poltergeist.GhostInteractibles.Specific
     {
         private EnemyAI enemy;
         private float lastInteractTime = 0;
+        private int consecutiveHits = 0;
         private EnemyDetector[] detectors;
 
         /**
@@ -38,7 +39,7 @@ namespace Poltergeist.GhostInteractibles.Specific
          */
         public override float GetCost()
         {
-            return 20;
+            return Poltergeist.Config.PesterCost.Value;
         }
 
         /**
@@ -54,11 +55,18 @@ namespace Poltergeist.GhostInteractibles.Specific
             if (enemy.isEnemyDead)
                 return 0;
 
+            //Handle the consecutive hit mechanic
+            if (lastInteractTime + Poltergeist.Config.TimeForAggro.Value < Time.time)
+                consecutiveHits = 1;
+            else
+                consecutiveHits++;
+
             //Send the interaction out to the other players
-            if (lastInteractTime + 3f < Time.time)
+            if (consecutiveHits < Poltergeist.Config.HitsForAggro.Value)
                 InteractServerRpc(-1);
             else
             {
+                Poltergeist.DebugLog("Pestered " + enemy.gameObject.name + " into targeting a player");
                 PlayerControllerB accusedPlayer = enemy.GetClosestPlayer(true, true, true);
                 if(accusedPlayer != null)
                     InteractServerRpc((int)accusedPlayer.playerClientId);
@@ -86,15 +94,16 @@ namespace Poltergeist.GhostInteractibles.Specific
         {
             string retStr = "";
 
+            //Display message for the enemy being dead
+            if (enemy.isEnemyDead)
+                return "Enemy is dead";
+
             //Display message for not having enough power
             if (SpectatorCamController.instance.Power < GetCost())
                 return "Not Enough Power (" + GetCost().ToString("F0") + ")";
 
             //Set up the actual text
-            if (!enemy.isEnemyDead)
-                retStr = "Pester enemy : [E]";
-            else
-                return "Enemy is dead";
+            retStr = "Pester enemy : [E]";
 
             return retStr + " (" + GetCost().ToString("F0") + ")";
         }

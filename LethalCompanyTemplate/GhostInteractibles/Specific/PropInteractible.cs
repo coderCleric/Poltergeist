@@ -23,7 +23,7 @@ namespace Poltergeist.GhostInteractibles.Specific
          */
         public override float GetCost()
         {
-            return 5;
+            return Poltergeist.Config.NoisyItemCost.Value;
         }
 
         /**

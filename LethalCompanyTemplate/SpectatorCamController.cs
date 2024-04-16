@@ -22,7 +22,6 @@ namespace Poltergeist
         private Light light = null;
 
         private float maxPower = 100;
-        private float powerRecover = 5;
         private float power = 0;
         public float Power => power;
 
@@ -323,7 +322,7 @@ namespace Poltergeist
             }
 
             //Calculate the max power based on # of connected players dead
-            float connected = -1; //Negative 1 because we want max power at 1 living player
+            float connected = -1 * Poltergeist.Config.AliveForMax.Value; //Negative because we want max power at AliveForMax living players
             float dead = 0;
             foreach(PlayerControllerB player in StartOfRound.Instance.allPlayerScripts) //First, count them
             {
@@ -342,7 +341,7 @@ namespace Poltergeist
                 maxPower = (dead / connected) * Poltergeist.Config.MaxPower.Value;
 
             //If dead, player should always be gaining power
-            power = Mathf.Min(maxPower, power + (powerRecover * Time.deltaTime));
+            power = Mathf.Min(maxPower, power + (Poltergeist.Config.PowerRegen.Value * Time.deltaTime));
 
             //If the player is in the menu (or we're in vanilla mode), don't do update stuff
             if (clientPlayer.isTypingChat || clientPlayer.quickMenuManager.isMenuOpen || Patches.vanillaMode)

@@ -27,17 +27,17 @@ namespace Poltergeist.GhostInteractibles.Specific
             switch(costType)
             {
                 case CostType.DOOR:
-                    return 10;
+                    return Poltergeist.Config.DoorCost.Value;
                 case CostType.VALVE:
-                    return 20;
+                    return Poltergeist.Config.ValveCost.Value;
                 case CostType.SHIPDOOR:
-                    return 30;
+                    return Poltergeist.Config.ShipDoorCost.Value;
                 case CostType.COMPANYBELL:
-                    return 15;
+                    return Poltergeist.Config.CompanyBellCost.Value;
                 case CostType.HANGARDOOR:
-                    return 50;
+                    return Poltergeist.Config.BigDoorCost.Value;
                 default: //Should only be misc
-                    return 5;
+                    return Poltergeist.Config.MiscCost.Value;
             }
         }
 

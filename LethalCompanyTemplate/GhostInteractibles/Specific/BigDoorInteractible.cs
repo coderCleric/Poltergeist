@@ -26,7 +26,7 @@ namespace Poltergeist.GhostInteractibles.Specific
          */
         public override float GetCost()
         {
-            return 50;
+            return Poltergeist.Config.BigDoorCost.Value;
         }
 
         /**
