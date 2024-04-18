@@ -19,6 +19,9 @@ namespace Poltergeist
         [InputAction("<Mouse>/scroll/down", Name = "Decelerate")]
         public InputAction DecelerateButton { get; private set; }
 
+        [InputAction("<Keyboard>/e", Name = "Ghost Interact")]
+        public InputAction InteractButton { get; private set; }
+
         [InputAction("<Keyboard>/q", Name = "Toggle Spectate Mode")]
         public InputAction ToggleButton { get; private set; }
 

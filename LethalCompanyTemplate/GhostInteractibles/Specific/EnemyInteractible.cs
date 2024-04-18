@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Text;
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 namespace Poltergeist.GhostInteractibles.Specific
 {
@@ -103,7 +104,7 @@ namespace Poltergeist.GhostInteractibles.Specific
                 return "Not Enough Power (" + GetCost().ToString("F0") + ")";
 
             //Set up the actual text
-            retStr = "Pester enemy : [E]";
+            retStr = "Pester enemy : [" + PoltergeistCustomInputs.instance.InteractButton.GetBindingDisplayString() + "]";
 
             return retStr + " (" + GetCost().ToString("F0") + ")";
         }

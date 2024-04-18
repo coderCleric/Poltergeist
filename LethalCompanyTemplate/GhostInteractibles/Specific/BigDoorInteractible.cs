@@ -4,6 +4,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using static MonoMod.Cil.RuntimeILReferenceBag.FastDelegateInvokers;
 
 namespace Poltergeist.GhostInteractibles.Specific
@@ -65,7 +66,7 @@ namespace Poltergeist.GhostInteractibles.Specific
             //Why is this private, let me see!
             bool powered = (bool)typeof(TerminalAccessibleObject).GetField("isPoweredOn", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(bigDoorObj);
             if (powered)
-                retStr = "Toggle door : [E]";
+                retStr = "Toggle door : [" + PoltergeistCustomInputs.instance.InteractButton.GetBindingDisplayString() + "]";
             else
                 return "Door is unpowered";
 

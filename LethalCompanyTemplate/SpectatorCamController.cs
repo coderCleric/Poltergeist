@@ -291,7 +291,7 @@ namespace Poltergeist
         private void OnEnable()
         {
             PoltergeistCustomInputs.instance.SwitchLightButton.performed += SwitchLight;
-            IngamePlayerSettings.Instance.playerInput.actions.FindAction("Interact").performed += DoInteract;
+            PoltergeistCustomInputs.instance.InteractButton.performed += DoInteract;
             PoltergeistCustomInputs.instance.AccelerateButton.performed += Accelerate;
             PoltergeistCustomInputs.instance.DecelerateButton.performed += Decelerate;
             PoltergeistCustomInputs.instance.ToggleButton.performed += SwitchModes;
@@ -301,7 +301,7 @@ namespace Poltergeist
         private void OnDisable()
         {
             PoltergeistCustomInputs.instance.SwitchLightButton.performed -= SwitchLight;
-            IngamePlayerSettings.Instance.playerInput.actions.FindAction("Interact").performed -= DoInteract;
+            PoltergeistCustomInputs.instance.InteractButton.performed -= DoInteract;
             PoltergeistCustomInputs.instance.AccelerateButton.performed -= Accelerate;
             PoltergeistCustomInputs.instance.DecelerateButton.performed -= Decelerate;
             PoltergeistCustomInputs.instance.ToggleButton.performed -= SwitchModes;

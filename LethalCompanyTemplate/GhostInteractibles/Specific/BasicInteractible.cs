@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 namespace Poltergeist.GhostInteractibles.Specific
 {
@@ -77,7 +78,7 @@ namespace Poltergeist.GhostInteractibles.Specific
             else
             {
                 StringBuilder builder = new StringBuilder(trigger.hoverTip);
-                retStr = builder.Replace("[LMB]", "[E]").ToString();
+                retStr = builder.Replace("[LMB]", "[" + PoltergeistCustomInputs.instance.InteractButton.GetBindingDisplayString() + "]").ToString();
             }
 
             return retStr + " (" + GetCost().ToString("F0") + ")";
