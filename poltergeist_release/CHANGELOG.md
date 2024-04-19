@@ -1,3 +1,19 @@
+# 1.0.0
+- Started using CSync to allow creation of many more options, such as:
+  - Max power.
+  - Power regen.
+  - Alive for max power.
+  - Pester aggro timespan.
+  - Aggro hit requirement.
+  - A bunch of cost settings.
+- Add a bunch more interactions, such as:
+  - Stopping steam valves.
+  - Opening/closing ship doors.
+  - Ringing the company bell.
+  - Opening/closing Artifice hangar doors.
+  - Pestering enemies.
+- Made the ghost girl visible to dead players.
+- Made the interact key rebindable.
 # 0.3.1
 - Added controls for vertical movement.
 - Added a button to stop regular camera movement from changing altitude.

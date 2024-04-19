@@ -1,7 +1,7 @@
 {
   "name": "Poltergeist",
-  "version_number": "0.3.1",
+  "version_number": "1.0.0",
   "website_url": "https://github.com/coderCleric/Poltergeist",
-  "description": "Lets players freecam on death as a ghost and mess with certain objects.",
-  "dependencies": [ "BepInEx-BepInExPack-5.4.2100", "Rune580-LethalCompany_InputUtils-0.6.3" ]
+  "description": "Lets players freecam on death as a ghost and do various interactions.",
+  "dependencies": [ "BepInEx-BepInExPack-5.4.2100", "Rune580-LethalCompany_InputUtils-0.6.3", "Sigurd-CSync-4.1.0" ]
 }
