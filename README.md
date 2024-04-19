@@ -5,7 +5,7 @@ Adds things for dead players to do by letting them fly around in a freecam and p
 - Instead of spectating normally, fly around in a freecam to watch what your friends are doing, or just to explore the map.
 - Teleport to players (or what's left of them) with the press of a button.
 - Toggle a global light to help you see in dark areas when dead.
-- Interact with certain types of objects. Mess with your friends, or try to communicate with them from *beyond the veil!*.
+- Perform various interactions. Mess with your friends, or try to communicate with them from *beyond the veil!*.
 
 # Controls
 - **Movement**: Same as how you move your living character, except that moving forwards and backwards can also change your elevation.
