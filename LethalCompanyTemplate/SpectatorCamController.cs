@@ -51,6 +51,7 @@ namespace Poltergeist
             light.type = LightType.Directional;
             light.shadows = LightShadows.None;
             light.intensity = Poltergeist.Config.LightIntensity.Value;
+            lightObj.hideFlags = HideFlags.DontSave;
 
             //Grab the camera and change the mask to include invisible enemies
             cam = GetComponent<Camera>();
@@ -306,6 +307,15 @@ namespace Poltergeist
             PoltergeistCustomInputs.instance.DecelerateButton.performed -= Decelerate;
             PoltergeistCustomInputs.instance.ToggleButton.performed -= SwitchModes;
             PoltergeistCustomInputs.instance.LockKey.performed -= LockAltitude;
+        }
+
+        /**
+         * When destroyed, need to manually destroy the ghost light
+         */
+        private void OnDestroy()
+        {
+            if(light != null)
+                DestroyImmediate(light.gameObject);
         }
 
         /**

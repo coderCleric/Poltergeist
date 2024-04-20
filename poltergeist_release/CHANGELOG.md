@@ -1,3 +1,5 @@
+# 1.0.1
+- Resolved an issue where CullFactory would cause the ghost light to not work inside.
 # 1.0.0
 - Started using CSync to allow creation of many more options, such as:
   - Max power.
