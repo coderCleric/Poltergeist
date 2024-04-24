@@ -41,6 +41,13 @@ namespace Poltergeist
          */
         private void Awake()
         {
+            //If the instance already exists, abort!
+            if(instance != null)
+            {
+                Destroy(this);
+                return;
+            }
+
             instance = this;
 
             //Set up the light
@@ -390,10 +397,29 @@ namespace Poltergeist
                 curMoveSpeed *= 5;
             Vector3 rightMove = transform.right * moveInput.x * curMoveSpeed * Time.deltaTime;
             Vector3 forwardMove;
+
+            //Normally, just move forward
             if (!altitudeLock)
+            {
                 forwardMove = transform.forward * moveInput.y * curMoveSpeed * Time.deltaTime;
-            else {
-                forwardMove = transform.forward;
+            }
+
+            //If their altitude is locked, need special logic
+            else
+            {
+                //If they're facing straight down, actually take the up vector
+                if (transform.forward.y < -0.99)
+                    forwardMove = transform.up;
+
+                //If they're facing straight up, actually take the down vector
+                else if(transform.forward.y > 0.99)
+                    forwardMove = transform.up * -1;
+
+                //Otherwise, take the forward vector
+                else
+                    forwardMove = transform.forward;
+
+                //Trim the y component to prevent vertical motion
                 forwardMove.y = 0;
                 forwardMove = forwardMove.normalized;
                 forwardMove = forwardMove * moveInput.y * curMoveSpeed * Time.deltaTime;

@@ -13,7 +13,7 @@ namespace Poltergeist
         //Plugin info
         public const string MOD_GUID = "coderCleric.Poltergeist";
         public const string MOD_NAME = "Poltergeist";
-        public const string MOD_VERSION = "1.0.0";
+        public const string MOD_VERSION = "1.0.2";
 
         //Network prefabs
         public static GameObject propInteractibleObject;
@@ -46,7 +46,7 @@ namespace Poltergeist
             NetcodePatcher();
 
             // All done!
-            Logger.LogInfo($"Plugin {MOD_GUID} is loaded!");
+            Logger.LogInfo($"Plugin {MOD_GUID} v{MOD_VERSION} is loaded!");
         }
 
         /**
