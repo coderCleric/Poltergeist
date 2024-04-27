@@ -20,6 +20,7 @@ namespace Poltergeist
         public static bool vanillaMode = false;
         public static GrabbableObject ignoreObj = null;
         public static bool shouldGameOver = false;
+        public static bool camControllerActive = false;
 
         /////////////////////////////// Misc ///////////////////////////////
         /**
@@ -32,10 +33,49 @@ namespace Poltergeist
             return playerScript != null;
         }
 
+        /**
+         * Transpile to make ship monitors viewable as a ghost
+         */
+        [HarmonyTranspiler]
+        [HarmonyPatch(typeof(ManualCameraRenderer), "MeetsCameraEnabledConditions")]
+        public static IEnumerable<CodeInstruction> MonitorDontCheckPlayerLocation(IEnumerable<CodeInstruction> instructions, ILGenerator il)
+        {
+            //First, load the list of instructions
+            List<CodeInstruction> code = new List<CodeInstruction>(instructions);
+
+            //Find where we want to be inserting
+            int insertIndex = -1;
+            Label afterLabel = il.DefineLabel();
+            for(int i = 0; i < code.Count; i++)
+            {
+                //Look for the "in hangar" check
+                if (code[i].opcode == OpCodes.Ldfld && (FieldInfo)code[i].operand == AccessTools.Field(typeof(PlayerControllerB), nameof(PlayerControllerB.isInHangarShipRoom)))
+                {
+                    Poltergeist.DebugLog("Found expected structure for monitor transpiler!");
+                    insertIndex = i - 1; //Actual insert is 1 line before
+                    code[i + 2].labels.Add(afterLabel);
+                    break;
+                }
+            }
+
+            //Make the new code to inject
+            List<CodeInstruction> insertion = new List<CodeInstruction>();
+            insertion.Add(new CodeInstruction(OpCodes.Ldsfld, AccessTools.Field(typeof(Patches), nameof(Patches.camControllerActive))));
+            insertion.Add(new CodeInstruction(OpCodes.Brtrue_S, afterLabel));
+
+            //Insert the code
+            if (insertIndex != -1)
+            {
+                code.InsertRange(insertIndex, insertion);
+            }
+
+            return code;
+        }
+
         /////////////////////////////// Needed to suppress certain base-game systems ///////////////////////////////
         /**
-         * Prevents certain manipulations of the spectate camera that would interfere with the controls
-         */
+            * Prevents certain manipulations of the spectate camera that would interfere with the controls
+            */
         [HarmonyPrefix]
         [HarmonyPatch(typeof(StartOfRound), nameof(StartOfRound.SetSpectateCameraToGameOverMode))]
         public static bool PreventSpectateFollow(bool enableGameOver)

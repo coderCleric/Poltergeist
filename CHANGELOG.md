@@ -1,3 +1,7 @@
+# 1.0.2
+- Fixed an issue where looking straight up/down with the altitude locked would prevent movement forward.
+- Made it so duplicate camera controllers will destroy themselves (fixed a conflict with suitsTerminal).
+- Made the radar screen more consistent as a ghost.
 # 1.0.1
 - Resolved an issue where CullFactory would cause the ghost light to not work inside.
 # 1.0.0

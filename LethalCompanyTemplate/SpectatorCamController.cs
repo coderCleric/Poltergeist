@@ -83,6 +83,7 @@ namespace Poltergeist
                     Transform oldCam = StartOfRound.Instance.activeCamera.transform;
                     transform.position = oldCam.position;
                     transform.rotation = oldCam.rotation;
+                    Patches.camControllerActive = true;
                 }
 
                 //If we don't have them, need to grab certain objects
@@ -115,6 +116,7 @@ namespace Poltergeist
                 enabled = false;
                 light.enabled = false;
                 Patches.vanillaMode = Poltergeist.Config.DefaultToVanilla.Value;
+                Patches.camControllerActive = false;
                 altitudeLock = false;
 
                 //If these aren't null, we moved them and need to put them back
@@ -271,12 +273,14 @@ namespace Poltergeist
                 currentGhostInteractible = null;
                 clientPlayer.cursorTip.text = "";
                 StartOfRound.Instance.SetSpectateCameraToGameOverMode(Patches.shouldGameOver, clientPlayer);
+                Patches.camControllerActive = false;
             }
 
             //Handle switching to modded
             else
             {
                 transform.parent = null;
+                Patches.camControllerActive = true;
             }
         }
 
