@@ -27,6 +27,7 @@ namespace Poltergeist
 
         private PlayerControllerB clientPlayer = null;
         public PlayerControllerB ClientPlayer => clientPlayer;
+        public GhostHead head = null;
         private IGhostInteractible currentGhostInteractible = null;
         private Transform hintPanelRoot = null;
         private Transform hintPanelOrigParent = null;

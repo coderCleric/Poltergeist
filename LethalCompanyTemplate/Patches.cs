@@ -347,10 +347,33 @@ namespace Poltergeist
             Poltergeist.propInteractibleObject.AddComponent<PropInteractible>();
             Poltergeist.enemyInteractibleObject = Poltergeist.poltergeistAssetBundle.LoadAsset<GameObject>("Assets/Prefabs/EnemyInteractible.prefab");
             Poltergeist.enemyInteractibleObject.AddComponent<EnemyInteractible>();
+            Poltergeist.ghostHeadObject = Poltergeist.poltergeistAssetBundle.LoadAsset<GameObject>("Assets/Prefabs/ghosthead.prefab");
+            Poltergeist.ghostHeadObject.AddComponent<GhostHead>();
 
             //Register the prefabs
             NetworkManager.Singleton.AddNetworkPrefab(Poltergeist.propInteractibleObject);
             NetworkManager.Singleton.AddNetworkPrefab(Poltergeist.enemyInteractibleObject);
+            NetworkManager.Singleton.AddNetworkPrefab(Poltergeist.ghostHeadObject);
+        }
+
+        /////////////////////////////// Needed for the ghost heads ///////////////////////////////
+        /**
+         * Make all of the player heads
+         */
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(PlayerControllerB), "Awake")]
+        public static void MakeGhostHeads(PlayerControllerB __instance)
+        {
+            if (NetworkManager.Singleton.IsHost || NetworkManager.Singleton.IsServer) //Only do this if we're the server
+            {
+                //Make the head and add it to the mapping
+                GameObject madeHead = GameObject.Instantiate(Poltergeist.ghostHeadObject);
+                GhostHead headScript = madeHead.GetComponent<GhostHead>();
+                madeHead.transform.position = __instance.playersManager.notSpawnedPosition.position;
+                GhostHead.headMapping.Add(__instance, headScript);
+                madeHead.GetComponent<NetworkObject>().Spawn();
+                Poltergeist.DebugLog("Making ghost head");
+            }
         }
     }
 }
