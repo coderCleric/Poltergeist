@@ -97,24 +97,6 @@ namespace Poltergeist
                 __instance.playersManager.overrideSpectateCamera = true;
         }
 
-        /**
-         * If this is the object we're ignoring, ignore it
-         * 
-         * __instance The calling grabbable
-         */
-        [HarmonyPrefix]
-        [HarmonyPatch(typeof(GrabbableObject), "ActivateItemClientRpc")]
-        public static bool SuppressDuplicateHonk(GrabbableObject __instance) { 
-            if(__instance == ignoreObj)
-            {
-                ignoreObj = null;
-                return __instance.NetworkManager.IsServer || __instance.NetworkManager.IsHost;
-            }
-            return true;
-        }
-
-
-
 
         /////////////////////////////// These are needed to manage the state of the camera controller ///////////////////////////////
         /**
@@ -348,6 +330,7 @@ namespace Poltergeist
             Poltergeist.enemyInteractibleObject = Poltergeist.poltergeistAssetBundle.LoadAsset<GameObject>("Assets/Prefabs/EnemyInteractible.prefab");
             Poltergeist.enemyInteractibleObject.AddComponent<EnemyInteractible>();
             Poltergeist.ghostHeadObject = Poltergeist.poltergeistAssetBundle.LoadAsset<GameObject>("Assets/Prefabs/ghosthead.prefab");
+            Poltergeist.ghostHeadObject.AddComponent<HeadTransform>();
             Poltergeist.ghostHeadObject.AddComponent<GhostHead>();
 
             //Register the prefabs
@@ -373,6 +356,29 @@ namespace Poltergeist
                 GhostHead.headMapping.Add(__instance, headScript);
                 madeHead.GetComponent<NetworkObject>().Spawn();
                 Poltergeist.DebugLog("Making ghost head");
+
+                //Check if this is the host head
+                headScript.isHostHead = __instance.gameObject == __instance.playersManager.allPlayerObjects[0];
+            }
+        }
+
+        /**
+         * When a new player joins, give them a head
+         */
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(StartOfRound), "OnClientConnect")]
+        public static void AssignPlayerHead(StartOfRound __instance, ulong clientId)
+        {
+            if (NetworkManager.Singleton.IsHost || NetworkManager.Singleton.IsServer) //Only do this if we're the server
+            {
+                //Figure out the gameobject number for the connecting player
+                int objectIndex = __instance.ClientPlayerList[clientId];
+
+                //Figure out the correct head for that player
+                GhostHead head = GhostHead.headMapping[__instance.allPlayerScripts[objectIndex]];
+
+                //Change the ownership of the head
+                head.GetComponent<NetworkObject>().ChangeOwnership(clientId);
             }
         }
     }

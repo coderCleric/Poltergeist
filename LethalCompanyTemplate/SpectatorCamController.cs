@@ -77,6 +77,9 @@ namespace Poltergeist
             {
                 enabled = true;
 
+                //Activate the head
+                head.isActive = true;
+
                 //Move the camera
                 if (!Patches.vanillaMode)
                 {
@@ -119,6 +122,13 @@ namespace Poltergeist
                 Patches.vanillaMode = Poltergeist.Config.DefaultToVanilla.Value;
                 Patches.camControllerActive = false;
                 altitudeLock = false;
+
+                //Deactivate the head
+                if (head != null)
+                {
+                    head.isActive = false;
+                    head.transform.position = StartOfRound.Instance.notSpawnedPosition.position;
+                }
 
                 //If these aren't null, we moved them and need to put them back
                 if (hintPanelRoot != null)
