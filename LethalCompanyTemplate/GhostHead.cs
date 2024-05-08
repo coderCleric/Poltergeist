@@ -40,5 +40,13 @@ namespace Poltergeist
                 transform.rotation = SpectatorCamController.instance.transform.rotation;
             }
         }
+
+        /**
+         * Deactivate the given head after client dc's
+         */
+        public void Deactivate()
+        {
+            transform.position = StartOfRound.Instance.notSpawnedPosition.position;
+        }
     }
 }

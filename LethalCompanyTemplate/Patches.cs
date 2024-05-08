@@ -355,7 +355,6 @@ namespace Poltergeist
                 madeHead.transform.position = __instance.playersManager.notSpawnedPosition.position;
                 GhostHead.headMapping.Add(__instance, headScript);
                 madeHead.GetComponent<NetworkObject>().Spawn();
-                Poltergeist.DebugLog("Making ghost head");
 
                 //Check if this is the host head
                 headScript.isHostHead = __instance.gameObject == __instance.playersManager.allPlayerObjects[0];
@@ -379,6 +378,34 @@ namespace Poltergeist
 
                 //Change the ownership of the head
                 head.GetComponent<NetworkObject>().ChangeOwnership(clientId);
+            }
+        }
+
+        /**
+         * When we dc, make sure we clear the dict
+         */
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(GameNetworkManager), "Disconnect")]
+        public static void ClearHeadDict()
+        {
+            GhostHead.headMapping.Clear();
+            Poltergeist.DebugLog("Cleared dict after local dc");
+        }
+
+        /**
+         * When another player dc's, make sure we remove them from the dict
+         */
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(StartOfRound), "OnPlayerDC")]
+        public static void HandleHeadOnDC(StartOfRound __instance, int playerObjectNumber)
+        {
+            if (NetworkManager.Singleton.IsHost || NetworkManager.Singleton.IsServer) //Only do this if we're the server
+            {
+                PlayerControllerB playerController = __instance.allPlayerScripts[playerObjectNumber];
+                GhostHead head = GhostHead.headMapping[playerController];
+
+                Poltergeist.DebugLog("Moving head after client dc: " + head.IsOwner);
+                head.Deactivate();
             }
         }
     }
