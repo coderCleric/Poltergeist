@@ -20,12 +20,17 @@ namespace Poltergeist
         private Light light = null;
         private Renderer renderer = null;
 
-        //Helps the animation
-        private static float[] switchtimes = { 0, 1f, 1.4f, 1.8f, 2.2f, 3 };
+        //Poor man's animation curve
+        private const int KEYFRAMES = 6;
+        private static float[] keyTimes = { 0, 1f, 1.4f, 1.8f, 2.2f, 3 };
+        private static float[] visibilities = { 0, 1, 1, 0.5f, 1f, 0 };
+        private int keyIndex = 999;
         private float startTime = 0;
-        private const int SWITCHLEN = 6; 
-        private int switchIndex = 999;
-        private bool visibleToPlayers = false;
+
+        //Bounds for the animation
+        private Material matInstance = null;
+        private float maxOpacity = 1;
+        private float maxIntensity = 1;
 
         /**
          * On awake, grab the renderer and light
@@ -34,6 +39,9 @@ namespace Poltergeist
         {
             light = GetComponentInChildren<Light>();
             renderer = GetComponentInChildren<Renderer>();
+            matInstance = renderer.material;
+            maxOpacity = matInstance.color.a;
+            maxIntensity = light.intensity;
         }
 
         /**
@@ -51,23 +59,34 @@ namespace Poltergeist
             }
 
             //Check the status of the flicker animation
-            if(switchIndex < SWITCHLEN)
+            if(keyIndex < KEYFRAMES)
             {
-                //Check if the current step is passed
-                if(Time.time >= startTime + switchtimes[switchIndex])
+                //Check if we need to move to the next frame
+                if (Time.time >= startTime + keyTimes[keyIndex])
+                    keyIndex++;
+
+                //If we're at the end, disable the light and make us invisible to the living
+                if(keyIndex ==  KEYFRAMES)
                 {
-                    switchIndex++;
-                    visibleToPlayers = !visibleToPlayers;
-                    if(visibleToPlayers) //Make it visible to players
-                    {
-                        light.enabled = true;
-                        renderer.gameObject.layer = 0;
-                    }
-                    else //Make it invisible
-                    {
-                        light.enabled = false;
-                        renderer.gameObject.layer = 23;
-                    }
+                    light.enabled = false;
+                    renderer.gameObject.layer = 23;
+                    light.intensity = maxIntensity;
+                    matInstance.color = new Color(matInstance.color.r, matInstance.color.g, matInstance.color.b, maxOpacity);
+                }
+
+                //Otherwise, actually do the animation
+                else
+                {
+                    //Determine where we are in this keyframe
+                    float duration = keyTimes[keyIndex] - keyTimes[keyIndex - 1];
+                    float timeInFrame = Time.time - (startTime + keyTimes[keyIndex - 1]);
+                    float progress = timeInFrame / duration;
+
+                    //Interpolate
+                    Color matCol = matInstance.color;
+                    matInstance.color = new Color(matCol.r, matCol.g, matCol.b, 
+                        Mathf.Lerp(visibilities[keyIndex - 1] * maxOpacity, visibilities[keyIndex] * maxOpacity, progress));
+                    light.intensity = Mathf.Lerp(visibilities[keyIndex - 1] * maxIntensity, visibilities[keyIndex] * maxIntensity, progress);
                 }
             }
         }
@@ -104,12 +123,14 @@ namespace Poltergeist
         public bool PlayFlickerAnim()
         {
             //Early return if already playing
-            if (switchIndex < SWITCHLEN)
+            if (keyIndex < KEYFRAMES)
                 return false;
 
-            switchIndex = 0;
+            //Start the animation
+            keyIndex = 1;
             startTime = Time.time;
-            visibleToPlayers = false;
+            light.enabled = true;
+            renderer.gameObject.layer = 0;
 
             return true;
         }
