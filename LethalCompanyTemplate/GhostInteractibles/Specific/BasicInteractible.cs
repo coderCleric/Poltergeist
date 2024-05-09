@@ -78,7 +78,7 @@ namespace Poltergeist.GhostInteractibles.Specific
             else
             {
                 StringBuilder builder = new StringBuilder(trigger.hoverTip);
-                retStr = builder.Replace("[LMB]", "[" + PoltergeistCustomInputs.instance.InteractButton.GetBindingDisplayString() + "]").ToString();
+                retStr = builder.Replace("[LMB]", "[" + PoltergeistCustomInputs.GetInteractString() + "]").ToString();
             }
 
             return retStr + " (" + GetCost().ToString("F0") + ")";

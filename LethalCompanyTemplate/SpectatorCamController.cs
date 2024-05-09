@@ -19,7 +19,7 @@ namespace Poltergeist
 
         private Camera cam;
         private float camMoveSpeed = 5f;
-        private Light light = null;
+        private Light[] lights = new Light[4];
 
         private float maxPower = 100;
         private float power = 0;
@@ -51,15 +51,39 @@ namespace Poltergeist
 
             instance = this;
 
-            //Set up the light
-            GameObject lightObj = new GameObject("GhostLight");
-            light = lightObj.AddComponent<Light>();
-            lightObj.AddComponent<HDAdditionalLightData>();
-            lightObj.transform.eulerAngles = new Vector3 (90f, 0f, 0f);
-            light.type = LightType.Directional;
-            light.shadows = LightShadows.None;
-            light.intensity = Poltergeist.Config.LightIntensity.Value;
-            lightObj.hideFlags = HideFlags.DontSave;
+            //Set up the lights
+            for (int i = 0; i < 4; i++)
+            {
+                //Determine the direction it should face
+                Vector3 dir = new Vector3();
+                switch(i)
+                {
+                    case 0:
+                        dir = new Vector3(20f, 0f, 0f); 
+                        break;
+                    case 1:
+                        dir = new Vector3(160f, 0f, 0f); 
+                        break;
+                    case 2:
+                        dir = new Vector3(20f, 90f, 0f); 
+                        break;
+                    case 3:
+                        dir = new Vector3(20f, -90f, 0f); 
+                        break;
+                }
+
+                //Actually make everything
+                GameObject lightObj = new GameObject("GhostLight" + i);
+                Light light = lightObj.AddComponent<Light>();
+                HDAdditionalLightData lightData = lightObj.AddComponent<HDAdditionalLightData>();
+                lightObj.transform.eulerAngles = dir;
+                light.type = LightType.Directional;
+                light.shadows = LightShadows.None;
+                light.intensity = Poltergeist.Config.LightIntensity.Value;
+                lightObj.hideFlags = HideFlags.DontSave;
+                lightData.affectsVolumetric = false;
+                lights[i] = light;
+            }
 
             //Grab the camera and change the mask to include invisible enemies
             cam = GetComponent<Camera>();
@@ -118,7 +142,8 @@ namespace Poltergeist
             {
                 //Basics
                 enabled = false;
-                light.enabled = false;
+                foreach(Light l in lights)
+                    l.enabled = false;
                 Patches.vanillaMode = Poltergeist.Config.DefaultToVanilla.Value;
                 Patches.camControllerActive = false;
                 altitudeLock = false;
@@ -155,7 +180,8 @@ namespace Poltergeist
             //If in the right conditions, switch the light
             if (clientPlayer.isPlayerDead && !clientPlayer.isTypingChat && !clientPlayer.quickMenuManager.isMenuOpen)
             {
-                light.enabled = !light.enabled;
+                foreach(Light l in lights)
+                    l.enabled = !l.enabled;
             }
         }
 
@@ -279,7 +305,8 @@ namespace Poltergeist
             //Handle switching to vanilla
             if(Patches.vanillaMode)
             {
-                light.enabled = false;
+                foreach (Light l in lights)
+                    l.enabled = false;
                 clientPlayer.spectatedPlayerScript = null;
                 currentGhostInteractible = null;
                 clientPlayer.cursorTip.text = "";
@@ -309,6 +336,19 @@ namespace Poltergeist
         }
 
         /**
+         * Manifest the player's head in the living world
+         */
+        private void ManifestHead(InputAction.CallbackContext context)
+        {
+            //Only do it if performing and not in vanilla mode
+            if (!context.performed || Patches.vanillaMode)
+                return;
+
+            //Call it on the head
+            head.ManifestServerRpc();
+        }
+
+        /**
          * Add and remove the different control listeners as needed
          */
         private void OnEnable()
@@ -319,6 +359,7 @@ namespace Poltergeist
             PoltergeistCustomInputs.instance.DecelerateButton.performed += Decelerate;
             PoltergeistCustomInputs.instance.ToggleButton.performed += SwitchModes;
             PoltergeistCustomInputs.instance.LockKey.performed += LockAltitude;
+            PoltergeistCustomInputs.instance.ManifestKey.performed += ManifestHead;
 
         }
         private void OnDisable()
@@ -329,6 +370,7 @@ namespace Poltergeist
             PoltergeistCustomInputs.instance.DecelerateButton.performed -= Decelerate;
             PoltergeistCustomInputs.instance.ToggleButton.performed -= SwitchModes;
             PoltergeistCustomInputs.instance.LockKey.performed -= LockAltitude;
+            PoltergeistCustomInputs.instance.ManifestKey.performed -= ManifestHead;
         }
 
         /**
@@ -336,8 +378,11 @@ namespace Poltergeist
          */
         private void OnDestroy()
         {
-            if(light != null)
-                DestroyImmediate(light.gameObject);
+            foreach (Light l in lights)
+            {
+                if (l != null)
+                    DestroyImmediate(l.gameObject);
+            }
         }
 
         /**
@@ -504,6 +549,13 @@ namespace Poltergeist
                     currentGhostInteractible = ghostInteractible;
                     clientPlayer.cursorTip.text = ghostInteractible.GetTipText();
                 }
+            }
+
+            //Move the ghost head to the player
+            if(head != null && head.isActive)
+            {
+                head.transform.position = transform.position;
+                head.transform.rotation = transform.rotation;
             }
         }
     }

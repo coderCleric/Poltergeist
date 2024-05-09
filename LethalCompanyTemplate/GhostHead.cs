@@ -16,6 +16,26 @@ namespace Poltergeist
         public bool isActive = false;
         public bool isHostHead = false;
 
+        //Components
+        private Light light = null;
+        private Renderer renderer = null;
+
+        //Helps the animation
+        private static float[] switchtimes = { 0, 1f, 1.4f, 1.8f, 2.2f, 3 };
+        private float startTime = 0;
+        private const int SWITCHLEN = 6; 
+        private int switchIndex = 999;
+        private bool visibleToPlayers = false;
+
+        /**
+         * On awake, grab the renderer and light
+         */
+        private void Awake ()
+        {
+            light = GetComponentInChildren<Light>();
+            renderer = GetComponentInChildren<Renderer>();
+        }
+
         /**
          * Handle the frame-by-frame things
          */
@@ -26,18 +46,29 @@ namespace Poltergeist
             {
                 initialized = true;
                 SpectatorCamController.instance.head = this;
+                renderer.enabled = false;
                 Poltergeist.DebugLog("Assigning head to local client");
             }
 
-            //If we aren't initialized, return
-            if (!initialized)
-                return;
-
-            //If we're active (AKA the player is dead), teleport the ghost head to the spectator cam
-            if(isActive)
+            //Check the status of the flicker animation
+            if(switchIndex < SWITCHLEN)
             {
-                transform.position = SpectatorCamController.instance.transform.position;
-                transform.rotation = SpectatorCamController.instance.transform.rotation;
+                //Check if the current step is passed
+                if(Time.time >= startTime + switchtimes[switchIndex])
+                {
+                    switchIndex++;
+                    visibleToPlayers = !visibleToPlayers;
+                    if(visibleToPlayers) //Make it visible to players
+                    {
+                        light.enabled = true;
+                        renderer.gameObject.layer = 0;
+                    }
+                    else //Make it invisible
+                    {
+                        light.enabled = false;
+                        renderer.gameObject.layer = 23;
+                    }
+                }
             }
         }
 
@@ -47,6 +78,40 @@ namespace Poltergeist
         public void Deactivate()
         {
             transform.position = StartOfRound.Instance.notSpawnedPosition.position;
+        }
+
+        /**
+         * Lets the server message clients about the head flickering
+         */
+        [ClientRpc]
+        public void ManifestClientRpc()
+        {
+            PlayFlickerAnim();
+        }
+
+        /**
+         * Lets the client tell the server to flicker the head
+         */
+        [ServerRpc]
+        public void ManifestServerRpc()
+        {
+            ManifestClientRpc();
+        }
+
+        /**
+         * Plays the flicker animation
+         */
+        public bool PlayFlickerAnim()
+        {
+            //Early return if already playing
+            if (switchIndex < SWITCHLEN)
+                return false;
+
+            switchIndex = 0;
+            startTime = Time.time;
+            visibleToPlayers = false;
+
+            return true;
         }
     }
 }

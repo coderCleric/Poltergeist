@@ -53,8 +53,7 @@ namespace Poltergeist
                 new ConfigDefinition("Client-Side", "LightIntensity"),
                 5f,
                 new ConfigDescription(
-                    "The intensity of the ghost light.\n" +
-                    "(WARNING: This game has a lot of fog, so setting this too high can actually make it harder to see.)",
+                    "The intensity of the ghost light.\n",
                     new AcceptableValueRange<float>(0, float.MaxValue)
                     )
                 );
