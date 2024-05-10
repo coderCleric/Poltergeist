@@ -11,6 +11,8 @@ namespace Poltergeist.GhostInteractibles.Specific
     {
         public CostType costType = CostType.MISC;
         private InteractTrigger trigger;
+        private float interactDuration = 1;
+        private float interactTime = 0;
 
         /**
          * On awake, grab the trigger
@@ -54,7 +56,13 @@ namespace Poltergeist.GhostInteractibles.Specific
             //Check to see if the interactor will let us do it
             if (trigger.interactable && (!trigger.interactCooldown || trigger.currentCooldownValue <= 0))
             {
-                trigger.Interact(playerTransform);
+                //Single-press interactions
+                if (!trigger.holdInteraction)
+                    trigger.Interact(playerTransform);
+
+                //Long press interactions
+                else
+                    interactTime = interactDuration;
                 return GetCost();
             }
 
@@ -82,6 +90,18 @@ namespace Poltergeist.GhostInteractibles.Specific
             }
 
             return retStr + " (" + GetCost().ToString("F0") + ")";
+        }
+
+        /**
+         * Every frame, check if we should keep interacting
+         */
+        private void Update()
+        {
+            interactTime -= Time.deltaTime;
+            if(interactTime > 0 && trigger.holdInteraction)
+            {
+                trigger.HoldInteractNotFilled();
+            }
         }
     }
 }

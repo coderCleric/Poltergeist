@@ -69,7 +69,7 @@ namespace Poltergeist.GhostInteractibles.Specific
                 return "Not Enough Power (" + GetCost().ToString("F0") + ")";
 
             //Set up the actual text
-            retStr = "Make noise : [" + PoltergeistCustomInputs.instance.InteractButton.GetBindingDisplayString() + "]";
+            retStr = "Use item : [" + PoltergeistCustomInputs.GetInteractString() + "]";
 
             return retStr + " (" + GetCost().ToString("F0") + ")";
         }

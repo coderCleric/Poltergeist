@@ -29,6 +29,7 @@ namespace Poltergeist
         [field: DataMember] public SyncedEntry<float> ShipDoorCost { get; private set; }
         [field: DataMember] public SyncedEntry<float> CompanyBellCost { get; private set; }
         [field: DataMember] public SyncedEntry<float> PesterCost { get; private set; }
+        [field: DataMember] public SyncedEntry<float> ManifestCost { get; private set; }
         [field: DataMember] public SyncedEntry<float> MiscCost { get; private set; }
 
         //Cost entries (also synced)
@@ -155,6 +156,14 @@ namespace Poltergeist
                 20f,
                 new ConfigDescription(
                     "The power required to pester enemies.",
+                    new AcceptableValueRange<float>(0, float.MaxValue)
+                    )
+                );
+            ManifestCost = cfg.BindSyncedEntry(
+                new ConfigDefinition("Synced: Costs", "Manifest cost"),
+                80f,
+                new ConfigDescription(
+                    "The power required to manifest in the realm of the living.",
                     new AcceptableValueRange<float>(0, float.MaxValue)
                     )
                 );

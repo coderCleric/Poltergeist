@@ -104,7 +104,7 @@ namespace Poltergeist.GhostInteractibles.Specific
                 return "Not Enough Power (" + GetCost().ToString("F0") + ")";
 
             //Set up the actual text
-            retStr = "Pester enemy : [" + PoltergeistCustomInputs.instance.InteractButton.GetBindingDisplayString() + "]";
+            retStr = "Pester enemy : [" + PoltergeistCustomInputs.GetInteractString() + "]";
 
             return retStr + " (" + GetCost().ToString("F0") + ")";
         }

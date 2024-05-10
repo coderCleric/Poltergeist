@@ -344,8 +344,12 @@ namespace Poltergeist
             if (!context.performed || Patches.vanillaMode)
                 return;
 
-            //Call it on the head
-            head.ManifestServerRpc();
+            //Call it on the head if there's enough power
+            if (power >= Poltergeist.Config.ManifestCost)
+            {
+                head.ManifestServerRpc();
+                power -= Poltergeist.Config.ManifestCost;
+            }
         }
 
         /**

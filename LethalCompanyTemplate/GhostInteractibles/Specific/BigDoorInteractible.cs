@@ -66,7 +66,7 @@ namespace Poltergeist.GhostInteractibles.Specific
             //Why is this private, let me see!
             bool powered = (bool)typeof(TerminalAccessibleObject).GetField("isPoweredOn", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(bigDoorObj);
             if (powered)
-                retStr = "Toggle door : [" + PoltergeistCustomInputs.instance.InteractButton.GetBindingDisplayString() + "]";
+                retStr = "Toggle door : [" + PoltergeistCustomInputs.GetInteractString() + "]";
             else
                 return "Door is unpowered";
 

@@ -201,39 +201,33 @@ namespace Poltergeist
                 interactible.costType = CostType.HANGARDOOR;
                 return;
             }
-        }
 
-        /**
-         * Add ghost interactor objects to airhorns and clownhorns and any other prop
-         * 
-         * @param __instance The calling noise prop
-         */
-        [HarmonyPostfix]
-        [HarmonyPatch(typeof(NoisemakerProp), "Start")]
-        public static void AddInteractorForHorns(NoisemakerProp __instance)
-        {
-            if (NetworkManager.Singleton.IsHost || NetworkManager.Singleton.IsServer)
+            //If it's the loudhorn, add one
+            if(__instance.GetComponent<ShipAlarmCord>() != null)
             {
-                GameObject interactObject = GameObject.Instantiate(Poltergeist.propInteractibleObject, __instance.transform);
-                interactObject.GetComponent<NetworkObject>().Spawn();
-                interactObject.transform.parent = __instance.transform;
+                BasicInteractible interactible = __instance.gameObject.AddComponent<BasicInteractible>();
+                interactible.costType = CostType.MISC;
+                return;
             }
         }
 
         /**
-         * Add ghost interactor objects to boomboxes
+         * Add ghost interactors for all of the different props
          * 
-         * @param __instance The calling boombox
+         * @param __instance The calling prop
          */
         [HarmonyPostfix]
-        [HarmonyPatch(typeof(BoomboxItem), "Start")]
-        public static void AddInteractorForBoombox(BoomboxItem __instance)
+        [HarmonyPatch(typeof(GrabbableObject), "Start")]
+        public static void AddInteractorForProp(GrabbableObject __instance)
         {
             if (NetworkManager.Singleton.IsHost || NetworkManager.Singleton.IsServer)
             {
-                GameObject interactObject = GameObject.Instantiate(Poltergeist.propInteractibleObject, __instance.transform);
-                interactObject.GetComponent<NetworkObject>().Spawn();
-                interactObject.transform.parent = __instance.transform;
+                if (__instance is NoisemakerProp || __instance is BoomboxItem ||
+                    __instance is RadarBoosterItem || __instance is RemoteProp) {
+                    GameObject interactObject = GameObject.Instantiate(Poltergeist.propInteractibleObject, __instance.transform);
+                    interactObject.GetComponent<NetworkObject>().Spawn();
+                    interactObject.transform.parent = __instance.transform;
+                }
             }
         }
 
@@ -282,6 +276,20 @@ namespace Poltergeist
                 GameObject interactObject = GameObject.Instantiate(Poltergeist.enemyInteractibleObject, __instance.transform);
                 interactObject.GetComponent<NetworkObject>().Spawn();
                 interactObject.transform.parent = __instance.transform;
+            }
+        }
+
+        /**
+         * Makes the whoppie cushion detect ghosts
+         */
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(WhoopieCushionTrigger), "OnTriggerEnter")]
+        public static void WhoopiePatch(WhoopieCushionTrigger __instance, Collider other)
+        {
+            if(other.gameObject.GetComponent<GhostHead>() != null)
+            {
+                Poltergeist.DebugLog("Ghost touched whoopie cushion");
+                __instance.itemScript.FartWithDebounce();
             }
         }
 
@@ -402,10 +410,13 @@ namespace Poltergeist
             if (NetworkManager.Singleton.IsHost || NetworkManager.Singleton.IsServer) //Only do this if we're the server
             {
                 PlayerControllerB playerController = __instance.allPlayerScripts[playerObjectNumber];
-                GhostHead head = GhostHead.headMapping[playerController];
+                if (GhostHead.headMapping.ContainsKey(playerController))
+                {
+                    GhostHead head = GhostHead.headMapping[playerController];
 
-                Poltergeist.DebugLog("Moving head after client dc: " + head.IsOwner);
-                head.Deactivate();
+                    Poltergeist.DebugLog("Moving head after client dc: " + head.IsOwner);
+                    head.Deactivate();
+                }
             }
         }
     }
