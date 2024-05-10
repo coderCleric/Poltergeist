@@ -10,6 +10,7 @@ using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Rendering.HighDefinition;
+using static UnityEngine.Rendering.DebugUI;
 
 namespace Poltergeist
 {
@@ -34,6 +35,7 @@ namespace Poltergeist
         private Transform hintPanelOrigParent = null;
         private Transform deathUIRoot = null;
         private TextMeshProUGUI controlsText = null;
+        private bool controlsHidden = true;
         private float accelTime = -1;
         private float decelTime = -1;
         public static List<MaskedPlayerEnemy> masked = new List<MaskedPlayerEnemy>();
@@ -137,7 +139,41 @@ namespace Poltergeist
 
                 //Enable ghost-only interactables
                 IGhostOnlyInteractible.SetGhostActivation(true);
+
+                //Set the controls text
+                UpdateControlText();
             }
+        }
+
+        /**
+         * Updates the contents of the control text
+         */
+        private void UpdateControlText()
+        {
+            //If it's hidden, only show how to toggle it
+            if(controlsHidden)
+            {
+                controlsText.text = "Show Poltergeist Controls; [" + PoltergeistCustomInputs.GetKeyString(PoltergeistCustomInputs.instance.ToggleControlsKey) + "]";
+                return;
+            }
+
+            //If it's not hidden, show everything
+            string str = "Hide Poltergeist Controls; [" + PoltergeistCustomInputs.GetKeyString(PoltergeistCustomInputs.instance.ToggleControlsKey) + "]\n";
+            str += "Switch Spectate Mode; [" + PoltergeistCustomInputs.GetKeyString(PoltergeistCustomInputs.instance.ToggleButton) + "]\n\n";
+
+            //Most only shown if we're not in vanilla mode
+            if (!Patches.vanillaMode)
+            {
+                str += "Increase Speed; [" + PoltergeistCustomInputs.GetKeyString(PoltergeistCustomInputs.instance.AccelerateButton) + "]\n";
+                str += "Decrease Speed; [" + PoltergeistCustomInputs.GetKeyString(PoltergeistCustomInputs.instance.DecelerateButton) + "]\n";
+                str += "Up; [" + PoltergeistCustomInputs.GetKeyString(PoltergeistCustomInputs.instance.UpKey) + "]\n";
+                str += "Down; [" + PoltergeistCustomInputs.GetKeyString(PoltergeistCustomInputs.instance.DownKey) + "]\n";
+                str += "Lock Altitude; [" + PoltergeistCustomInputs.GetKeyString(PoltergeistCustomInputs.instance.LockKey) + "]\n\n";
+                str += "Toggle Ghost Light; [" + PoltergeistCustomInputs.GetKeyString(PoltergeistCustomInputs.instance.SwitchLightButton) + "]\n";
+                str += "Manifest; [" + PoltergeistCustomInputs.GetKeyString(PoltergeistCustomInputs.instance.ManifestKey) + "] (Cost: "
+                    + Poltergeist.Config.ManifestCost.Value + ")";
+            }
+            controlsText.text = str;
         }
 
         /**
@@ -170,6 +206,9 @@ namespace Poltergeist
 
                 //Disable ghost-only interactables
                 IGhostOnlyInteractible.SetGhostActivation(false);
+
+                //Hide the control display
+                controlsHidden = true;
             }
         }
 
@@ -319,6 +358,9 @@ namespace Poltergeist
                 clientPlayer.cursorTip.text = "";
                 StartOfRound.Instance.SetSpectateCameraToGameOverMode(Patches.shouldGameOver, clientPlayer);
                 Patches.camControllerActive = false;
+
+                //Set the controls text
+                UpdateControlText();
             }
 
             //Handle switching to modded
@@ -326,6 +368,9 @@ namespace Poltergeist
             {
                 transform.parent = null;
                 Patches.camControllerActive = true;
+
+                //Set the controls text
+                UpdateControlText();
             }
         }
 
@@ -352,11 +397,25 @@ namespace Poltergeist
                 return;
 
             //Call it on the head if there's enough power
-            if (power >= Poltergeist.Config.ManifestCost)
+            if (power >= Poltergeist.Config.ManifestCost.Value)
             {
                 head.ManifestServerRpc();
-                power -= Poltergeist.Config.ManifestCost;
+                power -= Poltergeist.Config.ManifestCost.Value;
             }
+        }
+
+        /**
+         * Changes the visibility of the controls on the HUD
+         */
+        private void ToggleControlVis(InputAction.CallbackContext context)
+        {
+            //Only do it if performing
+            if (!context.performed)
+                return;
+
+            //Swap the visibility and update the text
+            controlsHidden = !controlsHidden;
+            UpdateControlText();
         }
 
         /**
@@ -371,6 +430,7 @@ namespace Poltergeist
             PoltergeistCustomInputs.instance.ToggleButton.performed += SwitchModes;
             PoltergeistCustomInputs.instance.LockKey.performed += LockAltitude;
             PoltergeistCustomInputs.instance.ManifestKey.performed += ManifestHead;
+            PoltergeistCustomInputs.instance.ToggleControlsKey.performed += ToggleControlVis;
 
         }
         private void OnDisable()
@@ -382,6 +442,7 @@ namespace Poltergeist
             PoltergeistCustomInputs.instance.ToggleButton.performed -= SwitchModes;
             PoltergeistCustomInputs.instance.LockKey.performed -= LockAltitude;
             PoltergeistCustomInputs.instance.ManifestKey.performed -= ManifestHead;
+            PoltergeistCustomInputs.instance.ToggleControlsKey.performed -= ToggleControlVis;
         }
 
         /**
@@ -399,9 +460,9 @@ namespace Poltergeist
         /**
          * Updates the controls text
          */
-        private void UpdateControlText()
+        private void PositionControlText()
         {
-            controlsText.text = "Hello world!";
+            //Figure out where to actually put the text
             Transform tf = controlsText.transform;
             Bounds bounds = HUDManager.Instance.holdButtonToEndGameEarlyVotesText.textBounds;
 
@@ -588,7 +649,7 @@ namespace Poltergeist
             }
 
             //Update the controls text
-            UpdateControlText();
+            PositionControlText();
         }
     }
 }

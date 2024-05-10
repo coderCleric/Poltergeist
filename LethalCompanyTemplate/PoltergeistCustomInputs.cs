@@ -37,6 +37,9 @@ namespace Poltergeist
         [InputAction("<Keyboard>/c", Name = "Manifest")]
         public InputAction ManifestKey { get; private set; }
 
+        [InputAction("<Keyboard>/h", Name = "Toggle Controls")]
+        public InputAction ToggleControlsKey { get; private set; }
+
         //When any instance is constructed, set it to be the instance
         public PoltergeistCustomInputs() : base()
         {
@@ -46,7 +49,13 @@ namespace Poltergeist
         //Get the string representation of the interact key
         public static string GetInteractString()
         {
-            string str = PoltergeistCustomInputs.instance.InteractButton.GetBindingDisplayString();
+            return GetKeyString(instance.InteractButton);
+        }
+
+        //Get the string representation of the any key
+        public static string GetKeyString(InputAction action)
+        {
+            string str = action.GetBindingDisplayString();
             string[] parts = str.Split(" | ");
             bool useKBM = false;
             bool useGamepad = false;
