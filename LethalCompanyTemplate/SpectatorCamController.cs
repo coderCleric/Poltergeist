@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.ComponentModel.Design;
 using System.Reflection;
 using System.Text;
+using TMPro;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -32,6 +33,7 @@ namespace Poltergeist
         private Transform hintPanelRoot = null;
         private Transform hintPanelOrigParent = null;
         private Transform deathUIRoot = null;
+        private TextMeshProUGUI controlsText = null;
         private float accelTime = -1;
         private float decelTime = -1;
         public static List<MaskedPlayerEnemy> masked = new List<MaskedPlayerEnemy>();
@@ -120,6 +122,11 @@ namespace Poltergeist
                     hintPanelRoot = HUDManager.Instance.tipsPanelAnimator.transform.parent;
                     hintPanelOrigParent = hintPanelRoot.parent;
                     deathUIRoot = HUDManager.Instance.SpectateBoxesContainer.transform.parent;
+
+                    //Also, make the controls display guy
+                    GameObject go = Instantiate(HUDManager.Instance.holdButtonToEndGameEarlyText.gameObject, deathUIRoot);
+                    controlsText = go.GetComponent<TextMeshProUGUI>();
+                    go.name = "PoltergeistControlsText";
                 }
 
                 //Move the hint panel to the death UI
@@ -390,6 +397,24 @@ namespace Poltergeist
         }
 
         /**
+         * Updates the controls text
+         */
+        private void UpdateControlText()
+        {
+            controlsText.text = "Hello world!";
+            Transform tf = controlsText.transform;
+            Bounds bounds = HUDManager.Instance.holdButtonToEndGameEarlyVotesText.textBounds;
+
+            //Need to account for the votes text being empty
+            if(bounds.m_Extents.y < 0)
+                tf.position = new Vector3(tf.position.x, HUDManager.Instance.holdButtonToEndGameEarlyVotesText.transform.position.y, tf.position.z);
+            else
+                tf.localPosition = new Vector3(tf.localPosition.x, (bounds.min + HUDManager.Instance.holdButtonToEndGameEarlyVotesText.transform.localPosition).y
+                    - (controlsText.bounds.extents.y + 22), 
+                    tf.localPosition.z);
+        }
+
+        /**
          * Just before rendering, handle camera input
          */
         private void LateUpdate ()
@@ -561,6 +586,9 @@ namespace Poltergeist
                 head.transform.position = transform.position;
                 head.transform.rotation = transform.rotation;
             }
+
+            //Update the controls text
+            UpdateControlText();
         }
     }
 }
