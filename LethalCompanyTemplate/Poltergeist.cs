@@ -13,12 +13,13 @@ namespace Poltergeist
         //Plugin info
         public const string MOD_GUID = "coderCleric.Poltergeist";
         public const string MOD_NAME = "Poltergeist";
-        public const string MOD_VERSION = "1.0.2";
+        public const string MOD_VERSION = "1.1.0";
 
         //Network prefabs
         public static GameObject propInteractibleObject;
         public static GameObject enemyInteractibleObject;
         public static GameObject ghostHeadObject;
+        public static GameObject colorVolObject;
 
         //Other things
         private static Poltergeist instance = null;
@@ -42,6 +43,9 @@ namespace Poltergeist
             string dllFolderPath = System.IO.Path.GetDirectoryName(Info.Location);
             string assetBundleFilePath = System.IO.Path.Combine(dllFolderPath, "bundles", "poltergeist");
             poltergeistAssetBundle = AssetBundle.LoadFromFile(assetBundleFilePath);
+
+            //Load the volume object
+            colorVolObject = poltergeistAssetBundle.LoadAsset<GameObject>("Assets/Prefabs/ghosthead_postprocess.prefab");
 
             //Patch netcode
             NetcodePatcher();

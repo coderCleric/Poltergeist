@@ -8,7 +8,7 @@ using System.Text;
 
 namespace Poltergeist
 {
-    public class PoltergeistConfig : SyncedConfig<PoltergeistConfig>
+    public class PoltergeistConfig : SyncedConfig2<PoltergeistConfig>
     {
         //Non-synced entries
         public ConfigEntry<bool> DefaultToVanilla { get; private set; }
@@ -32,16 +32,11 @@ namespace Poltergeist
         [field: DataMember] public SyncedEntry<float> ManifestCost { get; private set; }
         [field: DataMember] public SyncedEntry<float> MiscCost { get; private set; }
 
-        //Cost entries (also synced)
-
         /**
          * Make an instance of the config
          */
         public PoltergeistConfig(ConfigFile cfg) : base(Poltergeist.MOD_GUID)
         {
-            //Register the config
-            ConfigManager.Register(this);
-
             //Bind the non-synced stuff
             DefaultToVanilla = cfg.Bind(
                 new ConfigDefinition("Client-Side", "DefaultToVanilla"),
@@ -52,7 +47,7 @@ namespace Poltergeist
                 );
             LightIntensity = cfg.Bind(
                 new ConfigDefinition("Client-Side", "LightIntensity"),
-                5f,
+                8f,
                 new ConfigDescription(
                     "The intensity of the ghost light.\n",
                     new AcceptableValueRange<float>(0, float.MaxValue)
@@ -175,6 +170,9 @@ namespace Poltergeist
                     new AcceptableValueRange<float>(0, float.MaxValue)
                     )
                 );
+
+            //Register the config
+            ConfigManager.Register(this);
         }
     }
 }

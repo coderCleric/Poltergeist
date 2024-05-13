@@ -309,9 +309,13 @@ namespace Poltergeist
                 return;
             }
 
+            //Don't do things if paused
+            if (clientPlayer.isTypingChat || clientPlayer.quickMenuManager.isMenuOpen)
+                return;
+
             //If not null, use the interactible
             if (currentGhostInteractible != null)
-                power -= currentGhostInteractible.Interact(clientPlayer.transform);
+            power -= currentGhostInteractible.Interact(clientPlayer.transform);
         }
 
         /**
@@ -343,6 +347,10 @@ namespace Poltergeist
         {
             //Only do it if performing
             if (!context.performed)
+                return;
+
+            //Don't do things if paused
+            if (clientPlayer.isTypingChat || clientPlayer.quickMenuManager.isMenuOpen)
                 return;
 
             //Change the flag
@@ -383,6 +391,10 @@ namespace Poltergeist
             if (!context.performed || Patches.vanillaMode)
                 return;
 
+            //Don't do things if paused
+            if (clientPlayer.isTypingChat || clientPlayer.quickMenuManager.isMenuOpen)
+                return;
+
             //Change the flag
             altitudeLock = !altitudeLock;
         }
@@ -394,6 +406,10 @@ namespace Poltergeist
         {
             //Only do it if performing and not in vanilla mode
             if (!context.performed || Patches.vanillaMode)
+                return;
+
+            //Don't do things if paused
+            if (clientPlayer.isTypingChat || clientPlayer.quickMenuManager.isMenuOpen)
                 return;
 
             //Call it on the head if there's enough power
@@ -411,6 +427,10 @@ namespace Poltergeist
         {
             //Only do it if performing
             if (!context.performed)
+                return;
+
+            //Don't do things if paused
+            if (clientPlayer.isTypingChat || clientPlayer.quickMenuManager.isMenuOpen)
                 return;
 
             //Swap the visibility and update the text
@@ -514,6 +534,14 @@ namespace Poltergeist
             if (clientPlayer.isTypingChat || clientPlayer.quickMenuManager.isMenuOpen || Patches.vanillaMode)
             {
                 currentGhostInteractible = null;
+
+                //Should still move the ghost head to the correct position
+                if (head != null && head.isActive)
+                {
+                    head.transform.position = transform.position;
+                    head.transform.rotation = transform.rotation;
+                }
+
                 return;
             }
 
@@ -650,6 +678,16 @@ namespace Poltergeist
 
             //Update the controls text
             PositionControlText();
+
+            //Make all of the usernames visible
+            foreach(PlayerControllerB player in StartOfRound.Instance.allPlayerScripts)
+            {
+                if (player != clientPlayer && player.isPlayerControlled)
+                {
+                    player.ShowNameBillboard();
+                    player.usernameBillboard.LookAt(transform.position);
+                }
+            }
         }
     }
 }

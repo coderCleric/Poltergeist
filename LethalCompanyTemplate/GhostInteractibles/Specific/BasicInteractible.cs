@@ -13,6 +13,7 @@ namespace Poltergeist.GhostInteractibles.Specific
         private InteractTrigger trigger;
         private float interactDuration = 1;
         private float interactTime = 0;
+        public bool isHeld = false;
 
         /**
          * On awake, grab the trigger
@@ -57,7 +58,7 @@ namespace Poltergeist.GhostInteractibles.Specific
             if (trigger.interactable && (!trigger.interactCooldown || trigger.currentCooldownValue <= 0))
             {
                 //Single-press interactions
-                if (!trigger.holdInteraction)
+                if (!isHeld)
                     trigger.Interact(playerTransform);
 
                 //Long press interactions

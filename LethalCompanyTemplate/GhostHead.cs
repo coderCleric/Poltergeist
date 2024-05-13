@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.Text;
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.Rendering;
+using UnityEngine.Rendering.HighDefinition;
 
 namespace Poltergeist
 {
@@ -29,8 +31,10 @@ namespace Poltergeist
 
         //Bounds for the animation
         private Material matInstance = null;
+        private ColorAdjustments colorAdj = null;
         private float maxOpacity = 1;
         private float maxIntensity = 1;
+        private Color filterCol = Color.white;
 
         /**
          * On awake, grab the renderer and light
@@ -52,9 +56,18 @@ namespace Poltergeist
             //Check if we should initialize
             if(!initialized && SpectatorCamController.instance != null && IsOwner && (!base.IsServer || isHostHead))
             {
+                //Setup flags
                 initialized = true;
                 SpectatorCamController.instance.head = this;
                 renderer.enabled = false;
+
+                //Make and grab the postprocessing vol
+                GameObject volObj = Instantiate(Poltergeist.colorVolObject);
+                VolumeProfile colorProfile = volObj.GetComponent<Volume>().profile;
+                colorProfile.TryGet<ColorAdjustments>(out colorAdj);
+                colorAdj.colorFilter.overrideState = true;
+                filterCol = colorAdj.colorFilter.value;
+                colorAdj.colorFilter.value = Color.white;
                 Poltergeist.DebugLog("Assigning head to local client");
             }
 
@@ -72,6 +85,8 @@ namespace Poltergeist
                     renderer.gameObject.layer = 23;
                     light.intensity = maxIntensity;
                     matInstance.color = new Color(matInstance.color.r, matInstance.color.g, matInstance.color.b, maxOpacity);
+                    if(colorAdj != null)
+                        colorAdj.colorFilter.value = Color.white;
                 }
 
                 //Otherwise, actually do the animation
@@ -83,10 +98,12 @@ namespace Poltergeist
                     float progress = timeInFrame / duration;
 
                     //Interpolate
+                    float curIntensity = Mathf.Lerp(visibilities[keyIndex - 1], visibilities[keyIndex], progress);
                     Color matCol = matInstance.color;
-                    matInstance.color = new Color(matCol.r, matCol.g, matCol.b, 
-                        Mathf.Lerp(visibilities[keyIndex - 1] * maxOpacity, visibilities[keyIndex] * maxOpacity, progress));
-                    light.intensity = Mathf.Lerp(visibilities[keyIndex - 1] * maxIntensity, visibilities[keyIndex] * maxIntensity, progress);
+                    matInstance.color = new Color(matCol.r, matCol.g, matCol.b, curIntensity * maxOpacity);
+                    light.intensity = curIntensity * maxIntensity;
+                    if (colorAdj != null)
+                        colorAdj.colorFilter.value = Color.Lerp(Color.white, filterCol, curIntensity);
                 }
             }
         }

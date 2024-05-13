@@ -207,6 +207,7 @@ namespace Poltergeist
             {
                 BasicInteractible interactible = __instance.gameObject.AddComponent<BasicInteractible>();
                 interactible.costType = CostType.MISC;
+                interactible.isHeld = true;
                 return;
             }
         }
