@@ -15,22 +15,22 @@ namespace Poltergeist
         public ConfigEntry<float> LightIntensity { get; private set; }
 
         //Synced entries
-        [field: DataMember] public SyncedEntry<float> MaxPower { get; private set; }
-        [field: DataMember] public SyncedEntry<float> PowerRegen { get; private set; }
-        [field: DataMember] public SyncedEntry<int> AliveForMax { get; private set; }
-        [field: DataMember] public SyncedEntry<float> TimeForAggro { get; private set; }
-        [field: DataMember] public SyncedEntry<int> HitsForAggro { get; private set; }
+        [field: SyncedEntryField] public SyncedEntry<float> MaxPower { get; private set; }
+        [field: SyncedEntryField] public SyncedEntry<float> PowerRegen { get; private set; }
+        [field: SyncedEntryField] public SyncedEntry<int> AliveForMax { get; private set; }
+        [field: SyncedEntryField] public SyncedEntry<float> TimeForAggro { get; private set; }
+        [field: SyncedEntryField] public SyncedEntry<int> HitsForAggro { get; private set; }
 
         //Cost-related entries
-        [field: DataMember] public SyncedEntry<float> DoorCost { get; private set; }
-        [field: DataMember] public SyncedEntry<float> BigDoorCost { get; private set; }
-        [field: DataMember] public SyncedEntry<float> NoisyItemCost { get; private set; }
-        [field: DataMember] public SyncedEntry<float> ValveCost { get; private set; }
-        [field: DataMember] public SyncedEntry<float> ShipDoorCost { get; private set; }
-        [field: DataMember] public SyncedEntry<float> CompanyBellCost { get; private set; }
-        [field: DataMember] public SyncedEntry<float> PesterCost { get; private set; }
-        [field: DataMember] public SyncedEntry<float> ManifestCost { get; private set; }
-        [field: DataMember] public SyncedEntry<float> MiscCost { get; private set; }
+        [field: SyncedEntryField] public SyncedEntry<float> DoorCost { get; private set; }
+        [field: SyncedEntryField] public SyncedEntry<float> BigDoorCost { get; private set; }
+        [field: SyncedEntryField] public SyncedEntry<float> NoisyItemCost { get; private set; }
+        [field: SyncedEntryField] public SyncedEntry<float> ValveCost { get; private set; }
+        [field: SyncedEntryField] public SyncedEntry<float> ShipDoorCost { get; private set; }
+        [field: SyncedEntryField] public SyncedEntry<float> CompanyBellCost { get; private set; }
+        [field: SyncedEntryField] public SyncedEntry<float> PesterCost { get; private set; }
+        [field: SyncedEntryField] public SyncedEntry<float> ManifestCost { get; private set; }
+        [field: SyncedEntryField] public SyncedEntry<float> MiscCost { get; private set; }
 
         /**
          * Make an instance of the config
