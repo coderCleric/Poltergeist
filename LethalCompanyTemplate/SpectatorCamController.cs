@@ -63,16 +63,16 @@ namespace Poltergeist
                 switch(i)
                 {
                     case 0:
-                        dir = new Vector3(20f, 0f, 0f); 
+                        dir = new Vector3(50f, 0f, 0f); 
                         break;
                     case 1:
-                        dir = new Vector3(160f, 0f, 0f); 
+                        dir = new Vector3(120f, 0f, 0f); 
                         break;
                     case 2:
-                        dir = new Vector3(20f, 90f, 0f); 
+                        dir = new Vector3(50f, 90f, 0f); 
                         break;
                     case 3:
-                        dir = new Vector3(20f, -90f, 0f); 
+                        dir = new Vector3(50f, -90f, 0f); 
                         break;
                 }
 
