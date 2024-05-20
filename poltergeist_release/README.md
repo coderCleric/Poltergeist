@@ -17,13 +17,14 @@ Adds things for dead players to do by letting them fly around in a freecam and p
 - **Teleportation**: Pressing a number key will teleport you to the corresponding player, based on join order. This means that the host will be 1, the first player to join will be 2, and so on.
 - **Interact**: Pressing interact (default "e") on the objects listed below will let you interact with them as if you were still alive. Troll your friends, or try to help them out! Rebindable in the game settings.
 - **Mode Switching**: Switch between vanilla and modded spectate modes using the 'Q' key. Rebindable in the game settings.
+- **Manifest**: Temporarily appear before the living in a spectral form with the 'C' key. Rebindable in the game settings.
 
 # Interactable Objects
 - **Doors**: Can be opened and closed.
 - **Pneumatic Doors**: Pneumatic Doors can be opened and closed, assuming they have power.
 - **Hangar Doors**: Flip the levers on Artifice to open and close the big hangar doors.
 - **Valves**: Can stop them from gushing steam.
-- **Ship Light Switch**: Can be flipped on and off.
+- **Ship Light Switch/Remote**: Can be flipped on and off.
 - **Ship Door Buttons**: Allows the ship doors to be opened and closed.
 - **Company Bell**: Ring the bell at the company building!
 - **Noisemaker Props**: Items that make noise, such as the clownhorn, airhorn, and cash register.
@@ -32,6 +33,9 @@ Adds things for dead players to do by letting them fly around in a freecam and p
 - **Facility Lockers**: The doors of the storage lockers occasionally found in the facility.
 - **Pestering Enemies**: Pester enemies to disrupt their current actions. Be careful though, do it too much and they might get mad at the closest player that they can see!
   - *Note: This just has you hit the enemy for 0 damage. Some enemies don't do anything interesting when hit.*
+- **Loudhorn**: Can be pulled for one second intervals.
+- **Radar Boosters**: Can be turned on and off.
+- **Whoopie Cushions**: Make a noise when you fly through them.
 
 # Power
 Interacting with the mortal plane isn't easy, and requires a certain amount of effort on the part of the ghost. This is represented by the power system.
@@ -63,6 +67,7 @@ These settings are synced, so whatever settings the host has will be used by eve
   - **Ship Doors**
   - **The Company Bell**
   - **Enemy Pestering**
+  - **Manifest**
   - **Miscellaneous**: This is just any interaction not covered by the other categories, such as ship decorations.
 
 # Installing

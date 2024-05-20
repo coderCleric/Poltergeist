@@ -1,27 +1,61 @@
 ManifestFileVersion: 0
-CRC: 492763179
+CRC: 986860775
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: 8370ef2ee45d35af2600ea928167ca57
+    Hash: b6284a4ec89d07ada695fe10de1120c8
   TypeTreeHash:
     serializedVersion: 2
-    Hash: 35b41b3727f39c9df03a503ffc71e594
+    Hash: fbb3ca6b7479bed06db4e89e8d98cfc9
   IncrementalBuildHash:
     serializedVersion: 2
-    Hash: 8370ef2ee45d35af2600ea928167ca57
+    Hash: b6284a4ec89d07ada695fe10de1120c8
 HashAppended: 0
 ClassTypes:
 - Class: 1
   Script: {instanceID: 0}
 - Class: 4
   Script: {instanceID: 0}
+- Class: 21
+  Script: {instanceID: 0}
+- Class: 23
+  Script: {instanceID: 0}
+- Class: 33
+  Script: {instanceID: 0}
+- Class: 43
+  Script: {instanceID: 0}
+- Class: 48
+  Script: {instanceID: 0}
+- Class: 108
+  Script: {instanceID: 0}
+- Class: 114
+  Script: {fileID: 11500000, guid: 4b8bcdf71d7fafa419fca1ed162f5fc9, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 7a68c43fe1f2a47cfa234b5eeaa98012, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: d7fd9488000d3734a9e00ee676215985, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 172515602e62fb746b5d573b38a5fe58, type: 3}
 - Class: 114
   Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
 - Class: 115
   Script: {instanceID: 0}
-SerializeReferenceClassIdentifiers: []
+- Class: 135
+  Script: {instanceID: 0}
+SerializeReferenceClassIdentifiers:
+- AssemblyName: Unity.RenderPipelines.Core.Runtime
+  ClassName: UnityEngine.Rendering.ClampedFloatParameter
+- AssemblyName: Unity.RenderPipelines.Core.Runtime
+  ClassName: UnityEngine.Rendering.ColorParameter
+- AssemblyName: Unity.RenderPipelines.Core.Runtime
+  ClassName: UnityEngine.Rendering.FloatParameter
+- AssemblyName: Unity.RenderPipelines.HighDefinition.Runtime
+  ClassName: UnityEngine.Rendering.HighDefinition.BoolScalableSettingValue
+- AssemblyName: Unity.RenderPipelines.HighDefinition.Runtime
+  ClassName: UnityEngine.Rendering.HighDefinition.IntScalableSettingValue
 Assets:
 - Assets/Prefabs/EnemyInteractible.prefab
+- Assets/Prefabs/ghosthead_postprocess.prefab
+- Assets/Prefabs/ghosthead.prefab
 - Assets/Prefabs/PropInteractible.prefab
 Dependencies: []
