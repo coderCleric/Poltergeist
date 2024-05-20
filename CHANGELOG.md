@@ -1,3 +1,17 @@
+# 1.1.0
+- Significant Additions
+  - Gave dead players a "ghost head" as an avatar. This is visible to other dead players.
+  - Added the ability to manifest when dead, allowing ghosts to be temporarily visible to living players.
+  - Added the ability to interact with a few more things:
+    - Loudhorn
+    - Remotes
+    - Radar Boosters
+    - Whoopie Cushions (activated when ghosts fly through them)
+- Fixes/Improvements
+  - Ghosts can now see nametags over living players.
+  - Made the ghost light come in from more angles and no longer affect fog (This allows the light to be made more intense).
+  - Fixed a formatting error on interact prompts.
+  - Added an element to the death HUD to tell the player the controls.
 # 1.0.2
 - Fixed an issue where looking straight up/down with the altitude locked would prevent movement forward.
 - Made it so duplicate camera controllers will destroy themselves (fixed a conflict with suitsTerminal).
