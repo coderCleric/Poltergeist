@@ -284,13 +284,13 @@ namespace Poltergeist
          * Makes the whoppie cushion detect ghosts
          */
         [HarmonyPostfix]
-        [HarmonyPatch(typeof(WhoopieCushionTrigger), "OnTriggerEnter")]
-        public static void WhoopiePatch(WhoopieCushionTrigger __instance, Collider other)
+        [HarmonyPatch(typeof(GrabbableObject), "Start")]
+        public static void WhoopiePatch(GrabbableObject __instance)
         {
-            if(other.gameObject.GetComponent<GhostHead>() != null)
+            //See if this is a whoopie cushion, and make the ghost trigger if it is
+            if (__instance is WhoopieCushionItem)
             {
-                Poltergeist.DebugLog("Ghost touched whoopie cushion");
-                __instance.itemScript.FartWithDebounce();
+                GameObject.Instantiate(Poltergeist.itemTriggerObject, __instance.transform).transform.localPosition = Vector3.zero;
             }
         }
 

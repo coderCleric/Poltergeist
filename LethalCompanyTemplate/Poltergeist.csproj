@@ -13,8 +13,8 @@
         <PackageReference Include="BepInEx.Analyzers" Version="1.*" PrivateAssets="all" />
         <PackageReference Include="BepInEx.Core" Version="5.*" />
         <PackageReference Include="BepInEx.PluginInfoProps" Version="2.1.0" />
-        <PackageReference Include="Sigurd.BepInEx.CSync" Version="5.0.0" />
-        <PackageReference Include="LethalCompany.GameLibs.Steam" Version="50.0.0-ngd.0" />
+        <PackageReference Include="Sigurd.BepInEx.CSync" Version="5.0.1" />
+        <PackageReference Include="LethalCompany.GameLibs.Steam" Version="60.0.0-ngd.0" />
         <PackageReference Include="UnityEngine.Modules" Version="6000.0.1" IncludeAssets="compile" />
     </ItemGroup>
 
@@ -25,6 +25,7 @@
     <ItemGroup>
       <Reference Include="LethalCompanyInputUtils">
         <HintPath>..\Dependency Storage\LethalCompanyInputUtils.dll</HintPath>
+        <Private>False</Private>
       </Reference>
     </ItemGroup>
   

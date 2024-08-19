@@ -1,15 +1,15 @@
 ManifestFileVersion: 0
-CRC: 986860775
+CRC: 764210723
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: b6284a4ec89d07ada695fe10de1120c8
+    Hash: 759952bc3ffadbe23d57d5836724b170
   TypeTreeHash:
     serializedVersion: 2
-    Hash: fbb3ca6b7479bed06db4e89e8d98cfc9
+    Hash: 3294939b323cecadccc5bcb5a5700474
   IncrementalBuildHash:
     serializedVersion: 2
-    Hash: b6284a4ec89d07ada695fe10de1120c8
+    Hash: 759952bc3ffadbe23d57d5836724b170
 HashAppended: 0
 ClassTypes:
 - Class: 1
@@ -25,6 +25,8 @@ ClassTypes:
 - Class: 43
   Script: {instanceID: 0}
 - Class: 48
+  Script: {instanceID: 0}
+- Class: 54
   Script: {instanceID: 0}
 - Class: 108
   Script: {instanceID: 0}
@@ -55,6 +57,7 @@ SerializeReferenceClassIdentifiers:
   ClassName: UnityEngine.Rendering.HighDefinition.IntScalableSettingValue
 Assets:
 - Assets/Prefabs/EnemyInteractible.prefab
+- Assets/Prefabs/GhostItemTrigger.prefab
 - Assets/Prefabs/ghosthead_postprocess.prefab
 - Assets/Prefabs/ghosthead.prefab
 - Assets/Prefabs/PropInteractible.prefab

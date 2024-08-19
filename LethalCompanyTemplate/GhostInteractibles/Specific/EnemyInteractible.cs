@@ -53,7 +53,7 @@ namespace Poltergeist.GhostInteractibles.Specific
                 return 0;
 
             //Nothing happens if the enemy is dead
-            if (enemy.isEnemyDead)
+            if (enemy == null || enemy.isEnemyDead)
                 return 0;
 
             //Handle the consecutive hit mechanic
@@ -84,6 +84,9 @@ namespace Poltergeist.GhostInteractibles.Specific
          */
         public void InteractLocallyOnly(PlayerControllerB accusedPlayer)
         {
+            if(enemy == null)
+                return;
+
             Poltergeist.DebugLog("Interacting locally with " + enemy.gameObject.name);
             enemy.HitEnemy(0, accusedPlayer, true);
         }
@@ -96,7 +99,7 @@ namespace Poltergeist.GhostInteractibles.Specific
             string retStr = "";
 
             //Display message for the enemy being dead
-            if (enemy.isEnemyDead)
+            if (enemy == null || enemy.isEnemyDead)
                 return "Enemy is dead";
 
             //Display message for not having enough power

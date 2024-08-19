@@ -13,13 +13,14 @@ namespace Poltergeist
         //Plugin info
         public const string MOD_GUID = "coderCleric.Poltergeist";
         public const string MOD_NAME = "Poltergeist";
-        public const string MOD_VERSION = "1.1.0";
+        public const string MOD_VERSION = "1.1.1";
 
         //Prefabs
         public static GameObject propInteractibleObject;
         public static GameObject enemyInteractibleObject;
         public static GameObject ghostHeadObject;
         public static GameObject colorVolObject;
+        public static GameObject itemTriggerObject;
 
         //Other things
         private static Poltergeist instance = null;
@@ -46,6 +47,10 @@ namespace Poltergeist
 
             //Load the volume object
             colorVolObject = poltergeistAssetBundle.LoadAsset<GameObject>("Assets/Prefabs/ghosthead_postprocess.prefab");
+
+            //Load the item trigger object
+            itemTriggerObject = poltergeistAssetBundle.LoadAsset<GameObject>("Assets/Prefabs/GhostItemTrigger.prefab");
+            itemTriggerObject.AddComponent<GhostItemTrigger>();
 
             //Patch netcode
             NetcodePatcher();

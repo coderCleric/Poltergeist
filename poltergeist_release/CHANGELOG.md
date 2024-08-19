@@ -1,3 +1,7 @@
+# 1.1.1
+- Made it so that the mod actually loads on v61.
+- Fixed some issues that were making it so that the whoopie cushion interaction wasn't working.
+- I haven't had the time to do full testing in v61, but this should at least make the mod work. Please let me know on Github if you notice any issues!
 # 1.1.0
 - Significant Additions
   - Gave dead players a "ghost head" as an avatar. This is visible to other dead players.
