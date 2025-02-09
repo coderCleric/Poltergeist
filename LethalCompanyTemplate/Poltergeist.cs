@@ -84,7 +84,8 @@ namespace Poltergeist
          */
         public static void DebugLog(string msg)
         {
-            instance.Logger.LogInfo(msg);
+            if(Config.ShowDebugLogs.Value)
+                instance.Logger.LogInfo(msg);
         }
     }
 }

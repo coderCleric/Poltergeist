@@ -13,6 +13,7 @@ namespace Poltergeist
         //Non-synced entries
         public ConfigEntry<bool> DefaultToVanilla { get; private set; }
         public ConfigEntry<float> LightIntensity { get; private set; }
+        public ConfigEntry<bool> ShowDebugLogs { get; private set; }
 
         //Synced entries
         [field: SyncedEntryField] public SyncedEntry<float> MaxPower { get; private set; }
@@ -51,6 +52,14 @@ namespace Poltergeist
                 new ConfigDescription(
                     "The intensity of the ghost light.\n",
                     new AcceptableValueRange<float>(0, float.MaxValue)
+                    )
+                );
+            //Bind the non-synced stuff
+            ShowDebugLogs = cfg.Bind(
+                new ConfigDefinition("Client-Side", "ShowDebugLogs"),
+                false,
+                new ConfigDescription(
+                    "If true, you will see debug logs."
                     )
                 );
 
