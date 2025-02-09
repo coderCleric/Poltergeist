@@ -110,7 +110,7 @@ namespace Poltergeist
                 new ConfigDefinition("Synced: Costs", "Big door cost"),
                 50f,
                 new ConfigDescription(
-                    "The power required to open/close larger doors.",
+                    "The power required to open/close larger doors and mess with the mineshaft elevator.",
                     new AcceptableValueRange<float>(0, float.MaxValue)
                     )
                 );

@@ -14,7 +14,7 @@ namespace Poltergeist.GhostInteractibles.Specific
         /**
          * On start, grab the prop
          */
-        private void Start()
+        protected override void DoSetup()
         {
             prop = transform.parent.GetComponent<GrabbableObject>();
         }

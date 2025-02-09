@@ -86,7 +86,12 @@ namespace Poltergeist.GhostInteractibles.Specific
                 return trigger.disabledHoverTip; //Display no cost if you can't interact
             else
             {
-                StringBuilder builder = new StringBuilder(trigger.hoverTip);
+                StringBuilder builder;
+                if (!trigger.hoverTip.Equals(""))
+                    builder = new StringBuilder(trigger.hoverTip);
+                else
+                    builder = new StringBuilder("Interact; [LMB]");
+
                 retStr = builder.Replace("[LMB]", "[" + PoltergeistCustomInputs.GetInteractString() + "]").ToString();
             }
 

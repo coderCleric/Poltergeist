@@ -210,6 +210,14 @@ namespace Poltergeist
                 interactible.isHeld = true;
                 return;
             }
+
+            //If it's the elevator button, add one
+            if (__instance.transform.parent != null && __instance.transform.parent.name.Equals("ElevatorButtonTrigger"))
+            {
+                BasicInteractible interactible = __instance.gameObject.AddComponent<BasicInteractible>();
+                interactible.costType = CostType.HANGARDOOR;
+                return;
+            }
         }
 
         /**

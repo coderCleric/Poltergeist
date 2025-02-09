@@ -16,9 +16,9 @@ namespace Poltergeist.GhostInteractibles.Specific
         private EnemyDetector[] detectors;
 
         /**
-         * In start, grab the enemy AI
+         * Grab the enemy AI
          */
-        private void Start()
+        protected override void DoSetup()
         {
             //Find the enemy AI
             Transform enemyTF = transform.parent;
