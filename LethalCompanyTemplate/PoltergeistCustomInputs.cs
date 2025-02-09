@@ -53,9 +53,22 @@ namespace Poltergeist
         }
 
         //Get the string representation of the any key
+        //If there's no binding, it's ""
+        //If there's both, it's "KBM | CTR"
+        //If there's only keyboard, it's "KBM | "
+        //IF there's only controller, it's "CTR"
         public static string GetKeyString(InputAction action)
         {
             string str = action.GetBindingDisplayString();
+
+            //If there's no string, that means the control is unbound
+            if (str.Length <= 0)
+                return "None";
+
+            //If there's no vertical bar, just display it
+            if (!str.Contains("|"))
+                return str;
+
             string[] parts = str.Split(" | ");
             bool useKBM = false;
             bool useGamepad = false;
