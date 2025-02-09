@@ -271,6 +271,11 @@ namespace Poltergeist
         [HarmonyPatch(typeof(MaskedPlayerEnemy), "Start")]
         public static void AddInteractorForEnemies(EnemyAI __instance)
         {
+            //Screw manticoils all my homies hate manticoils
+            if (__instance is DoublewingAI)
+                return;
+
+            //Everything else, set it up
             if (NetworkManager.Singleton.IsHost || NetworkManager.Singleton.IsServer)
             {
                 Poltergeist.DebugLog("Making interactor for " + __instance.name);

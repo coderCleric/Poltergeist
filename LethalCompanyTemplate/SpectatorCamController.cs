@@ -169,6 +169,7 @@ namespace Poltergeist
                 str += "Up; [" + PoltergeistCustomInputs.GetKeyString(PoltergeistCustomInputs.instance.UpKey) + "]\n";
                 str += "Down; [" + PoltergeistCustomInputs.GetKeyString(PoltergeistCustomInputs.instance.DownKey) + "]\n";
                 str += "Lock Altitude; [" + PoltergeistCustomInputs.GetKeyString(PoltergeistCustomInputs.instance.LockKey) + "]\n\n";
+                str += "Teleport to players; [1-9]\n";
                 str += "Toggle Ghost Light; [" + PoltergeistCustomInputs.GetKeyString(PoltergeistCustomInputs.instance.SwitchLightButton) + "]\n";
                 str += "Manifest; [" + PoltergeistCustomInputs.GetKeyString(PoltergeistCustomInputs.instance.ManifestKey) + "] (Cost: "
                     + Poltergeist.Config.ManifestCost.Value + ")";
