@@ -21,6 +21,7 @@ namespace Poltergeist
         public static GameObject ghostHeadObject;
         public static GameObject colorVolObject;
         public static GameObject itemTriggerObject;
+        public static GameObject followTriggerObject;
 
         //Other things
         private static Poltergeist instance = null;
@@ -51,6 +52,10 @@ namespace Poltergeist
             //Load the item trigger object
             itemTriggerObject = poltergeistAssetBundle.LoadAsset<GameObject>("Assets/Prefabs/GhostItemTrigger.prefab");
             itemTriggerObject.AddComponent<GhostItemTrigger>();
+
+            //Load the follow trigger object
+            followTriggerObject = poltergeistAssetBundle.LoadAsset<GameObject>("Assets/Prefabs/GhostFollowTrigger.prefab");
+            followTriggerObject.AddComponent<GhostFollowTrigger>();
 
             //Patch netcode
             NetcodePatcher();

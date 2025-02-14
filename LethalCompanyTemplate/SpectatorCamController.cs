@@ -16,7 +16,6 @@ namespace Poltergeist
 {
     public class SpectatorCamController : MonoBehaviour
     {
-        //Other fields
         public static SpectatorCamController instance = null;
 
         private Camera cam;
@@ -26,6 +25,8 @@ namespace Poltergeist
         private float maxPower = 100;
         private float power = 0;
         public float Power => power;
+
+        private Transform ghostParent = null;
 
         private PlayerControllerB clientPlayer = null;
         public PlayerControllerB ClientPlayer => clientPlayer;
@@ -97,6 +98,16 @@ namespace Poltergeist
         }
 
         /**
+         * Tells the spectator to parent to something when ghost mode is active
+         */
+        public void ParentTo(Transform parent)
+        {
+            ghostParent = parent;
+            if(enabled && !Patches.vanillaMode)
+                transform.parent = ghostParent;
+        }
+
+        /**
          * Enables the spectator camera
          */
         public void EnableCam()
@@ -111,7 +122,7 @@ namespace Poltergeist
                 //Move the camera
                 if (!Patches.vanillaMode)
                 {
-                    transform.parent = null;
+                    transform.parent = ghostParent;
                     Transform oldCam = StartOfRound.Instance.activeCamera.transform;
                     transform.position = oldCam.position;
                     transform.rotation = oldCam.rotation;
@@ -146,6 +157,42 @@ namespace Poltergeist
         }
 
         /**
+         * Disables the spectator camera
+         */
+        public void DisableCam()
+        {
+            if (enabled)
+            {
+                //Basics
+                enabled = false;
+                foreach (Light l in lights)
+                    l.enabled = false;
+                Patches.vanillaMode = Poltergeist.Config.DefaultToVanilla.Value;
+                Patches.camControllerActive = false;
+                altitudeLock = false;
+
+                //Deactivate the head
+                if (head != null)
+                {
+                    head.isActive = false;
+                    head.transform.position = StartOfRound.Instance.notSpawnedPosition.position;
+                }
+
+                //If these aren't null, we moved them and need to put them back
+                if (hintPanelRoot != null)
+                {
+                    hintPanelRoot.parent = hintPanelOrigParent;
+                }
+
+                //Disable ghost-only interactables
+                IGhostOnlyInteractible.SetGhostActivation(false);
+
+                //Hide the control display
+                controlsHidden = true;
+            }
+        }
+
+        /**
          * Updates the contents of the control text
          */
         private void UpdateControlText()
@@ -175,42 +222,6 @@ namespace Poltergeist
                     + Poltergeist.Config.ManifestCost.Value + ")";
             }
             controlsText.text = str;
-        }
-
-        /**
-         * Disables the spectator camera
-         */
-        public void DisableCam()
-        {
-            if (enabled)
-            {
-                //Basics
-                enabled = false;
-                foreach(Light l in lights)
-                    l.enabled = false;
-                Patches.vanillaMode = Poltergeist.Config.DefaultToVanilla.Value;
-                Patches.camControllerActive = false;
-                altitudeLock = false;
-
-                //Deactivate the head
-                if (head != null)
-                {
-                    head.isActive = false;
-                    head.transform.position = StartOfRound.Instance.notSpawnedPosition.position;
-                }
-
-                //If these aren't null, we moved them and need to put them back
-                if (hintPanelRoot != null)
-                {
-                    hintPanelRoot.parent = hintPanelOrigParent;
-                }
-
-                //Disable ghost-only interactables
-                IGhostOnlyInteractible.SetGhostActivation(false);
-
-                //Hide the control display
-                controlsHidden = true;
-            }
         }
 
         /**
@@ -375,7 +386,7 @@ namespace Poltergeist
             //Handle switching to modded
             else
             {
-                transform.parent = null;
+                transform.parent = ghostParent;
                 Patches.camControllerActive = true;
 
                 //Set the controls text

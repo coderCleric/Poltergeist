@@ -72,6 +72,17 @@ namespace Poltergeist
             return code;
         }
 
+        /**
+         * Make the ghost follow trigger on the ship
+         */
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(StartMatchLever), nameof(StartMatchLever.Start))]
+        public static void MakeFollowTrigger(StartMatchLever __instance)
+        {
+            GameObject.Instantiate(Poltergeist.followTriggerObject, __instance.transform).transform.localPosition = Vector3.zero;
+        }
+
+
         /////////////////////////////// Needed to suppress certain base-game systems ///////////////////////////////
         /**
             * Prevents certain manipulations of the spectate camera that would interfere with the controls
