@@ -77,3 +77,4 @@ Just the same as any of the other BepInEx-based mod, put the folder for the mod 
 - Haven't quite figured out how to get weather effects to work properly, so for now it's just based on the last player you teleported to (or where you died if you haven't teleported to anyone yet). This means that, if you died in the rain and fly down to the dungeon, you'll see rain inside.
 - The dungeon is located way below the surface, so if you want to explore it you need to either teleport to someone who's already there, or just fly through the ground.
 - If you find any other bugs feel free to post an issue on the [Github repo](https://github.com/coderCleric/Poltergeist)
+- Credit to Zeekers for many of the base sounds, as they are ripped from the game.
