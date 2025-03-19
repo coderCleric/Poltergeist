@@ -60,6 +60,9 @@ namespace Poltergeist
             //Patch netcode
             NetcodePatcher();
 
+            //Load the audio
+            AudioManager.LoadClips(System.IO.Path.Combine(dllFolderPath, "sounds"));
+
             // All done!
             Logger.LogInfo($"Plugin {MOD_GUID} v{MOD_VERSION} is loaded!");
         }

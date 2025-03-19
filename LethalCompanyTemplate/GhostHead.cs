@@ -69,6 +69,9 @@ namespace Poltergeist
                 filterCol = colorAdj.colorFilter.value;
                 colorAdj.colorFilter.value = Color.white;
                 Poltergeist.DebugLog("Assigning head to local client");
+
+                //Send the default clip to the audio manager
+                AudioManager.defaultClip = transform.Find("manifest_audio").GetComponent<AudioSource>().clip;
             }
 
             //Check the status of the flicker animation
