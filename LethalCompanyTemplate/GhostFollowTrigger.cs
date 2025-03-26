@@ -13,7 +13,7 @@ namespace Poltergeist
         private void OnTriggerEnter(Collider other)
         {
             GhostHead head = other.GetComponent<GhostHead>();
-            if (head != null && head.isHostHead)
+            if (head != null && head == SpectatorCamController.instance.head)
             {
                 SpectatorCamController.instance.ParentTo(transform);
             }
@@ -24,7 +24,7 @@ namespace Poltergeist
         private void OnTriggerExit(Collider other)
         {
             GhostHead head = other.GetComponent<GhostHead>();
-            if (head != null && head.isHostHead)
+            if (head != null && head == SpectatorCamController.instance.head)
             {
                 SpectatorCamController.instance.ParentTo(null);
             }

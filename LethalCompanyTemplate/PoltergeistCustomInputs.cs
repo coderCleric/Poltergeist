@@ -37,6 +37,9 @@ namespace Poltergeist
         [InputAction("<Keyboard>/c", Name = "Manifest")]
         public InputAction ManifestKey { get; private set; }
 
+        [InputAction("<Keyboard>/v", Name = "Play Audio")]
+        public InputAction BarkKey { get; private set; }
+
         [InputAction("<Keyboard>/h", Name = "Toggle Controls")]
         public InputAction ToggleControlsKey { get; private set; }
 

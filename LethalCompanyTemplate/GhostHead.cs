@@ -17,10 +17,13 @@ namespace Poltergeist
         private bool initialized = false;
         public bool isActive = false;
         public bool isHostHead = false;
+        private float playTime = 0;
 
         //Components
         private Light light = null;
         private Renderer renderer = null;
+        private AudioSource manifestSource = null;
+        private AudioSource barkSource = null;
 
         //Poor man's animation curve
         private const int KEYFRAMES = 6;
@@ -46,6 +49,10 @@ namespace Poltergeist
             matInstance = renderer.material;
             maxOpacity = matInstance.color.a;
             maxIntensity = light.intensity;
+            manifestSource = transform.Find("manifest_audio").GetComponent<AudioSource>();
+            manifestSource.volume = Poltergeist.Config.GhostVolume.Value;
+            barkSource = transform.Find("bark_audio").GetComponent<AudioSource>();
+            barkSource.volume = Poltergeist.Config.GhostVolume.Value;
         }
 
         /**
@@ -71,7 +78,11 @@ namespace Poltergeist
                 Poltergeist.DebugLog("Assigning head to local client");
 
                 //Send the default clip to the audio manager
-                AudioManager.defaultClip = transform.Find("manifest_audio").GetComponent<AudioSource>().clip;
+                AudioManager.defaultClip = manifestSource.clip;
+
+                //Make it so that neither source is spatial
+                manifestSource.spatialBlend = 0;
+                barkSource.spatialBlend = 0;
             }
 
             //Check the status of the flicker animation
@@ -90,6 +101,7 @@ namespace Poltergeist
                     matInstance.color = new Color(matInstance.color.r, matInstance.color.g, matInstance.color.b, maxOpacity);
                     if(colorAdj != null)
                         colorAdj.colorFilter.value = Color.white;
+                    manifestSource.Stop();
                 }
 
                 //Otherwise, actually do the animation
@@ -108,6 +120,14 @@ namespace Poltergeist
                     if (colorAdj != null)
                         colorAdj.colorFilter.value = Color.Lerp(Color.white, filterCol, curIntensity);
                 }
+            }
+
+            //Handle the audio timer
+            if(playTime > 0)
+            {
+                playTime -= Time.deltaTime;
+                if (playTime <= 0) 
+                    barkSource.Stop();
             }
         }
 
@@ -138,12 +158,20 @@ namespace Poltergeist
         }
 
         /**
+         * Tells if the head is currently manifesting
+         */
+        public bool IsManifesting()
+        {
+            return keyIndex < KEYFRAMES;
+        }
+
+        /**
          * Plays the flicker animation
          */
         public bool PlayFlickerAnim()
         {
             //Early return if already playing
-            if (keyIndex < KEYFRAMES)
+            if (IsManifesting())
                 return false;
 
             //Start the animation
@@ -152,7 +180,51 @@ namespace Poltergeist
             light.enabled = true;
             renderer.gameObject.layer = 0;
 
+            //Play the audio
+            manifestSource.Play();
+
             return true;
+        }
+
+        /**
+         * Lets the server message clients about the head flickering
+         */
+        [ClientRpc]
+        public void BarkClientRpc(int index)
+        {
+            PlayBarkAudio(index);
+        }
+
+        /**
+         * Lets the client tell the server to flicker the head
+         */
+        [ServerRpc]
+        public void BarkServerRpc(int index)
+        {
+            BarkClientRpc(index);
+        }
+
+        /**
+         * Tells if bark audio is currently playing
+         */
+        public bool IsBarking()
+        {
+            return barkSource.isPlaying;
+        }
+
+        /**
+         * Plays the given bark audio
+         */
+        public void PlayBarkAudio(int index)
+        {
+            //Make sure it's not already playing
+            if (IsBarking())
+                return;
+
+            Poltergeist.DebugLog("Playing a bark locally");
+            playTime = Poltergeist.Config.AudioTime.Value;
+            barkSource.clip = AudioManager.GetClip(index);
+            barkSource.Play();
         }
     }
 }

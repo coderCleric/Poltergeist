@@ -14,6 +14,7 @@ namespace Poltergeist
         public ConfigEntry<bool> DefaultToVanilla { get; private set; }
         public ConfigEntry<float> LightIntensity { get; private set; }
         public ConfigEntry<bool> ShowDebugLogs { get; private set; }
+        public ConfigEntry<float> GhostVolume { get; private set; }
 
         //Synced entries
         [field: SyncedEntryField] public SyncedEntry<float> MaxPower { get; private set; }
@@ -21,6 +22,7 @@ namespace Poltergeist
         [field: SyncedEntryField] public SyncedEntry<int> AliveForMax { get; private set; }
         [field: SyncedEntryField] public SyncedEntry<float> TimeForAggro { get; private set; }
         [field: SyncedEntryField] public SyncedEntry<int> HitsForAggro { get; private set; }
+        [field: SyncedEntryField] public SyncedEntry<float> AudioTime { get; private set; }
 
         //Cost-related entries
         [field: SyncedEntryField] public SyncedEntry<float> DoorCost { get; private set; }
@@ -31,6 +33,7 @@ namespace Poltergeist
         [field: SyncedEntryField] public SyncedEntry<float> CompanyBellCost { get; private set; }
         [field: SyncedEntryField] public SyncedEntry<float> PesterCost { get; private set; }
         [field: SyncedEntryField] public SyncedEntry<float> ManifestCost { get; private set; }
+        [field: SyncedEntryField] public SyncedEntry<float> BarkCost { get; private set; }
         [field: SyncedEntryField] public SyncedEntry<float> MiscCost { get; private set; }
 
         /**
@@ -54,12 +57,19 @@ namespace Poltergeist
                     new AcceptableValueRange<float>(0, float.MaxValue)
                     )
                 );
-            //Bind the non-synced stuff
             ShowDebugLogs = cfg.Bind(
                 new ConfigDefinition("Client-Side", "ShowDebugLogs"),
                 false,
                 new ConfigDescription(
                     "If true, you will see debug logs."
+                    )
+                );
+            GhostVolume = cfg.Bind(
+                new ConfigDefinition("Client-Side", "Ghost Volume"),
+                1f,
+                new ConfigDescription(
+                    "Volume of the audio ghosts make",
+                    new AcceptableValueRange<float>(0, 1)
                     )
                 );
 
@@ -103,6 +113,14 @@ namespace Poltergeist
                 new ConfigDescription(
                     "How many times an enemy has to be pestered in the timespan in order to get mad at a nearby player.",
                     new AcceptableValueRange<int>(1, int.MaxValue)
+                    )
+                );
+            AudioTime = cfg.BindSyncedEntry(
+                new ConfigDefinition("Synced", "Audio play time"),
+                5f,
+                new ConfigDescription(
+                    "The maximum time (in seconds) that ghost audio can play before stopping.",
+                    new AcceptableValueRange<float>(0, float.MaxValue)
                     )
                 );
 
@@ -165,9 +183,17 @@ namespace Poltergeist
                 );
             ManifestCost = cfg.BindSyncedEntry(
                 new ConfigDefinition("Synced: Costs", "Manifest cost"),
-                80f,
+                60f,
                 new ConfigDescription(
                     "The power required to manifest in the realm of the living.",
+                    new AcceptableValueRange<float>(0, float.MaxValue)
+                    )
+                );
+            BarkCost = cfg.BindSyncedEntry(
+                new ConfigDefinition("Synced: Costs", "Audio playing cost"),
+                20f,
+                new ConfigDescription(
+                    "The power required to play audio that the living can hear.",
                     new AcceptableValueRange<float>(0, float.MaxValue)
                     )
                 );

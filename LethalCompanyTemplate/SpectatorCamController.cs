@@ -18,29 +18,38 @@ namespace Poltergeist
     {
         public static SpectatorCamController instance = null;
 
+        //Camera stuff
         private Camera cam;
         private float camMoveSpeed = 5f;
         private Light[] lights = new Light[4];
 
+        //Power stuff
         private float maxPower = 100;
         private float power = 0;
         public float Power => power;
 
+        //Tracking certain things
         private Transform ghostParent = null;
-
         private PlayerControllerB clientPlayer = null;
         public PlayerControllerB ClientPlayer => clientPlayer;
         public GhostHead head = null;
         private IGhostInteractible currentGhostInteractible = null;
+
+        //Control display
         private Transform hintPanelRoot = null;
         private Transform hintPanelOrigParent = null;
         private Transform deathUIRoot = null;
         private TextMeshProUGUI controlsText = null;
         private bool controlsHidden = true;
+
+        //Control related things
         private float accelTime = -1;
         private float decelTime = -1;
-        public static List<MaskedPlayerEnemy> masked = new List<MaskedPlayerEnemy>();
         private bool altitudeLock = false;
+
+        //Helpful stuff
+        public static List<MaskedPlayerEnemy> masked = new List<MaskedPlayerEnemy>();
+        private static DunGen.RandomStream rand = null;
 
         /**
          * On awake, make and grab the light
@@ -153,6 +162,10 @@ namespace Poltergeist
 
                 //Set the controls text
                 UpdateControlText();
+
+                //Make the rng thing
+                if(rand == null)
+                    rand = new DunGen.RandomStream();
             }
         }
 
@@ -219,7 +232,9 @@ namespace Poltergeist
                 str += "Teleport to players; [1-9]\n";
                 str += "Toggle Ghost Light; [" + PoltergeistCustomInputs.GetKeyString(PoltergeistCustomInputs.instance.SwitchLightButton) + "]\n";
                 str += "Manifest; [" + PoltergeistCustomInputs.GetKeyString(PoltergeistCustomInputs.instance.ManifestKey) + "] (Cost: "
-                    + Poltergeist.Config.ManifestCost.Value + ")";
+                    + Poltergeist.Config.ManifestCost.Value + ")\n";
+                str += "Play Audio; [" + PoltergeistCustomInputs.GetKeyString(PoltergeistCustomInputs.instance.BarkKey) + "] (Cost: "
+                    + Poltergeist.Config.BarkCost.Value + ")";
             }
             controlsText.text = str;
         }
@@ -424,11 +439,32 @@ namespace Poltergeist
             if (clientPlayer.isTypingChat || clientPlayer.quickMenuManager.isMenuOpen)
                 return;
 
-            //Call it on the head if there's enough power
-            if (power >= Poltergeist.Config.ManifestCost.Value)
+            //Call it on the head if there's enough power (and it's not already being done)
+            if (power >= Poltergeist.Config.ManifestCost.Value && !head.IsManifesting())
             {
                 head.ManifestServerRpc();
                 power -= Poltergeist.Config.ManifestCost.Value;
+            }
+        }
+
+        /**
+         * Play bark audio
+         */
+        private void Bark(InputAction.CallbackContext context)
+        {
+            //Only do it if performing and not in vanilla mode
+            if (!context.performed || Patches.vanillaMode)
+                return;
+            
+            //Don't do things if paused
+            if (clientPlayer.isTypingChat || clientPlayer.quickMenuManager.isMenuOpen)
+                return;
+
+            //Call it on the head if there's enough power (and it's not already being done)
+            if (power >= Poltergeist.Config.BarkCost.Value && !head.IsBarking())
+            {
+                head.BarkServerRpc(rand.Next());
+                power -= Poltergeist.Config.BarkCost.Value;
             }
         }
 
@@ -462,6 +498,7 @@ namespace Poltergeist
             PoltergeistCustomInputs.instance.ToggleButton.performed += SwitchModes;
             PoltergeistCustomInputs.instance.LockKey.performed += LockAltitude;
             PoltergeistCustomInputs.instance.ManifestKey.performed += ManifestHead;
+            PoltergeistCustomInputs.instance.BarkKey.performed += Bark;
             PoltergeistCustomInputs.instance.ToggleControlsKey.performed += ToggleControlVis;
 
         }
@@ -474,6 +511,7 @@ namespace Poltergeist
             PoltergeistCustomInputs.instance.ToggleButton.performed -= SwitchModes;
             PoltergeistCustomInputs.instance.LockKey.performed -= LockAltitude;
             PoltergeistCustomInputs.instance.ManifestKey.performed -= ManifestHead;
+            PoltergeistCustomInputs.instance.BarkKey.performed -= Bark;
             PoltergeistCustomInputs.instance.ToggleControlsKey.performed -= ToggleControlVis;
         }
 
