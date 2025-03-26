@@ -191,7 +191,7 @@ namespace Poltergeist
                 );
             BarkCost = cfg.BindSyncedEntry(
                 new ConfigDefinition("Synced: Costs", "Audio playing cost"),
-                20f,
+                40f,
                 new ConfigDescription(
                     "The power required to play audio that the living can hear.",
                     new AcceptableValueRange<float>(0, float.MaxValue)
