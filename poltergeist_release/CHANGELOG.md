@@ -1,3 +1,15 @@
+# 1.2.0
+- Made it so that ghosts can now play sounds with the 'V' key
+  - The sounds can be changed by changing the contents of the 'sounds' folder. See the readme for more info.
+- Manifesting now makes a noise, to better get living player's attention.
+- If a ghost is inside the ship, they will move with the ship instead of having to chase it.
+- The mine elevator can now be sent up and down by ghosts.
+- Removed interactions from Manticoils since they were super inconsistent.
+- Added a config option to enable/disable debug messages.
+- Bug Fixes:
+  - Edited control display to include the number key teleportation.
+  - Attempted to fix a random error that would sometimes occur with enemies and props (hopefully it worked!)
+  - Fixed a softlock that would occur when certain controls were completely unbound.
 # 1.1.1
 - Made it so that the mod actually loads on v61.
 - Fixed some issues that were making it so that the whoopie cushion interaction wasn't working.
