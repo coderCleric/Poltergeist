@@ -44,12 +44,14 @@ namespace Poltergeist
                 {
                     Task<AudioClip> task = Task.Run(async () => await GetAudioClip(path));
                     task.Wait();
-                    loadedClips.Add(task.Result);
+                    if(task.Result != null)
+                        loadedClips.Add(task.Result);
                 }
 
                 //If we can't, throw an error and move on to the next
                 catch (Exception e)
                 {
+                    Poltergeist.LogError("An exception was encountered while loading audio!");
                     continue;
                 }
             }
@@ -76,6 +78,7 @@ namespace Poltergeist
                     audioType = AudioType.MPEG;
                     break;
                 default:
+                    Poltergeist.LogWarning($"Ran into illegal extension {extension} while loading audio!");
                     return null;
             }
 
@@ -98,6 +101,7 @@ namespace Poltergeist
                     //Make sure that it actually loaded
                     if (www.result != UnityWebRequest.Result.Success)
                     {
+                        Poltergeist.LogError("An MP3 file failed to load!");
                         return null;
                     }
 
@@ -124,6 +128,7 @@ namespace Poltergeist
                     //Make sure it actually loaded
                     if (www.result != UnityWebRequest.Result.Success)
                     {
+                        Poltergeist.LogError("A non-MP3 file failed to load!");
                         return null;
                     }
 

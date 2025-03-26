@@ -95,5 +95,21 @@ namespace Poltergeist
             if(Config.ShowDebugLogs.Value)
                 instance.Logger.LogInfo(msg);
         }
+
+        /**
+         * Log an error
+         */
+        public static void LogError(string msg)
+        {
+            instance.Logger.LogError(msg);
+        }
+
+        /**
+         * Log a warning
+         */
+        public static void LogWarning(string msg)
+        {
+            instance.Logger.LogWarning(msg);
+        }
     }
 }
