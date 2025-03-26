@@ -1,15 +1,15 @@
 ManifestFileVersion: 0
-CRC: 764210723
+CRC: 3546072293
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: 759952bc3ffadbe23d57d5836724b170
+    Hash: eb9acb5727aed4e4abe8ab5a6ada15b9
   TypeTreeHash:
     serializedVersion: 2
-    Hash: 3294939b323cecadccc5bcb5a5700474
+    Hash: 3aa4d2e465632171ad7fbfb8f837ee3f
   IncrementalBuildHash:
     serializedVersion: 2
-    Hash: 759952bc3ffadbe23d57d5836724b170
+    Hash: eb9acb5727aed4e4abe8ab5a6ada15b9
 HashAppended: 0
 ClassTypes:
 - Class: 1
@@ -28,6 +28,12 @@ ClassTypes:
   Script: {instanceID: 0}
 - Class: 54
   Script: {instanceID: 0}
+- Class: 65
+  Script: {instanceID: 0}
+- Class: 82
+  Script: {instanceID: 0}
+- Class: 83
+  Script: {instanceID: 0}
 - Class: 108
   Script: {instanceID: 0}
 - Class: 114
@@ -44,6 +50,12 @@ ClassTypes:
   Script: {instanceID: 0}
 - Class: 135
   Script: {instanceID: 0}
+- Class: 241
+  Script: {instanceID: 0}
+- Class: 243
+  Script: {instanceID: 0}
+- Class: 245
+  Script: {instanceID: 0}
 SerializeReferenceClassIdentifiers:
 - AssemblyName: Unity.RenderPipelines.Core.Runtime
   ClassName: UnityEngine.Rendering.ClampedFloatParameter
@@ -59,6 +71,7 @@ Assets:
 - Assets/Prefabs/EnemyInteractible.prefab
 - Assets/Prefabs/GhostItemTrigger.prefab
 - Assets/Prefabs/ghosthead_postprocess.prefab
+- Assets/Prefabs/GhostFollowTrigger.prefab
 - Assets/Prefabs/ghosthead.prefab
 - Assets/Prefabs/PropInteractible.prefab
 Dependencies: []
