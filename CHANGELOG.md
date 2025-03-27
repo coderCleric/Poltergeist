@@ -1,3 +1,5 @@
+# 1.2.1
+- Changed the static audio played by manifesting to not suck.
 # 1.2.0
 - Made it so that ghosts can now play sounds with the 'V' key
   - The sounds can be changed by changing the contents of the 'sounds' folder. See the readme for more info.
