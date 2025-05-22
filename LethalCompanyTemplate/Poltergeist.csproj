@@ -32,4 +32,7 @@
     <Target Name="NetcodePatch" AfterTargets="PostBuildEvent">
       <Exec Command="netcode-patch &quot;$(TargetPath)&quot; @(ReferencePathWithRefAssemblies->'&quot;%(Identity)&quot;', ' ')" />
     </Target>
+  <Target Name="DLLCopy" AfterTargets="NetcodePatch">
+    <Exec Command="copy &quot;$(TargetPath)&quot; &quot;$(AppData)\r2modmanPlus-local\LethalCompany\profiles\Modding\BepInEx\plugins\Unknown-Poltergeist&quot;" />
+  </Target>
 </Project>
