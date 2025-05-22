@@ -32,8 +32,14 @@ namespace Poltergeist
         private int keyIndex = 999;
         private float startTime = 0;
 
-        //Bounds for the animation
+        //Material handling
+        public static string[] matNames = ["ace_mat", "bi_mat", "lesbian_mat", "pan_mat", "pride_mat", "trans_mat"];
+        private static Material[] sharedMats = null;
+        private Material[] materials = null;
         private Material matInstance = null;
+        private DunGen.RandomStream matRNG = null;
+
+        //Bounds for the animation
         private ColorAdjustments colorAdj = null;
         private float maxOpacity = 1;
         private float maxIntensity = 1;
@@ -44,6 +50,7 @@ namespace Poltergeist
          */
         private void Awake ()
         {
+            //Grab a bunch of different attributes
             light = GetComponentInChildren<Light>();
             renderer = GetComponentInChildren<Renderer>();
             matInstance = renderer.material;
@@ -53,6 +60,13 @@ namespace Poltergeist
             manifestSource.volume = Poltergeist.Config.GhostVolume.Value;
             barkSource = transform.Find("bark_audio").GetComponent<AudioSource>();
             barkSource.volume = Poltergeist.Config.GhostVolume.Value;
+
+            //Load the material instances
+            materials = new Material[sharedMats.Length];
+            for (int i = 0; i < sharedMats.Length; i++)
+            {
+                materials[i] = Instantiate(sharedMats[i]);
+            }
         }
 
         /**
@@ -132,11 +146,49 @@ namespace Poltergeist
         }
 
         /**
+         * Applies a random material to the head
+         */
+        public void ApplyRandomMat()
+        {
+            //Make the rng thing, if needed
+            if(matRNG == null)
+                matRNG = new DunGen.RandomStream();
+
+            //Select then apply a random material
+            int index = matRNG.Next() % materials.Length;
+            ApplyMatServerRPC(index);
+        }
+
+        /**
          * Deactivate the given head after client dc's
          */
         public void Deactivate()
         {
             transform.position = StartOfRound.Instance.notSpawnedPosition.position;
+
+            //Stop the animation
+            keyIndex = KEYFRAMES;
+            light.enabled = false;
+            renderer.gameObject.layer = 23;
+            light.intensity = maxIntensity;
+            matInstance.color = new Color(matInstance.color.r, matInstance.color.g, matInstance.color.b, maxOpacity);
+            if (colorAdj != null)
+                colorAdj.colorFilter.value = Color.white;
+            manifestSource.Stop();
+        }
+
+        /**
+         * Load the materials from the assetbundle into the shared mats
+         */
+        public static void LoadMats(AssetBundle bundle)
+        {
+            sharedMats = new Material[matNames.Length];
+
+            //Load each material from the bundle
+            for(int i = 0; i < sharedMats.Length; i++)
+            {
+                sharedMats[i] = bundle.LoadAsset<Material>($"Assets/Materials/{matNames[i]}.mat");
+            }
         }
 
         /**
@@ -225,6 +277,33 @@ namespace Poltergeist
             playTime = Poltergeist.Config.AudioTime.Value;
             barkSource.clip = AudioManager.GetClip(index);
             barkSource.Play();
+        }
+
+        /**
+         * Let clients tell the server to change their mat
+         */
+        [ServerRpc]
+        private void ApplyMatServerRPC(int index)
+        {
+            ApplyMatClientRPC(index);
+        }
+
+        /**
+         * Let the server tell clients about a mat change
+         */
+        [ClientRpc]
+        private void ApplyMatClientRPC(int index)
+        {
+            ApplyMatLocally(index);
+        }
+
+        /**
+         * Applies the given material index to the head locally
+         */
+        private void ApplyMatLocally(int index)
+        {
+            matInstance = materials[index];
+            renderer.sharedMaterial = matInstance;
         }
     }
 }

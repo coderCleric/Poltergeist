@@ -127,6 +127,7 @@ namespace Poltergeist
 
                 //Activate the head
                 head.isActive = true;
+                head.ApplyRandomMat();
 
                 //Move the camera
                 if (!Patches.vanillaMode)
@@ -188,7 +189,7 @@ namespace Poltergeist
                 if (head != null)
                 {
                     head.isActive = false;
-                    head.transform.position = StartOfRound.Instance.notSpawnedPosition.position;
+                    head.Deactivate();
                 }
 
                 //If these aren't null, we moved them and need to put them back

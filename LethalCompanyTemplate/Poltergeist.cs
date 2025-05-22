@@ -34,17 +34,24 @@ namespace Poltergeist
 
             //Handle the config
             Config = new PoltergeistConfig(base.Config);
+            DebugLog("Config setup done");
 
             //Make the patches
             Harmony.CreateAndPatchAll(Assembly.GetExecutingAssembly());
+            DebugLog("Patches done");
 
             //Make the input instance
             new PoltergeistCustomInputs();
+            DebugLog("Input instance created");
 
             //Load the assetbundle
             string dllFolderPath = System.IO.Path.GetDirectoryName(Info.Location);
             string assetBundleFilePath = System.IO.Path.Combine(dllFolderPath, "bundles", "poltergeist");
             poltergeistAssetBundle = AssetBundle.LoadFromFile(assetBundleFilePath);
+            DebugLog("Bundle loaded");
+
+            //Load ghost head mats from the bundle
+            GhostHead.LoadMats(poltergeistAssetBundle);
 
             //Load the volume object
             colorVolObject = poltergeistAssetBundle.LoadAsset<GameObject>("Assets/Prefabs/ghosthead_postprocess.prefab");
@@ -56,12 +63,15 @@ namespace Poltergeist
             //Load the follow trigger object
             followTriggerObject = poltergeistAssetBundle.LoadAsset<GameObject>("Assets/Prefabs/GhostFollowTrigger.prefab");
             followTriggerObject.AddComponent<GhostFollowTrigger>();
-
-            //Patch netcode
-            NetcodePatcher();
+            DebugLog("Important objects extracted from bundle");
 
             //Load the audio
             AudioManager.LoadClips(System.IO.Path.Combine(dllFolderPath, "sounds"));
+            DebugLog("Audio loaded");
+
+            //Patch netcode
+            NetcodePatcher();
+            DebugLog("Netcode patcher ran");
 
             // All done!
             Logger.LogInfo($"Plugin {MOD_GUID} v{MOD_VERSION} is loaded!");
