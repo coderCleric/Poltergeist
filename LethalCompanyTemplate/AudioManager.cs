@@ -42,10 +42,13 @@ namespace Poltergeist
                 //Try and load it
                 try
                 {
+                    Poltergeist.DebugLog("Found a file in the audio folder");
                     Task<AudioClip> task = Task.Run(async () => await GetAudioClip(path));
+                    Poltergeist.DebugLog("Waiting for file load task to complete");
                     task.Wait();
                     if(task.Result != null)
                         loadedClips.Add(task.Result);
+                    Poltergeist.DebugLog("Clip loaded successfully");
                 }
 
                 //If we can't, throw an error and move on to the next
@@ -87,6 +90,8 @@ namespace Poltergeist
             //If it's an MP3, need to load it a specific way
             if (audioType == AudioType.MPEG)
             {
+                Poltergeist.DebugLog("Loading MP3 file");
+
                 //Set up the thing to "download" the audio
                 DownloadHandlerAudioClip dh = new DownloadHandlerAudioClip(path, AudioType.MPEG);
                 dh.compressed = true;
@@ -118,6 +123,8 @@ namespace Poltergeist
             //It's not an MP3, we can use this method
             else
             {
+                Poltergeist.DebugLog("Loading non-MP3 file");
+
                 //Make the web request
                 using (UnityWebRequest www = UnityWebRequestMultimedia.GetAudioClip(path, audioType))
                 {
