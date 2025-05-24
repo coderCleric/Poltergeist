@@ -1,15 +1,15 @@
 ManifestFileVersion: 0
-CRC: 1170951453
+CRC: 3646452242
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: b39f21e58288093141deda28a321c832
+    Hash: fed84fc3e1d62cdf02671559477c4167
   TypeTreeHash:
     serializedVersion: 2
-    Hash: 3aa4d2e465632171ad7fbfb8f837ee3f
+    Hash: 9890e2acc3ed00f3e30ab1efe7196e2e
   IncrementalBuildHash:
     serializedVersion: 2
-    Hash: b39f21e58288093141deda28a321c832
+    Hash: fed84fc3e1d62cdf02671559477c4167
 HashAppended: 0
 ClassTypes:
 - Class: 1
@@ -19,6 +19,8 @@ ClassTypes:
 - Class: 21
   Script: {instanceID: 0}
 - Class: 23
+  Script: {instanceID: 0}
+- Class: 28
   Script: {instanceID: 0}
 - Class: 33
   Script: {instanceID: 0}
@@ -70,8 +72,15 @@ SerializeReferenceClassIdentifiers:
 Assets:
 - Assets/Prefabs/EnemyInteractible.prefab
 - Assets/Prefabs/GhostItemTrigger.prefab
+- Assets/Materials/lesbian_mat.mat
+- Assets/Materials/pan_mat.mat
+- Assets/Materials/ghost_mat.mat
 - Assets/Prefabs/ghosthead_postprocess.prefab
+- Assets/Materials/pride_mat.mat
+- Assets/Materials/bi_mat.mat
 - Assets/Prefabs/GhostFollowTrigger.prefab
+- Assets/Materials/trans_mat.mat
+- Assets/Materials/ace_mat.mat
 - Assets/Prefabs/ghosthead.prefab
 - Assets/Prefabs/PropInteractible.prefab
 Dependencies: []
