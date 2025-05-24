@@ -1,3 +1,6 @@
+# 1.2.2
+- Added a bunch of debug messages to help troubleshoot some audio issues.
+- june
 # 1.2.1
 - Changed the static audio played by manifesting to not suck.
 # 1.2.0
