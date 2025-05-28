@@ -1,15 +1,15 @@
 ManifestFileVersion: 0
-CRC: 3646452242
+CRC: 3465222388
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: fed84fc3e1d62cdf02671559477c4167
+    Hash: 5572504122b1b6279ae44b055cb711cb
   TypeTreeHash:
     serializedVersion: 2
     Hash: 9890e2acc3ed00f3e30ab1efe7196e2e
   IncrementalBuildHash:
     serializedVersion: 2
-    Hash: fed84fc3e1d62cdf02671559477c4167
+    Hash: 5572504122b1b6279ae44b055cb711cb
 HashAppended: 0
 ClassTypes:
 - Class: 1
@@ -75,6 +75,8 @@ Assets:
 - Assets/Materials/lesbian_mat.mat
 - Assets/Materials/pan_mat.mat
 - Assets/Materials/ghost_mat.mat
+- Assets/Materials/fluid_mat.mat
+- Assets/Materials/nb_mat.mat
 - Assets/Prefabs/ghosthead_postprocess.prefab
 - Assets/Materials/pride_mat.mat
 - Assets/Materials/bi_mat.mat
@@ -82,5 +84,6 @@ Assets:
 - Assets/Materials/trans_mat.mat
 - Assets/Materials/ace_mat.mat
 - Assets/Prefabs/ghosthead.prefab
+- Assets/Materials/aro_mat.mat
 - Assets/Prefabs/PropInteractible.prefab
 Dependencies: []

@@ -33,7 +33,7 @@ namespace Poltergeist
         private float startTime = 0;
 
         //Material handling
-        public static string[] matNames = ["ace_mat", "bi_mat", "lesbian_mat", "pan_mat", "pride_mat", "trans_mat"];
+        public static string[] matNames = ["ace_mat", "bi_mat", "lesbian_mat", "pan_mat", "pride_mat", "trans_mat", "nb_mat", "fluid_mat", "aro_mat"];
         private static Material[] sharedMats = null;
         private Material[] materials = null;
         private Material matInstance = null;
