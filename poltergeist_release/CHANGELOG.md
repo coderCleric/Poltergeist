@@ -1,3 +1,5 @@
+# 1.2.3
+- Added a more robust fix for the NRE in DoSetup. Should give more info if it fails and try to recover more meaningfully.
 # 1.2.2
 - Added a bunch of debug messages to help troubleshoot some audio issues.
 - june
