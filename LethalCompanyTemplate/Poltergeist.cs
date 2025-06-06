@@ -13,7 +13,7 @@ namespace Poltergeist
         //Plugin info
         public const string MOD_GUID = "coderCleric.Poltergeist";
         public const string MOD_NAME = "Poltergeist";
-        public const string MOD_VERSION = "1.2.2";
+        public const string MOD_VERSION = "1.2.3";
 
         //Prefabs
         public static GameObject propInteractibleObject;
