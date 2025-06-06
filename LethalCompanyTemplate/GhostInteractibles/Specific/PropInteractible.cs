@@ -16,7 +16,20 @@ namespace Poltergeist.GhostInteractibles.Specific
          */
         protected override void DoSetup()
         {
+            //If there is somehow no parent, try again later
+            if (transform.parent == null)
+            {
+                waitTime = 2;
+                wasBugged = true;
+                Poltergeist.LogWarning($"A prop interactible is orphaned! Trying setup again in {waitTime} seconds.\nThe host log should show exactly what type of prop is causing this.");
+                SendWarningServerRpc();
+                return;
+            }
+
             prop = transform.parent.GetComponent<GrabbableObject>();
+
+            if (wasBugged)
+                Poltergeist.Log($"Bugged prop {gameObject.name} was recovered");
         }
 
         /**
@@ -32,6 +45,10 @@ namespace Poltergeist.GhostInteractibles.Specific
          */
         public override float Interact(Transform playerTransform)
         {
+            //Abort if there's no prop somehow
+            if (prop == null)
+                return 0;
+
             //Don't let them interact without meeting the cost
             if (SpectatorCamController.instance.Power < GetCost())
                 return 0;
@@ -53,6 +70,10 @@ namespace Poltergeist.GhostInteractibles.Specific
          */
         public void InteractLocallyOnly()
         {
+            //Abort if there's no prop somehow
+            if (prop == null)
+                return;
+
             Poltergeist.DebugLog("Interacting locally with " + prop.gameObject.name);
             prop.ItemActivate(prop.isBeingUsed);
         }
@@ -62,6 +83,10 @@ namespace Poltergeist.GhostInteractibles.Specific
          */
         public override string GetTipText()
         {
+            //Abort if there's no prop somehow
+            if (prop == null)
+                return "Prop not synced correctly!";
+
             string retStr = "";
 
             //Display message for not having enough power
@@ -80,6 +105,10 @@ namespace Poltergeist.GhostInteractibles.Specific
         [ClientRpc]
         public void InteractClientRpc(int playerID, bool isBeingUsed)
         {
+            //Abort if there's no prop somehow
+            if (prop == null)
+                return;
+
             //Do nothing if we're the originator
             if (SpectatorCamController.instance.ClientPlayer != null && playerID == (int)SpectatorCamController.instance.ClientPlayer.playerClientId)
                 return;

@@ -107,6 +107,14 @@ namespace Poltergeist
         }
 
         /**
+         * Log things more important than debug, but aren't warnings or errors
+         */
+        public static void Log(string msg)
+        {
+            instance.Logger.LogInfo(msg);
+        }
+
+        /**
          * Log an error
          */
         public static void LogError(string msg)

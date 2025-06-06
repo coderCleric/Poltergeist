@@ -8,7 +8,9 @@ namespace Poltergeist.GhostInteractibles
 {
     public abstract class NetworkedInteractible : NetworkBehaviour, IGhostInteractible
     {
-        private float waitTime = 2;
+        protected float waitTime = 2;
+        protected bool wasBugged = false;
+
 
         public abstract float Interact(Transform playerTransform);
         public abstract float GetCost();
@@ -26,6 +28,15 @@ namespace Poltergeist.GhostInteractibles
                 if(waitTime <= 0)
                     DoSetup();
             }
+        }
+
+        /**
+         * Allows clients to report issues to the server, for better warning messages
+         */
+        [ServerRpc(RequireOwnership = false)]
+        public void SendWarningServerRpc()
+        {
+            Poltergeist.LogWarning($"A player is having an issue with interactible {gameObject.name}!");
         }
     }
 }

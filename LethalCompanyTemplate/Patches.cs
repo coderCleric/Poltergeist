@@ -245,6 +245,7 @@ namespace Poltergeist
                 if (__instance is NoisemakerProp || __instance is BoomboxItem ||
                     __instance is RadarBoosterItem || __instance is RemoteProp) {
                     GameObject interactObject = GameObject.Instantiate(Poltergeist.propInteractibleObject, __instance.transform);
+                    interactObject.name = __instance.name + "Interactor";
                     interactObject.GetComponent<NetworkObject>().Spawn();
                     interactObject.transform.parent = __instance.transform;
                 }
@@ -299,6 +300,7 @@ namespace Poltergeist
             {
                 Poltergeist.DebugLog("Making interactor for " + __instance.name);
                 GameObject interactObject = GameObject.Instantiate(Poltergeist.enemyInteractibleObject, __instance.transform);
+                interactObject.name = __instance.name + "Interactor";
                 interactObject.GetComponent<NetworkObject>().Spawn();
                 interactObject.transform.parent = __instance.transform;
             }

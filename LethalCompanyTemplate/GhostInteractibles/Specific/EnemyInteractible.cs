@@ -20,6 +20,16 @@ namespace Poltergeist.GhostInteractibles.Specific
          */
         protected override void DoSetup()
         {
+            //If there is somehow no parent, try again later
+            if (transform.parent == null)
+            {
+                waitTime = 2;
+                wasBugged = true;
+                Poltergeist.LogWarning($"An enemy interactible is orphaned! Trying setup again in {waitTime} seconds.\nThe host log should show what type of enemy is causing this.");
+                SendWarningServerRpc();
+                return;
+            }
+
             //Find the enemy AI
             Transform enemyTF = transform.parent;
             enemy = enemyTF.GetComponent<EnemyAI>();
@@ -33,6 +43,9 @@ namespace Poltergeist.GhostInteractibles.Specific
                 detectors[i] = AIDetectors[i].gameObject.AddComponent<EnemyDetector>();
                 detectors[i].RegisterInteractible(this);
             }
+
+            if (wasBugged)
+                Poltergeist.Log($"Bugged enemy {gameObject.name} was recovered");
         }
 
         /**
@@ -48,6 +61,10 @@ namespace Poltergeist.GhostInteractibles.Specific
          */
         public override float Interact(Transform playerTransform)
         {
+            //Abort if there's no enemy somehow
+            if (enemy == null)
+                return 0;
+
             //Don't let them interact without meeting the cost
             if (SpectatorCamController.instance.Power < GetCost())
                 return 0;
@@ -84,7 +101,8 @@ namespace Poltergeist.GhostInteractibles.Specific
          */
         public void InteractLocallyOnly(PlayerControllerB accusedPlayer)
         {
-            if(enemy == null)
+            //Abort if there's no enemy somehow
+            if (enemy == null)
                 return;
 
             Poltergeist.DebugLog("Interacting locally with " + enemy.gameObject.name);
@@ -96,6 +114,10 @@ namespace Poltergeist.GhostInteractibles.Specific
          */
         public override string GetTipText()
         {
+            //Abort if there's no enemy somehow
+            if (enemy == null)
+                return "Enemy is not synced!";
+
             string retStr = "";
 
             //Display message for the enemy being dead

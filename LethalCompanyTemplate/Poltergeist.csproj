@@ -34,5 +34,6 @@
     </Target>
   <Target Name="DLLCopy" AfterTargets="NetcodePatch">
     <Exec Command="copy &quot;$(TargetPath)&quot; &quot;$(AppData)\r2modmanPlus-local\LethalCompany\profiles\Modding\BepInEx\plugins\Unknown-Poltergeist&quot;" />
+    <Exec Command="copy &quot;$(TargetPath)&quot; &quot;$(AppData)\r2modmanPlus-local\LethalCompany\profiles\Modding\BepInEx\plugins\coderCleric-Poltergeist&quot;" />
   </Target>
 </Project>
