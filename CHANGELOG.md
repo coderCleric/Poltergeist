@@ -1,3 +1,5 @@
+# 1.2.4
+- Trying again to fix the bug in DoSetup.
 # 1.2.3
 - Added a more robust fix for the NRE in DoSetup. Should give more info if it fails and try to recover more meaningfully.
 # 1.2.2
