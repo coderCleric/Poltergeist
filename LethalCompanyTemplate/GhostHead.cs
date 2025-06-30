@@ -41,6 +41,7 @@ namespace Poltergeist
 
         //Bounds for the animation
         private ColorAdjustments colorAdj = null;
+        private GameObject colorVolume = null;
         private float maxOpacity = 1;
         private float maxIntensity = 1;
         private Color filterCol = Color.white;
@@ -82,13 +83,14 @@ namespace Poltergeist
                 SpectatorCamController.instance.head = this;
                 renderer.enabled = false;
 
-                //Make and grab the postprocessing vol
-                GameObject volObj = Instantiate(Poltergeist.colorVolObject);
-                VolumeProfile colorProfile = volObj.GetComponent<Volume>().profile;
+                //Make and grab the postprocessing volume
+                colorVolume = Instantiate(Poltergeist.colorVolObject, transform);
+                VolumeProfile colorProfile = colorVolume.GetComponent<Volume>().profile;
                 colorProfile.TryGet<ColorAdjustments>(out colorAdj);
                 colorAdj.colorFilter.overrideState = true;
                 filterCol = colorAdj.colorFilter.value;
                 colorAdj.colorFilter.value = Color.white;
+                colorVolume.SetActive(false);
                 Poltergeist.DebugLog("Assigning head to local client");
 
                 //Send the default clip to the audio manager
@@ -115,6 +117,8 @@ namespace Poltergeist
                     matInstance.color = new Color(matInstance.color.r, matInstance.color.g, matInstance.color.b, maxOpacity);
                     if(colorAdj != null)
                         colorAdj.colorFilter.value = Color.white;
+                    if (colorVolume != null)
+                        colorVolume.SetActive(false);
                     manifestSource.Stop();
                 }
 
@@ -174,6 +178,8 @@ namespace Poltergeist
             matInstance.color = new Color(matInstance.color.r, matInstance.color.g, matInstance.color.b, maxOpacity);
             if (colorAdj != null)
                 colorAdj.colorFilter.value = Color.white;
+            if (colorVolume != null)
+                colorVolume.SetActive(false);
             manifestSource.Stop();
         }
 
@@ -231,6 +237,8 @@ namespace Poltergeist
             startTime = Time.time;
             light.enabled = true;
             renderer.gameObject.layer = 0;
+            if (colorVolume != null)
+                colorVolume.SetActive(true);
 
             //Play the audio
             manifestSource.Play();
