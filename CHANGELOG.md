@@ -1,3 +1,5 @@
+# 1.2.5
+- Fixed bug that caused the game to look slightly different with the mod on.
 # 1.2.4
 - Trying again to fix the bug in DoSetup.
 # 1.2.3
