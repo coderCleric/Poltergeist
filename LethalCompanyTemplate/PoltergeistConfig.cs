@@ -25,6 +25,7 @@ namespace Poltergeist
         [field: SyncedEntryField] public SyncedEntry<float> TimeForAggro { get; private set; }
         [field: SyncedEntryField] public SyncedEntry<int> HitsForAggro { get; private set; }
         [field: SyncedEntryField] public SyncedEntry<float> AudioTime { get; private set; }
+        public ConfigEntry<string> PesterBlacklist { get; private set; } //Not actually a synced entry, since only the host makes pestering happen
 
         //Cost-related entries
         [field: SyncedEntryField] public SyncedEntry<float> DoorCost { get; private set; }
@@ -137,6 +138,15 @@ namespace Poltergeist
                 new ConfigDescription(
                     "The maximum time (in seconds) that ghost audio can play before stopping.",
                     new AcceptableValueRange<float>(0, float.MaxValue)
+                    )
+                );
+            PesterBlacklist = cfg.Bind( //Not actually synced, but only works for the host
+                new ConfigDefinition("Synced", "Pester Blacklist"),
+                "",
+                new ConfigDescription(
+                    "A comma-separated list of monster names. Monsters who's names contain values from here will not be able to be pestered." +
+                    "\n\nExample: \"Centipede,man\" will disable pestering for snare fleas (CENTIPEDE), brackens (flowerMAN), and " +
+                    "coilheads (springMAN)"
                     )
                 );
 

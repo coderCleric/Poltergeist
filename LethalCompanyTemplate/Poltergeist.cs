@@ -28,6 +28,7 @@ namespace Poltergeist
         public static AssetBundle poltergeistAssetBundle;
         public static string dllFolderPath;
         public new static PoltergeistConfig Config { get; private set; }
+        public static string[] pesterBlacklist {  get; private set; }
 
         private void Awake()
         {
@@ -36,6 +37,13 @@ namespace Poltergeist
             //Handle the config
             Config = new PoltergeistConfig(base.Config);
             DebugLog("Config setup done");
+
+            //Load blacklisted enemy names
+            string tmp = Config.PesterBlacklist.Value.ToLower();
+            string[] splits = [", ", ","];
+            pesterBlacklist = tmp.Split(splits, System.StringSplitOptions.None);
+            if (pesterBlacklist.Length == 1 && pesterBlacklist[0].Equals(""))
+                pesterBlacklist = new string[0];
 
             //Make the patches
             Harmony.CreateAndPatchAll(Assembly.GetExecutingAssembly());

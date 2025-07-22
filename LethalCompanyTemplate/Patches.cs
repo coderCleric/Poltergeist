@@ -296,6 +296,14 @@ namespace Poltergeist
             if (__instance is DoublewingAI)
                 return;
 
+            //Check the blacklist
+            string enemyName = __instance.name.ToLower();
+            foreach(string forbidden in Poltergeist.pesterBlacklist)
+            {
+                if (enemyName.Contains(forbidden))
+                    return;
+            }
+
             //Everything else, set it up
             if (NetworkManager.Singleton.IsHost || NetworkManager.Singleton.IsServer)
             {
