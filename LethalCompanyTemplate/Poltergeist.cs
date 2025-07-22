@@ -26,6 +26,7 @@ namespace Poltergeist
         //Other things
         private static Poltergeist instance = null;
         public static AssetBundle poltergeistAssetBundle;
+        public static string dllFolderPath;
         public new static PoltergeistConfig Config { get; private set; }
 
         private void Awake()
@@ -45,7 +46,7 @@ namespace Poltergeist
             DebugLog("Input instance created");
 
             //Load the assetbundle
-            string dllFolderPath = System.IO.Path.GetDirectoryName(Info.Location);
+            dllFolderPath = System.IO.Path.GetDirectoryName(Info.Location);
             string assetBundleFilePath = System.IO.Path.Combine(dllFolderPath, "bundles", "poltergeist");
             poltergeistAssetBundle = AssetBundle.LoadFromFile(assetBundleFilePath);
             DebugLog("Bundle loaded");
@@ -66,7 +67,7 @@ namespace Poltergeist
             DebugLog("Important objects extracted from bundle");
 
             //Load the audio
-            AudioManager.LoadClips(System.IO.Path.Combine(dllFolderPath, "sounds"));
+            AudioManager.LoadClips();
             DebugLog("Audio loaded");
 
             //Patch netcode

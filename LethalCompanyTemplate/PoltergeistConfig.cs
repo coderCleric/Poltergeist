@@ -15,6 +15,8 @@ namespace Poltergeist
         public ConfigEntry<float> LightIntensity { get; private set; }
         public ConfigEntry<bool> ShowDebugLogs { get; private set; }
         public ConfigEntry<float> GhostVolume { get; private set; }
+        public ConfigEntry<bool> DisableDuplicateSounds { get; private set; }
+        public ConfigEntry<bool> UseDefaultSounds { get; private set; }
 
         //Synced entries
         [field: SyncedEntryField] public SyncedEntry<float> MaxPower { get; private set; }
@@ -70,6 +72,20 @@ namespace Poltergeist
                 new ConfigDescription(
                     "Volume of the audio ghosts make",
                     new AcceptableValueRange<float>(0, 1)
+                    )
+                );
+            DisableDuplicateSounds = cfg.Bind(
+                new ConfigDefinition("Client-Side", "Disable Duplicate Sounds"),
+                false,
+                new ConfigDescription(
+                    "Whether or not sound files with identical names should be loaded alongside each other."
+                    )
+                );
+            UseDefaultSounds = cfg.Bind(
+                new ConfigDefinition("Client-Side", "Use Default Sounds"),
+                true,
+                new ConfigDescription(
+                    "Whether or not the files found in Poltergeist\'s \"sounds\" folder should be included."
                     )
                 );
 
