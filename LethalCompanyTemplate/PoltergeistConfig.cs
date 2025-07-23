@@ -10,6 +10,8 @@ namespace Poltergeist
 {
     public class PoltergeistConfig : SyncedConfig2<PoltergeistConfig>
     {
+        public enum NAME_TYPE {INTERNAL = 1, COMMON = 2, BOTH = 3};
+
         //Non-synced entries
         public ConfigEntry<bool> DefaultToVanilla { get; private set; }
         public ConfigEntry<float> LightIntensity { get; private set; }
@@ -25,6 +27,7 @@ namespace Poltergeist
         [field: SyncedEntryField] public SyncedEntry<float> TimeForAggro { get; private set; }
         [field: SyncedEntryField] public SyncedEntry<int> HitsForAggro { get; private set; }
         [field: SyncedEntryField] public SyncedEntry<float> AudioTime { get; private set; }
+        public ConfigEntry<NAME_TYPE> PesterBlacklistType { get; private set; } //Not actually a synced entry, since only the host makes pestering happen
         public ConfigEntry<string> PesterBlacklist { get; private set; } //Not actually a synced entry, since only the host makes pestering happen
 
         //Cost-related entries
@@ -140,13 +143,22 @@ namespace Poltergeist
                     new AcceptableValueRange<float>(0, float.MaxValue)
                     )
                 );
+            PesterBlacklistType = cfg.Bind( //Not actually synced, but only works for the host
+                new ConfigDefinition("Synced", "Enemy Name Type"),
+                NAME_TYPE.BOTH,
+                new ConfigDescription(
+                    "What type of name Poltergeist should look at when blacklisting enemies. Valid values are:" +
+                    "\nINTERNAL: The internal name used by the game (GiantKiwi). You may need to look it up/ask a mod dev for this name." +
+                    "\nCOMMON:   The name that appears when the enemy is scanned (Giant Sapsucker). This may not work for all enemies." +
+                    "\nBOTH:     Both of the other name types.\n"
+                    )
+                );
             PesterBlacklist = cfg.Bind( //Not actually synced, but only works for the host
                 new ConfigDefinition("Synced", "Pester Blacklist"),
                 "",
                 new ConfigDescription(
                     "A comma-separated list of monster names. Monsters who's names contain values from here will not be able to be pestered." +
-                    "\n\nExample: \"Centipede,man\" will disable pestering for snare fleas (CENTIPEDE), brackens (flowerMAN), and " +
-                    "coilheads (springMAN)"
+                    "\nExample: \"Bracken,mask\" will disable pestering for the \"BRACKEN\", the \"MASKed\", and the \"MASK Hornets\"."
                     )
                 );
 

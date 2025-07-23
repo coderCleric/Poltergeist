@@ -292,17 +292,11 @@ namespace Poltergeist
         [HarmonyPatch(typeof(MaskedPlayerEnemy), "Start")]
         public static void AddInteractorForEnemies(EnemyAI __instance)
         {
-            //Screw manticoils all my homies hate manticoils
+            //Don't include manticoils or blacklisted enemies
             if (__instance is DoublewingAI)
                 return;
-
-            //Check the blacklist
-            string enemyName = __instance.name.ToLower();
-            foreach(string forbidden in Poltergeist.pesterBlacklist)
-            {
-                if (enemyName.Contains(forbidden))
-                    return;
-            }
+            if (Poltergeist.EnemyInBlacklist(__instance))
+                return;
 
             //Everything else, set it up
             if (NetworkManager.Singleton.IsHost || NetworkManager.Singleton.IsServer)

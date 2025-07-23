@@ -87,6 +87,39 @@ namespace Poltergeist
         }
 
         /**
+         * Tells if a given enemy is in the blacklist
+         */
+        public static bool EnemyInBlacklist(EnemyAI enemy)
+        {
+            //Check based on the internal name
+            if ((Config.PesterBlacklistType.Value & PoltergeistConfig.NAME_TYPE.INTERNAL) > 0) {
+                string enemyName = enemy.enemyType.name.ToLower().Trim();
+                foreach (string forbidden in Poltergeist.pesterBlacklist)
+                {
+                    if (enemyName.Contains(forbidden))
+                        return true;
+                }
+            }
+
+            //Check based on the common name
+            if((Config.PesterBlacklistType.Value & PoltergeistConfig.NAME_TYPE.COMMON) > 0)
+            {
+                ScanNodeProperties node = enemy.GetComponentInChildren<ScanNodeProperties>();
+                if(node != null)
+                {
+                    string enemyName = node.headerText.ToLower().Trim();
+                    foreach (string forbidden in Poltergeist.pesterBlacklist)
+                    {
+                        if (enemyName.Contains(forbidden))
+                            return true;
+                    }
+                }
+            }
+
+            return false;
+        }
+
+        /**
          * The wiki says to do this
          */
         private static void NetcodePatcher()
