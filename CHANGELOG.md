@@ -1,3 +1,6 @@
+# 1.2.6
+- Made it possible for sound addons to actually work without manually shuffling files around (details in readme).
+- Added a pestering blacklist, so you can make certain enemies impossible for ghosts to pester.
 # 1.2.5
 - Fixed bug that caused the game to look slightly different with the mod on.
 # 1.2.4
