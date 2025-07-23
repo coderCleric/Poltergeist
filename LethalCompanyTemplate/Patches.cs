@@ -34,42 +34,16 @@ namespace Poltergeist
         }
 
         /**
-         * Transpile to make ship monitors viewable as a ghost
+         * Make the ship monitors viewable as a ghost
          */
-        [HarmonyTranspiler]
-        [HarmonyPatch(typeof(ManualCameraRenderer), "MeetsCameraEnabledConditions")]
-        public static IEnumerable<CodeInstruction> MonitorDontCheckPlayerLocation(IEnumerable<CodeInstruction> instructions, ILGenerator il)
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(ManualCameraRenderer), nameof(ManualCameraRenderer.MeetsCameraEnabledConditions))]
+        public static void RenderForGhosts(ref bool __result)
         {
-            //First, load the list of instructions
-            List<CodeInstruction> code = new List<CodeInstruction>(instructions);
-
-            //Find where we want to be inserting
-            int insertIndex = -1;
-            Label afterLabel = il.DefineLabel();
-            for(int i = 0; i < code.Count; i++)
+            if(camControllerActive)
             {
-                //Look for the "in hangar" check
-                if (code[i].opcode == OpCodes.Ldfld && (FieldInfo)code[i].operand == AccessTools.Field(typeof(PlayerControllerB), nameof(PlayerControllerB.isInHangarShipRoom)))
-                {
-                    Poltergeist.DebugLog("Found expected structure for monitor transpiler!");
-                    insertIndex = i - 1; //Actual insert is 1 line before
-                    code[i + 2].labels.Add(afterLabel);
-                    break;
-                }
+                __result = true;
             }
-
-            //Make the new code to inject
-            List<CodeInstruction> insertion = new List<CodeInstruction>();
-            insertion.Add(new CodeInstruction(OpCodes.Ldsfld, AccessTools.Field(typeof(Patches), nameof(Patches.camControllerActive))));
-            insertion.Add(new CodeInstruction(OpCodes.Brtrue_S, afterLabel));
-
-            //Insert the code
-            if (insertIndex != -1)
-            {
-                code.InsertRange(insertIndex, insertion);
-            }
-
-            return code;
         }
 
         /**
