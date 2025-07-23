@@ -15,10 +15,13 @@ Interacting with the mortal plane isn't easy, and requires a certain amount of e
 - Some actions require so much power that they may not be possible unless a certain number of players are dead. This prevents ghosts from doing anything grand at the start, but they will become more and more capable as the day goes on!
 
 # Custom Noises
-By pressing 'V', it's possible for ghosts to make noises that the living can hear. These noises are pulled from the "sounds" folder in the mod files, which means that they can be changed! If you're careful about it, the sounds will even be synced between players! Some things to keep in mind while putting your own sounds:
+By pressing 'V', it's possible for ghosts to make noises that the living can hear. These noises are pulled from the `sounds` folder in the mod files, which means that they can be changed! If you're careful about it, the sounds will even be synced between players! Some things to keep in mind while putting your own sounds:
 - Sounds are only updated when the game starts, so changing them mid-game won't do anything.
 - Only .wav, .ogg, and .mp3 files are supported. Any other file format will be ignored with a warning.
 - Sounds are played from each player's machine, not streamed over the network. This means that people having different sound files in their folders will lead to them hearing different sounds. To make sure that your friends hear the same sounds as you, **make sure that you all have the same files with the same names!**
+
+**Soundpacks**<br />
+Soundpacks are now possible! If another mod has a folder titled `PoltergeistSounds` in it, any files within that folder will be loaded in the same way as those in Poltergeist's `sounds` folder. To have your soundpack work with mod managers, it is suggested that you follow the folder structure `MySoundpack/BepInEx/Plugins/PoltergeistSounds`. `MySoundpack`'s name should be changed to match the name of your mod, and it should contain your soundpack's manifest, icon, and readme. `PoltergeistSounds` should contain all of the sounds that you wish to add.
 
 # Controls
 - **Movement**: Same as how you move your living character, except that moving forwards and backwards can also change your elevation.
@@ -61,6 +64,8 @@ These settings aren't synced so that you can tailor them to your personal prefer
 - **GhostLightIntensity**: Modifies the intensity of the light available to ghosts. (WARNING; this game has a lot of fog, so really high light intensities may actually *decrease* visibility.)
 - **ShowDebugLogs**: Whether or not to show debug logs (you probably want this to be false.)
 - **Ghost Volume**: A multiplier to noises that ghosts make.
+- **Disable Duplicate Sounds**: If true, then only the first sound file with a specific name encountered will actually be loaded. Useful for modpacks with overlapping sounds.
+- **Use Default Sounds**: If false, no files from Poltergeist's `sounds` folder will be loaded. Files found in folders titled `PoltergeistSounds` will still be loaded.
 
 **Synced Configs**<br />
 These settings are synced, so whatever settings the host has will be used by everyone
@@ -71,6 +76,8 @@ These settings are synced, so whatever settings the host has will be used by eve
 - **Pester Aggro Timespan**: How many seconds have to pass before enemies forget that they've been pestered by any ghosts.
 - **Aggro Hit Requirement**: How many times do ghosts have to pester the same enemy before that enemy gets mad at the nearest player with line-of-sight.
 - **Audio Play Time**: How long ghost sounds can play, in seconds.
+- **Enemy Name Type**: The type of name used to identify enemies in the blacklist. Valid values are INTERNAL, COMMON, and BOTH.
+- **Pester Blacklist**: A list of enemies that ghosts should not be able to pester. Checks for the name containing the word, so putting "mask" will disable enemies named "masked" as well as enemies named "mask hornets".
 - **Costs**: Many different interaction costs are configurable, with the categories being:
   - **Regular Doors**
   - **Big Doors**: Both the pressurized facility doors as well as the Artifice hangar doors fall under this.
