@@ -158,12 +158,13 @@ namespace Poltergeist
             if(matRNG == null)
                 matRNG = new DunGen.RandomStream();
 
-            //Select then apply a random material
+            //Most of the time, use the default mat
             double randomRoll = matRNG.NextDouble();
-            Poltergeist.DebugLog($"Head random mat roll: {randomRoll}");
             int index;
-            if (randomRoll > randMatChance)
+            if (!Poltergeist.Config.PrideMode.Value && randomRoll > randMatChance)
                 index = -1;
+
+            //Otherwise, pick one from the array
             else
                 index = matRNG.Next() % materials.Length;
             ApplyMatServerRPC(index);

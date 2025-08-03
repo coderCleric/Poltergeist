@@ -19,6 +19,7 @@ namespace Poltergeist
         public ConfigEntry<float> GhostVolume { get; private set; }
         public ConfigEntry<bool> DisableDuplicateSounds { get; private set; }
         public ConfigEntry<bool> UseDefaultSounds { get; private set; }
+        public ConfigEntry<bool> PrideMode { get; private set; }
 
         //Synced entries
         [field: SyncedEntryField] public SyncedEntry<float> MaxPower { get; private set; }
@@ -90,6 +91,13 @@ namespace Poltergeist
                 true,
                 new ConfigDescription(
                     "Whether or not the files found in Poltergeist\'s \"sounds\" folder should be included."
+                    )
+                );
+            PrideMode = cfg.Bind(
+                new ConfigDefinition("Client-Side", "Pride mode"),
+                false,
+                new ConfigDescription(
+                    "If true, forces the mod to give you a pride flag material on your ghost."
                     )
                 );
 
