@@ -34,8 +34,11 @@ namespace Poltergeist
 
         //Material handling
         public static string[] matNames = ["ace_mat", "bi_mat", "lesbian_mat", "pan_mat", "pride_mat", "trans_mat", "nb_mat", "fluid_mat", "aro_mat"];
+        private static float randMatChance = 0.15f;
         private static Material[] sharedMats = null;
+        private static Material sharedDefaultMat = null;
         private Material[] materials = null;
+        private Material defaultMat = null;
         private Material matInstance = null;
         private DunGen.RandomStream matRNG = null;
 
@@ -67,6 +70,7 @@ namespace Poltergeist
             {
                 materials[i] = Instantiate(sharedMats[i]);
             }
+            defaultMat = Instantiate(sharedDefaultMat);
         }
 
         /**
@@ -148,14 +152,20 @@ namespace Poltergeist
         /**
          * Applies a random material to the head
          */
-        public void ApplyRandomMat()
+        public void UpdateHeadMat()
         {
             //Make the rng thing, if needed
             if(matRNG == null)
                 matRNG = new DunGen.RandomStream();
 
             //Select then apply a random material
-            int index = matRNG.Next() % materials.Length;
+            double randomRoll = matRNG.NextDouble();
+            Poltergeist.DebugLog($"Head random mat roll: {randomRoll}");
+            int index;
+            if (randomRoll > randMatChance)
+                index = -1;
+            else
+                index = matRNG.Next() % materials.Length;
             ApplyMatServerRPC(index);
         }
 
@@ -189,6 +199,9 @@ namespace Poltergeist
             {
                 sharedMats[i] = bundle.LoadAsset<Material>($"Assets/Materials/{matNames[i]}.mat");
             }
+
+            //Load the default
+            sharedDefaultMat = bundle.LoadAsset<Material>("Assets/Materials/ghost_mat.mat");
         }
 
         /**
@@ -302,7 +315,11 @@ namespace Poltergeist
          */
         private void ApplyMatLocally(int index)
         {
-            matInstance = materials[index];
+            if (index < 0)
+                matInstance = defaultMat;
+            else
+                matInstance = materials[index];
+
             renderer.sharedMaterial = matInstance;
         }
     }

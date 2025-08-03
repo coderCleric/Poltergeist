@@ -127,7 +127,7 @@ namespace Poltergeist
 
                 //Activate the head
                 head.isActive = true;
-                head.ApplyRandomMat();
+                head.UpdateHeadMat();
 
                 //Move the camera
                 if (!Patches.vanillaMode)
