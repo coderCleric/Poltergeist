@@ -161,7 +161,7 @@ namespace Poltergeist
             //Most of the time, use the default mat
             double randomRoll = matRNG.NextDouble();
             int index;
-            if (!Poltergeist.Config.PrideMode.Value && randomRoll > randMatChance)
+            if (!Poltergeist.Config.PrideMode.Value && DateTime.Now.Month != 6 && randomRoll > randMatChance)
                 index = -1;
 
             //Otherwise, pick one from the array
