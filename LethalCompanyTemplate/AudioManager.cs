@@ -112,7 +112,7 @@ namespace Poltergeist
                 }
 
                 //If we can't, throw an error and move on to the next
-                catch (Exception e)
+                catch (Exception)
                 {
                     Poltergeist.LogError("An exception was encountered while loading audio!");
                     continue;

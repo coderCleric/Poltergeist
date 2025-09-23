@@ -1,3 +1,6 @@
+# 1.2.7
+- Made the pride heads into a config option.
+  - Without the option active, pride heads will occur with a 15% chance, or a 100% chance during June.
 # 1.2.6
 - Made it possible for sound addons to actually work without manually shuffling files around (details in readme).
 - Added a pestering blacklist, so you can make certain enemies impossible for ghosts to pester.
