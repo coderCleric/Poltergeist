@@ -1,3 +1,5 @@
+# 1.2.8
+- Update the mod to not explode on game version 73.
 # 1.2.7
 - Made the pride heads into a config option.
   - Without the option active, pride heads will occur with a 15% chance, or a 100% chance during June.
