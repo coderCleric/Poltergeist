@@ -343,7 +343,7 @@ namespace Poltergeist
             Poltergeist.enemyInteractibleObject = Poltergeist.poltergeistAssetBundle.LoadAsset<GameObject>("Assets/Prefabs/EnemyInteractible.prefab");
             Poltergeist.enemyInteractibleObject.AddComponent<EnemyInteractible>();
             Poltergeist.ghostHeadObject = Poltergeist.poltergeistAssetBundle.LoadAsset<GameObject>("Assets/Prefabs/ghosthead.prefab");
-            Poltergeist.ghostHeadObject.AddComponent<HeadTransform>();
+            Poltergeist.ghostHeadObject.AddComponent<RPCTransform>();
             Poltergeist.ghostHeadObject.AddComponent<GhostHead>();
 
             //Register the prefabs
