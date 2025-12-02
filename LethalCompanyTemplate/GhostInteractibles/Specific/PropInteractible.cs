@@ -59,7 +59,8 @@ namespace Poltergeist.GhostInteractibles.Specific
 
             //Make the noise
             Patches.ignoreObj = prop;
-            InteractServerRpc((int)SpectatorCamController.instance.ClientPlayer.playerClientId, prop.isBeingUsed);
+            if(prop.itemProperties.syncUseFunction) //Some mods manually sync, while setting this to false
+                InteractServerRpc((int)SpectatorCamController.instance.ClientPlayer.playerClientId, prop.isBeingUsed);
             InteractLocallyOnly();
 
             return GetCost();
