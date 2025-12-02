@@ -102,7 +102,7 @@ namespace Poltergeist
                 //Try and load it
                 try
                 {
-                    Poltergeist.DebugLog("Found a file in the audio folder");
+                    Poltergeist.DebugLog($"Found an audio file {Path.GetFileName(path)}");
                     Task<AudioClip> task = Task.Run(async () => await GetAudioClip(path));
                     Poltergeist.DebugLog("Waiting for file load task to complete");
                     task.Wait();
