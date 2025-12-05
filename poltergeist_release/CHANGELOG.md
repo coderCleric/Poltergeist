@@ -1,3 +1,8 @@
+# 1.2.9
+- Fixed an issue where client ghost heads did not sync properly.
+  - If you were having issues with ghost sounds and manifesting not working, this should fix that.
+- Fixed an issue that occurred where some modded scrap would trigger multiple times, if used by a ghost.
+- Improved debug messages concerning the loading of audio.
 # 1.2.8
 - Update the mod to not explode on game version 73.
 # 1.2.7
