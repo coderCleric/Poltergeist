@@ -10,7 +10,6 @@ using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Rendering.HighDefinition;
-using static UnityEngine.Rendering.DebugUI;
 
 namespace Poltergeist
 {
@@ -538,7 +537,7 @@ namespace Poltergeist
             Bounds bounds = HUDManager.Instance.holdButtonToEndGameEarlyVotesText.textBounds;
 
             //Need to account for the votes text being empty
-            if(bounds.m_Extents.y < 0)
+            if(bounds.extents.y < 0)
                 tf.position = new Vector3(tf.position.x, HUDManager.Instance.holdButtonToEndGameEarlyVotesText.transform.position.y, tf.position.z);
             else
                 tf.localPosition = new Vector3(tf.localPosition.x, (bounds.min + HUDManager.Instance.holdButtonToEndGameEarlyVotesText.transform.localPosition).y

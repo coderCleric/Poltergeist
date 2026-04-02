@@ -6,6 +6,7 @@ using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.HighDefinition;
+using DunGen;
 
 namespace Poltergeist
 {
@@ -40,7 +41,7 @@ namespace Poltergeist
         private Material[] materials = null;
         private Material defaultMat = null;
         private Material matInstance = null;
-        private DunGen.RandomStream matRNG = null;
+        private RandomStream matRNG = null;
 
         //Bounds for the animation
         private ColorAdjustments colorAdj = null;
