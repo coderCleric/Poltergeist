@@ -9,74 +9,27 @@
         <LangVersion>latest</LangVersion>
     </PropertyGroup>
 
-    <ItemGroup>
-      <PackageReference Include="BepInEx.AssemblyPublicizer.MSBuild" Version="0.4.3" PrivateAssets="all" />
-      <PackageReference Include="BepInEx.Analyzers" Version="1.*" PrivateAssets="all" />
-      <PackageReference Include="BepInEx.Core" Version="5.*" PrivateAssets="all" Publicize="true" />
-    </ItemGroup>
-
     <ItemGroup Condition="'$(TargetFramework.TrimEnd(`0123456789`))' == 'net'">
         <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.2" PrivateAssets="all" />
     </ItemGroup>
 
     <ItemGroup>
-      <Reference Include="Assembly-CSharp" Publicize="true">
-        <HintPath>..\Dependency Storage\Assembly-CSharp.dll</HintPath>
-      </Reference>
+      <PackageReference Include="BepInEx.Analyzers" Version="1.0.8">
+        <PrivateAssets>all</PrivateAssets>
+        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      </PackageReference>
+      <PackageReference Include="BepInEx.Core" Version="5.4.21" />
+      <PackageReference Include="LethalCompany.GameLibs.Steam" Version="81.0.0-ngd.0" />
+    </ItemGroup>
+
+    <ItemGroup>
       <Reference Include="com.sigurd.csync">
         <HintPath>..\Dependency Storage\com.sigurd.csync.dll</HintPath>
-      </Reference>
-      <Reference Include="DunGen">
-        <HintPath>..\Dependency Storage\DunGen.dll</HintPath>
+        <Private>False</Private>
       </Reference>
       <Reference Include="LethalCompanyInputUtils">
         <HintPath>..\Dependency Storage\LethalCompanyInputUtils.dll</HintPath>
         <Private>False</Private>
-      </Reference>
-      <Reference Include="Unity.InputSystem">
-        <HintPath>..\Dependency Storage\Unity.InputSystem.dll</HintPath>
-      </Reference>
-      <Reference Include="Unity.Netcode.Runtime">
-        <HintPath>..\Dependency Storage\Unity.Netcode.Runtime.dll</HintPath>
-      </Reference>
-      <Reference Include="Unity.RenderPipelines.Core.Runtime">
-        <HintPath>..\Dependency Storage\Unity.RenderPipelines.Core.Runtime.dll</HintPath>
-      </Reference>
-      <Reference Include="Unity.RenderPipelines.HighDefinition.Runtime">
-        <HintPath>..\Dependency Storage\Unity.RenderPipelines.HighDefinition.Runtime.dll</HintPath>
-      </Reference>
-      <Reference Include="Unity.TextMeshPro">
-        <HintPath>..\Dependency Storage\Unity.TextMeshPro.dll</HintPath>
-      </Reference>
-      <Reference Include="UnityEngine">
-        <HintPath>..\Dependency Storage\UnityEngine.dll</HintPath>
-      </Reference>
-      <Reference Include="UnityEngine.AnimationModule">
-        <HintPath>..\Dependency Storage\UnityEngine.AnimationModule.dll</HintPath>
-      </Reference>
-      <Reference Include="UnityEngine.AssetBundleModule">
-        <HintPath>..\Dependency Storage\UnityEngine.AssetBundleModule.dll</HintPath>
-      </Reference>
-      <Reference Include="UnityEngine.AudioModule">
-        <HintPath>..\Dependency Storage\UnityEngine.AudioModule.dll</HintPath>
-      </Reference>
-      <Reference Include="UnityEngine.CoreModule">
-        <HintPath>..\Dependency Storage\UnityEngine.CoreModule.dll</HintPath>
-      </Reference>
-      <Reference Include="UnityEngine.InputModule">
-        <HintPath>..\Dependency Storage\UnityEngine.InputModule.dll</HintPath>
-      </Reference>
-      <Reference Include="UnityEngine.PhysicsModule">
-        <HintPath>..\Dependency Storage\UnityEngine.PhysicsModule.dll</HintPath>
-      </Reference>
-      <Reference Include="UnityEngine.UI">
-        <HintPath>..\Dependency Storage\UnityEngine.UI.dll</HintPath>
-      </Reference>
-      <Reference Include="UnityEngine.UnityWebRequestAudioModule">
-        <HintPath>..\Dependency Storage\UnityEngine.UnityWebRequestAudioModule.dll</HintPath>
-      </Reference>
-      <Reference Include="UnityEngine.UnityWebRequestModule">
-        <HintPath>..\Dependency Storage\UnityEngine.UnityWebRequestModule.dll</HintPath>
       </Reference>
     </ItemGroup>
   

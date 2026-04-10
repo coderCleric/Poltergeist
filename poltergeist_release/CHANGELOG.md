@@ -1,3 +1,5 @@
+# 1.2.10
+- Update to game version 81.
 # 1.2.9
 - Fixed an issue where client ghost heads did not sync properly.
   - If you were having issues with ghost sounds and manifesting not working, this should fix that.
