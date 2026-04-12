@@ -18,8 +18,12 @@
         <PrivateAssets>all</PrivateAssets>
         <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       </PackageReference>
+      <PackageReference Include="BepInEx.AssemblyPublicizer.MSBuild" Version="0.4.3">
+        <PrivateAssets>all</PrivateAssets>
+        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      </PackageReference>
       <PackageReference Include="BepInEx.Core" Version="5.4.21" />
-      <PackageReference Include="LethalCompany.GameLibs.Steam" Version="81.0.0-ngd.0" />
+      <PackageReference Include="LethalCompany.GameLibs.Steam" Version="81.0.0-ngd.0" Publicize="true" />
     </ItemGroup>
 
     <ItemGroup>
@@ -32,10 +36,15 @@
         <Private>False</Private>
       </Reference>
     </ItemGroup>
+
+  <Target Name="NetcodePatch" AfterTargets="PostBuildEvent">
+    <PropertyGroup>
+      <NetcodePatcherDepsListFile>$(IntermediateOutputPath)ncp-deps.list</NetcodePatcherDepsListFile>
+    </PropertyGroup>
+    <WriteLinesToFile File="$(NetcodePatcherDepsListFile)" Lines="@(ReferencePathWithRefAssemblies)" Overwrite="true"/>
+    <Exec Command="netcode-patch -uv 2022.3.62 -nv 1.12.2 -tv 1.0.0 &quot;$(TargetPath)&quot; --dependency-file &quot;$(NetcodePatcherDepsListFile)&quot;" />
+  </Target>
   
-    <Target Name="NetcodePatch" AfterTargets="PostBuildEvent">
-      <Exec Command="netcode-patch -uv 2022.3.62 -nv 1.12.0 -tv 1.0.0 &quot;$(TargetPath)&quot; @(ReferencePathWithRefAssemblies->'&quot;%(Identity)&quot;', ' ')" />
-    </Target>
   <Target Name="DLLCopy" AfterTargets="NetcodePatch">
     <Exec Command="copy &quot;$(TargetPath)&quot; &quot;$(AppData)\r2modmanPlus-local\LethalCompany\profiles\Modding\BepInEx\plugins\Unknown-Poltergeist&quot;" />
     <Exec Command="copy &quot;$(TargetPath)&quot; &quot;$(AppData)\r2modmanPlus-local\LethalCompany\profiles\Modding\BepInEx\plugins\coderCleric-Poltergeist&quot;" />

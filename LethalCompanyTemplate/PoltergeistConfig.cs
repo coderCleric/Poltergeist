@@ -20,6 +20,7 @@ namespace Poltergeist
         public ConfigEntry<bool> DisableDuplicateSounds { get; private set; }
         public ConfigEntry<bool> UseDefaultSounds { get; private set; }
         public ConfigEntry<bool> PrideMode { get; private set; }
+        public ConfigEntry<float> CullDistance { get; private set; }
 
         //Synced entries
         [field: SyncedEntryField] public SyncedEntry<float> MaxPower { get; private set; }
@@ -98,6 +99,14 @@ namespace Poltergeist
                 false,
                 new ConfigDescription(
                     "If true, forces the mod to give you a pride flag material on your ghost."
+                    )
+                );
+            CullDistance = cfg.Bind(
+                new ConfigDefinition("Client-Side", "Cull distance"),
+                150f,
+                new ConfigDescription(
+                    "If a ghost is farther than this distance from a room, rendering for that room will be disabled\n" +
+                    "If you're having framerate issues, lowering this value may help"
                     )
                 );
 

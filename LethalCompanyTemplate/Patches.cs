@@ -10,6 +10,7 @@ using Unity.Netcode;
 using System.Reflection;
 using Poltergeist.GhostInteractibles;
 using Poltergeist.GhostInteractibles.Specific;
+using DunGen;
 
 namespace Poltergeist
 {
@@ -82,6 +83,37 @@ namespace Poltergeist
                 __instance.playersManager.overrideSpectateCamera = true;
         }
 
+        /**
+         * Override dungeon culling to sometimes do it distance-based
+         */
+        
+        [HarmonyPrefix]
+        [HarmonyPatch(typeof(AdjacentRoomCullingModified), nameof(AdjacentRoomCullingModified.SetTileVisibility))]
+        public static void CancelCulling(Tile tile, ref bool visible)
+        {
+            //Should to normal behavior if we're not in freecam
+            if (!camControllerActive)
+                return;
+
+            //Otherwise, switch to a distance-based culling strat
+            visible = (tile.transform.position - SpectatorCamController.instance.transform.position).magnitude <= 
+                Poltergeist.Config.CullDistance.Value;
+        }
+
+        /**
+         * If the player's dead the dungeon culling will need to recalc every frame
+         */
+
+        [HarmonyPrefix]
+        [HarmonyPatch(typeof(AdjacentRoomCullingModified), nameof(AdjacentRoomCullingModified.LateUpdate))]
+        public static void CullEveryFrame(AdjacentRoomCullingModified __instance)
+        {
+            if(__instance.Ready && camControllerActive)
+            {
+                foreach (Tile tile in __instance.allTiles)
+                    __instance.SetTileVisibility(tile, true); //Bool doesn't matter, overriden by patch
+            }
+        }
 
         /////////////////////////////// These are needed to manage the state of the camera controller ///////////////////////////////
         /**
