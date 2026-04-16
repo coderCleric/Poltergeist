@@ -66,6 +66,8 @@ These settings aren't synced so that you can tailor them to your personal prefer
 - **Ghost Volume**: A multiplier to noises that ghosts make.
 - **Disable Duplicate Sounds**: If true, then only the first sound file with a specific name encountered will actually be loaded. Useful for modpacks with overlapping sounds.
 - **Use Default Sounds**: If false, no files from Poltergeist's `sounds` folder will be loaded. Files found in folders titled `PoltergeistSounds` will still be loaded.
+- **Pride Mode**: If true, your ghost will have a pride material outside of June.
+- **Cull Distance**: Dungeon rooms farther away than this will not be rendered during freecam. Consider lowering this if you have framerate issues during freecam.
 
 **Synced Configs**<br />
 These settings are synced, so whatever settings the host has will be used by everyone

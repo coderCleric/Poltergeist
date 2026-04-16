@@ -41,12 +41,13 @@
     <PropertyGroup>
       <NetcodePatcherDepsListFile>$(IntermediateOutputPath)ncp-deps.list</NetcodePatcherDepsListFile>
     </PropertyGroup>
-    <WriteLinesToFile File="$(NetcodePatcherDepsListFile)" Lines="@(ReferencePathWithRefAssemblies)" Overwrite="true"/>
+    <WriteLinesToFile File="$(NetcodePatcherDepsListFile)" Lines="@(ReferencePathWithRefAssemblies)" Overwrite="true" />
     <Exec Command="netcode-patch -uv 2022.3.62 -nv 1.12.2 -tv 1.0.0 &quot;$(TargetPath)&quot; --dependency-file &quot;$(NetcodePatcherDepsListFile)&quot;" />
   </Target>
   
   <Target Name="DLLCopy" AfterTargets="NetcodePatch">
     <Exec Command="copy &quot;$(TargetPath)&quot; &quot;$(AppData)\r2modmanPlus-local\LethalCompany\profiles\Modding\BepInEx\plugins\Unknown-Poltergeist&quot;" />
     <Exec Command="copy &quot;$(TargetPath)&quot; &quot;$(AppData)\r2modmanPlus-local\LethalCompany\profiles\Modding\BepInEx\plugins\coderCleric-Poltergeist&quot;" />
+    <Exec Command="copy &quot;$(TargetPath)&quot; &quot;..\poltergeist_release\BepInEx\plugins&quot;" />
   </Target>
 </Project>

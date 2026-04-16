@@ -1,3 +1,8 @@
+# 1.2.11
+- Fixed a bug where adult maneaters were impossible to pester.
+- Fixed a bug where ghosts could kill certain enemies.
+- Replaced vanilla dungeon culling with a distance-based method when the player is in freecam.
+  - Added a client-side config option to determine how far away rooms will render.
 # 1.2.10
 - Update to game version 81.
 # 1.2.9
