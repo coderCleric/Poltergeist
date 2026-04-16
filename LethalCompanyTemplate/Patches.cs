@@ -22,6 +22,7 @@ namespace Poltergeist
         public static GrabbableObject ignoreObj = null;
         public static bool shouldGameOver = false;
         public static bool camControllerActive = false;
+        private static int cachedHealth = 0;
 
         /////////////////////////////// Misc ///////////////////////////////
         /**
@@ -55,6 +56,32 @@ namespace Poltergeist
         public static void MakeFollowTrigger(StartMatchLever __instance)
         {
             GameObject.Instantiate(Poltergeist.followTriggerObject, __instance.transform).transform.localPosition = Vector3.zero;
+        }
+
+        /**
+         * Prevent certain enemies from being killable by ghosts
+         * 
+         * First method makes sure the enemy doesn't die, second makes sure another mod tweaking things doesn't heal them
+         * It's dirty, but it *should* work
+         */
+        [HarmonyPrefix]
+        [HarmonyPatch(typeof(CadaverBloomAI), nameof(CadaverBloomAI.HitEnemy))]
+        [HarmonyPatch(typeof(CaveDwellerAI), nameof(CaveDwellerAI.HitEnemy))]
+        public static void PreHitHeal(EnemyAI __instance, int force)
+        {
+            if(force == 0)
+            {
+                cachedHealth = __instance.enemyHP;
+                __instance.enemyHP++;
+            }
+        }
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(CadaverBloomAI), nameof(CadaverBloomAI.HitEnemy))]
+        [HarmonyPatch(typeof(CaveDwellerAI), nameof(CaveDwellerAI.HitEnemy))]
+        public static void PostHitPreventHeal(EnemyAI __instance, int force)
+        {
+            if(force == 0)
+                __instance.enemyHP = cachedHealth;
         }
 
 

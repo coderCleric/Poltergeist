@@ -35,7 +35,7 @@ namespace Poltergeist.GhostInteractibles.Specific
             enemy = enemyTF.GetComponent<EnemyAI>();
 
             //Make all of the detectors
-            EnemyAICollisionDetect[] AIDetectors = enemyTF.GetComponentsInChildren<EnemyAICollisionDetect>();
+            EnemyAICollisionDetect[] AIDetectors = enemyTF.GetComponentsInChildren<EnemyAICollisionDetect>(true);
             int detectorCount = AIDetectors.Length;
             detectors = new EnemyDetector[detectorCount];
             for (int i = 0; i < detectorCount; i++)
