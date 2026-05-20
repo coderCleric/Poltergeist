@@ -118,7 +118,7 @@ namespace Poltergeist
         [HarmonyPatch(typeof(AdjacentRoomCullingModified), nameof(AdjacentRoomCullingModified.SetTileVisibility))]
         public static void CancelCulling(Tile tile, ref bool visible)
         {
-            //Should to normal behavior if we're not in freecam
+            //Should defer to normal behavior if we're not in freecam
             if (!camControllerActive)
                 return;
 
@@ -138,7 +138,10 @@ namespace Poltergeist
             if(__instance.Ready && camControllerActive)
             {
                 foreach (Tile tile in __instance.allTiles)
-                    __instance.SetTileVisibility(tile, true); //Bool doesn't matter, overriden by patch
+                {
+                    if (tile != null)
+                        __instance.SetTileVisibility(tile, true); //Bool doesn't matter, overriden by patch
+                }
             }
         }
 

@@ -1,3 +1,5 @@
+# 1.2.12
+- Fixed some error spam at the end of a round.
 # 1.2.11
 - Fixed a bug where adult maneaters were impossible to pester.
 - Fixed a bug where ghosts could kill certain enemies.
